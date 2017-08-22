@@ -1,0 +1,19 @@
+object dmMainUplds: TdmMainUplds
+  OnCreate = DataModuleCreate
+  OldCreateOrder = False
+  Height = 154
+  HorizontalOffset = 290
+  VerticalOffset = 201
+  Width = 242
+  object BrookHTTPServerConfiguration1: TBrookHTTPServerConfiguration
+    Left = 96
+    Top = 24
+  end
+  object BrookHTTPServer1: TBrookHTTPServer
+    Configuration = BrookHTTPServerConfiguration1
+    OnRequest = BrookHTTPServer1Request
+    OnRequestError = BrookHTTPServer1RequestError
+    Left = 96
+    Top = 88
+  end
+end

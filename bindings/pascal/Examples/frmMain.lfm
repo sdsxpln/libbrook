@@ -1,0 +1,111 @@
+object frMain: TfrMain
+  Left = 248
+  Height = 171
+  Top = 137
+  Width = 347
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = 'HTTP server'
+  ClientHeight = 171
+  ClientWidth = 347
+  Position = poDesktopCenter
+  LCLVersion = '1.7'
+  object btStart: TButton
+    AnchorSideLeft.Control = edPort
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = edPort
+    AnchorSideTop.Side = asrCenter
+    Left = 121
+    Height = 25
+    Top = 16
+    Width = 75
+    Action = acStart
+    BorderSpacing.Left = 6
+    TabOrder = 0
+  end
+  object btStop: TButton
+    AnchorSideLeft.Control = btStart
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = btStart
+    Left = 202
+    Height = 25
+    Top = 16
+    Width = 75
+    Action = acStop
+    BorderSpacing.Left = 6
+    TabOrder = 1
+  end
+  object lbPort: TLabel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    Left = 20
+    Height = 17
+    Top = 20
+    Width = 23
+    BorderSpacing.Left = 20
+    BorderSpacing.Top = 20
+    Caption = 'Port'
+    ParentColor = False
+  end
+  object edPort: TSpinEdit
+    AnchorSideLeft.Control = lbPort
+    AnchorSideLeft.Side = asrBottom
+    AnchorSideTop.Control = lbPort
+    AnchorSideTop.Side = asrCenter
+    Left = 49
+    Height = 27
+    Top = 15
+    Width = 66
+    BorderSpacing.Left = 6
+    MaxValue = 65535
+    MinValue = 1
+    TabOrder = 2
+    Value = 8080
+  end
+  object lbLink: TLabel
+    Cursor = crHandPoint
+    Left = 20
+    Height = 17
+    Top = 64
+    Width = 114
+    Caption = 'http://localhost:8080'
+    Enabled = False
+    Font.Color = clBlue
+    ParentColor = False
+    ParentFont = False
+    OnClick = lbLinkClick
+    OnMouseEnter = lbLinkMouseEnter
+    OnMouseLeave = lbLinkMouseLeave
+  end
+  object alMain: TActionList
+    Left = 32
+    Top = 48
+    object acStart: TAction
+      Category = 'Server'
+      Caption = '&Start'
+      OnExecute = acStartExecute
+      ShortCut = 120
+    end
+    object acStop: TAction
+      Category = 'Server'
+      Caption = 'Sto&p'
+      Enabled = False
+      OnExecute = acStopExecute
+      ShortCut = 16497
+    end
+  end
+  object BrookHTTPServerConfiguration1: TBrookHTTPServerConfiguration
+    Left = 200
+    Top = 56
+  end
+  object BrookHTTPServer1: TBrookHTTPServer
+    Configuration = BrookHTTPServerConfiguration1
+    AfterOpen = BrookHTTPServer1AfterOpen
+    AfterClose = BrookHTTPServer1AfterClose
+    OnRequest = BrookHTTPServer1Request
+    OnRequestError = BrookHTTPServer1RequestError
+    OnError = BrookHTTPServer1Error
+    Left = 88
+    Top = 112
+  end
+end

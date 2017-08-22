@@ -1,0 +1,702 @@
+(*    _____   _____    _____   _____   _   __
+ *   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
+ *   | |_) | | |_) |  | | | | | | | | | |/ /
+ *   |  _ <  |  _ <   | | | | | | | | |   (
+ *   | |_) | | | \ \  | |_| | | |_| | | |\ \
+ *   |_____/ |_|  \_\ \_____/ \_____/ |_| \_\ 4-REST.
+ *
+ *   –– a small tool which helps you write quickly REST APIs.
+ *
+ * Copyright (c) 2012-2017 Silvio Clecio, et al.
+ *
+ * This software is licensed as described in the file COPYING, which
+ * you should have received as part of this distribution. The terms
+ * are also available at https://brookframework.org/docs/copyright.html.
+ *
+ * You may opt to use, copy, modify, merge, publish, distribute and/or sell
+ * copies of the Software, and permit persons to whom the Software is
+ * furnished to do so, under the terms of the COPYING file.
+ *
+ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
+ * KIND, either express or implied.
+ *)
+
+unit libbrook;
+
+{$IFDEF FPC}
+ {$MODE DELPHI}
+{$ENDIF}
+
+interface
+
+uses
+  SysUtils,
+{$IFDEF FPC}
+ {$IFDEF UNIX}
+  BaseUnix,
+ {$ENDIF}
+  DynLibs,
+{$ELSE}
+ {$IF DEFINED(MSWINDOWS)}
+  Winapi.Windows
+ {$ELSEIF DEFINED(POSIX)}
+  Posix.Dlfcn,
+  Posix.SysTypes
+ {$ENDIF},
+{$ENDIF}
+  SyncObjs;
+
+{$IFDEF FPC}
+ {$PACKRECORDS C}
+ {$IFDEF VER3_0}
+type
+ TLibHandle = DynLibs.TLibHandle;
+ {$ENDIF}
+{$ELSE}
+type
+ {$IF DEFINED(NEXTGEN) AND DEFINED(POSIX)}
+  AnsiChar = UTF8Char;
+  AnsiString = UTF8String; { TODO: check if AnsiString is represented as UTF8String in the new BDS generations. }
+  PAnsiChar = PUTF8Char;
+  PPAnsiChar = ^PUTF8Char;
+ {$ENDIF}
+  TLibHandle = HMODULE;
+{$ENDIF}
+
+const
+{$IFDEF FPC}
+ {$IFDEF VER3_0}
+  NilHandle = DynLibs.NilHandle;
+ {$ENDIF}
+{$ELSE}
+  NilHandle = HMODULE(0);
+  SharedSuffix =
+ {$IF DEFINED(MSWINDOWS)}
+    'dll'
+ {$ELSEIF DEFINED(MACOS)}
+    'dylib'
+ {$ELSE}
+    'so'
+ {$ENDIF};
+{$ENDIF}
+  B4R_LIB_NAME = Concat(
+{$IFDEF MSWINDOWS}
+    'libbrook-4'
+{$ELSE}
+    'libbrook'
+{$ENDIF}, '.', SharedSuffix);
+
+resourcestring
+  SBFLibraryNotLoaded = 'Brook library ''%s'' not loaded.';
+
+type
+  EBFLibraryNotLoaded = class(Exception);
+
+type
+  cchar = AnsiChar;
+  Pcchar = PAnsiChar;
+  PPcchar = PPAnsiChar;
+  cbool = Boolean;
+  Pcbool = PBoolean;
+  cuint16 = UInt16;
+  cuint64 = UInt64;
+  cint = Integer;
+  cuint = Cardinal;
+  csize =
+{$IFDEF FPC}
+ {$IFDEF UNIX}
+    BaseUnix
+ {$ELSE}
+    System
+ {$ENDIF}
+{$ELSE}
+ {$IFDEF POSIX}
+    Posix.SysTypes
+ {$ELSE}
+    Winapi.Windows
+ {$ENDIF}
+{$ENDIF}.size_t;
+  cenum = cint;
+  Pcvoid = Pointer;
+  cva_list = Pointer;
+
+const
+  B4R_UUID_STR_LEN = 36;
+
+type
+  Pb4r_hs = ^b4r_hs;
+  PPb4r_hs = ^Pb4r_hs;
+  b4r_hs = record
+  end;
+
+  b4r_uuid_func = function(uuid: Pcchar): cbool; cdecl;
+
+  b4r_hs_iter_cb = function(cls: Pcvoid; hs: Pb4r_hs): cbool; cdecl;
+
+  b4r_hs_sort_cb = function(cls: Pcvoid; a: Pb4r_hs; b: Pb4r_hs): cint; cdecl;
+
+var
+  b4r_hs_name: function(hs: Pb4r_hs): Pcchar; cdecl;
+
+  b4r_hs_val: function(hs: Pb4r_hs): Pcchar; cdecl;
+
+  b4r_hs_name_val: function(hs: Pb4r_hs; const name: PPcchar;
+    const val: PPcchar): cbool; cdecl;
+
+  b4r_hs_add: function(hsl: PPb4r_hs; const name: Pcchar;
+    const val: Pcchar): cbool; cdecl;
+
+  b4r_hs_add_or_set: function(hsl: PPb4r_hs; const name: Pcchar;
+    const val: Pcchar): cbool; cdecl;
+
+  b4r_hs_rm: function(hsl: PPb4r_hs; const name: Pcchar): cbool; cdecl;
+
+  b4r_hs_find: function(hsl: Pb4r_hs; const name: Pcchar): Pb4r_hs; cdecl;
+
+  b4r_hs_find_val: function(hsl: Pb4r_hs; const name: Pcchar): Pcchar; cdecl;
+
+  b4r_hs_try: function(hsl: Pb4r_hs; const name: Pcchar;
+    const val: PPcchar): cbool; cdecl;
+
+  b4r_hs_has: function(hsl: Pb4r_hs; const name: Pcchar): cbool; cdecl;
+
+  b4r_hs_iter: function(hsl: Pb4r_hs;
+    iter_cb: b4r_hs_iter_cb; iter_cls: Pcvoid): cbool; cdecl;
+
+  b4r_hs_next: function(hs: PPb4r_hs): cbool; cdecl;
+
+  b4r_hs_count: function(hsl: Pb4r_hs): cuint; cdecl;
+
+  b4r_hs_sort: function(hsl: PPb4r_hs; cmp_cb: b4r_hs_sort_cb;
+    cmp_cls: Pcvoid): Boolean; cdecl;
+
+  b4r_hs_cleanup: procedure(hsl: PPb4r_hs); cdecl;
+
+const
+  B4R_HTTPSRV_PORT = 8080;
+
+  B4R_HTTPSRV_POST_BUF_SIZE =
+{$IF DEFINED(ANDROID)}
+    1024 // 1 kB
+{$ELSEIF DEFINED(WIN32)}
+    32768 // 32 kB
+{$ELSE}
+    65536 // 64 kB
+{$ENDIF};
+
+  B4R_HTTPSRV_MAX_BODY_SIZE = 2097152; // 2 MB
+
+  B4R_HTTPSRV_MAX_PAYLD_SIZE = 2097152; // 2 MB
+
+  B4R_HTTPSRV_MAX_UPLD_SIZE = 15728640; // 15 MB
+
+  B4R_HTTPSRV_CONTENT_TYPE  = 'text/html';
+
+  B4R_HTTPSRV_CFG_PORT = 'b4r_httpsrv_cfg_port';
+
+  B4R_HTTPSRV_CFG_UPLDS_DIR = 'b4r_httpsrv_cfg_upld_dir';
+
+  B4R_HTTPSRV_CFG_MAX_BODY_SIZE = 'b4r_httpsrv_cfg_max_body_size';
+
+  B4R_HTTPSRV_CFG_POST_BUF_SIZE = 'b4r_httpsrv_cfg_post_buf_size';
+
+  B4R_HTTPSRV_CFG_MAX_PAYLD_SIZE = 'b4r_httpsrv_cfg_max_payld_size';
+
+  B4R_HTTPSRV_CFG_MAX_UPLD_SIZE = 'b4r_httpsrv_cfg_max_upld_size';
+
+  B4R_HTTPSRV_CFG_CONTENT_TYPE = 'b4r_httpsrv_cfg_content_type';
+
+  B4R_HTTPSRV_CFG_UUID_FUNC = 'b4r_httpsrv_cfg_uuid_func';
+
+type
+  B4R_HTTPSRV_AUTH_TYPE = cenum;
+const
+  B4R_HTTPSRV_AUTH_TYPE_BASIC = 1;
+  B4R_HTTPSRV_AUTH_TYPE_DIGEST = 2;
+
+type
+  B4R_HTTPSRV_OPT = cenum;
+const
+  B4R_HTTPSRV_OPT_CON_CB = 0;
+  B4R_HTTPSRV_OPT_REQ_INIT_CB = 1;
+  B4R_HTTPSRV_OPT_REQ_FINI_CB = 2;
+  B4R_HTTPSRV_OPT_REQ_PREP_CB = 3;
+  B4R_HTTPSRV_OPT_REQ_UPLD_DATA_CB = 4;
+  B4R_HTTPSRV_OPT_REQ_UPLD_FILE_CBS = 5;
+  B4R_HTTPSRV_OPT_REQ_ERR_CB = 6;
+  B4R_HTTPSRV_OPT_REQ_ALLOWED_POST = 7;
+  B4R_HTTPSRV_OPT_ERR_CB = 8;
+  B4R_HTTPSRV_OPT_PORT = 9;
+  B4R_HTTPSRV_OPT_SHUTDOWN_ATTEMPTS = 10;
+  B4R_HTTPSRV_OPT_FORCED_SHUTDOWN = 11;
+  B4R_HTTPSRV_OPT_AUTH = 12;
+  B4R_HTTPSRV_OPT_ENABLED_LOG = 13;
+
+type
+  Pb4r_httpsrv_cfg = ^b4r_httpsrv_cfg;
+  b4r_httpsrv_cfg = record
+  end;
+
+  Pb4r_httpsrv = ^b4r_httpsrv;
+  b4r_httpsrv = record
+  end;
+
+  Pb4r_httpsrv_req = ^b4r_httpsrv_req;
+  b4r_httpsrv_req = record
+  end;
+
+  Pb4r_httpsrv_res = ^b4r_httpsrv_res;
+  b4r_httpsrv_res = record
+  end;
+
+  PPb4r_httpsrv_req_upld = ^Pb4r_httpsrv_req_upld;
+  Pb4r_httpsrv_req_upld = ^b4r_httpsrv_req_upld;
+  b4r_httpsrv_req_upld = record
+  end;
+
+  b4r_httpsrv_con_cb = procedure(cls: Pcvoid; const id: Pcchar;
+    closed: cbool); cdecl;
+
+  b4r_httpsrv_req_init_cb = procedure(cls: Pcvoid; const id: Pcchar;
+    const uri: Pcchar; aborted: Pcbool); cdecl;
+
+  b4r_httpsrv_req_fini_cb = procedure(cls: Pcvoid; finished: cbool); cdecl;
+
+  b4r_httpsrv_req_prep_cb = procedure(cls: Pcvoid; req: Pb4r_httpsrv_req;
+    res: Pb4r_httpsrv_res; done: Pcbool); cdecl;
+
+  b4r_httpsrv_req_cb = procedure(cls: Pcvoid; req: Pb4r_httpsrv_req;
+    res: Pb4r_httpsrv_res; done: Pcbool); cdecl;
+
+  b4r_httpsrv_req_upld_data_cb = procedure(cls: Pcvoid; req: Pb4r_httpsrv_req;
+    const buf: Pcchar; size: csize; err: Pcchar); cdecl;
+
+  b4r_httpsrv_req_upld_file_prepare_cb = function(cls: Pcvoid;
+    upld: Pb4r_httpsrv_req_upld): Pcvoid; cdecl;
+
+  b4r_httpsrv_req_upld_file_save_cb = function(cls: Pcvoid;
+    upld: Pb4r_httpsrv_req_upld; overwritten: cbool): cbool; cdecl;
+
+  b4r_httpsrv_req_upld_file_write_cb = function(cls: Pcvoid;
+    upld: Pb4r_httpsrv_req_upld; const buf: Pcchar; size: csize): cbool; cdecl;
+
+  b4r_httpsrv_req_err_cb = procedure(cls: Pcvoid; req: Pb4r_httpsrv_req;
+    res: Pb4r_httpsrv_res; done: Pcbool; const fmt: Pcchar; va: cva_list); cdecl;
+
+  b4r_httpsrv_err_cb = procedure(cls: Pcvoid; const fmt: Pcchar;
+    va: cva_list); cdecl;
+
+  b4r_httpsrv_req_uplds_iter_cb = procedure(cls: Pcvoid;
+    upld: Pb4r_httpsrv_req_upld); cdecl;
+
+var
+  b4r_httpsrv_cfg_new: function(const filename: Pcchar): Pb4r_httpsrv_cfg; cdecl;
+
+  b4r_httpsrv_cfg_free: procedure(cfg: Pb4r_httpsrv_cfg); cdecl;
+
+  b4r_httpsrv_cfg_set_va: function(cfg: Pb4r_httpsrv_cfg; const name: Pcchar;
+    va: cva_list): cbool; cdecl;
+
+  b4r_httpsrv_cfg_set: function(cfg: Pb4r_httpsrv_cfg;
+    const name: Pcchar): cbool; cdecl varargs;
+
+  b4r_httpsrv_cfg_get: function(cfg: Pb4r_httpsrv_cfg;
+    const name: Pcchar): cbool; cdecl varargs;
+
+  b4r_httpsrv_new: function(cfg: Pb4r_httpsrv_cfg;
+    req_cb: b4r_httpsrv_req_cb; req_cls: Pcvoid;
+    req_err_cb: b4r_httpsrv_req_err_cb; req_err_cls: Pcvoid;
+    err_cb: b4r_httpsrv_err_cb; err_cls: Pcvoid): Pb4r_httpsrv; cdecl;
+
+  b4r_httpsrv_free: procedure(srv: Pb4r_httpsrv);  cdecl;
+
+  b4r_httpsrv_listen: function(srv: Pb4r_httpsrv): cbool; cdecl;
+
+  b4r_httpsrv_listening: function(srv: Pb4r_httpsrv): cbool; cdecl;
+
+  b4r_httpsrv_shutdown: function(srv: Pb4r_httpsrv): cbool; cdecl;
+
+  b4r_httpsrv_setopt: function(srv: Pb4r_httpsrv;
+    opt: B4R_HTTPSRV_OPT): cbool; cdecl varargs;
+
+  b4r_httpsrv_active_conns: function(srv: Pb4r_httpsrv): cuint; cdecl;
+
+  b4r_httpsrv_req_version: function(req: Pb4r_httpsrv_req): Pcchar; cdecl;
+
+  b4r_httpsrv_req_uri: function(req: Pb4r_httpsrv_req): Pcchar; cdecl;
+
+  b4r_httpsrv_req_id: function(req: Pb4r_httpsrv_req): Pcchar; cdecl;
+
+  b4r_httpsrv_req_path: function(req: Pb4r_httpsrv_req): Pcchar; cdecl;
+
+  b4r_httpsrv_req_method: function(req: Pb4r_httpsrv_req): Pcchar; cdecl;
+
+  b4r_httpsrv_req_content_type: function(req: Pb4r_httpsrv_req): Pcchar; cdecl;
+
+  b4r_httpsrv_req_up: function(req: Pb4r_httpsrv_req): cbool; cdecl;
+
+  b4r_httpsrv_req_header: function(req: Pb4r_httpsrv_req;
+    const name: Pcchar): Pcchar; cdecl;
+
+  b4r_httpsrv_req_param: function(req: Pb4r_httpsrv_req;
+    const name: Pcchar): pcchar; cdecl;
+
+  b4r_httpsrv_req_try_param: function(req: Pb4r_httpsrv_req; const name: Pcchar;
+     const val: PPcchar): cbool; cdecl;
+
+  b4r_httpsrv_req_headers_ref: function(req: Pb4r_httpsrv_req): Pcvoid; cdecl;
+
+  b4r_httpsrv_req_params_ref: function(req: Pb4r_httpsrv_req): Pcvoid; cdecl;
+
+  b4r_httpsrv_req_fields_ref: function(req: Pb4r_httpsrv_req): Pcvoid; cdecl;
+
+  b4r_httpsrv_req_payld: function(req: Pb4r_httpsrv_req): Pcchar; cdecl;
+
+  b4r_httpsrv_req_iter_uplds: function(req: Pb4r_httpsrv_req;
+     iter_cb: b4r_httpsrv_req_uplds_iter_cb; iter_cls: Pcvoid): cbool; cdecl;
+
+  b4r_httpsrv_req_uplds_first: function(req: Pb4r_httpsrv_req;
+     upld: PPb4r_httpsrv_req_upld): cbool; cdecl;
+
+  b4r_httpsrv_req_uplds_next: function(
+     upld: PPb4r_httpsrv_req_upld): cbool; cdecl;
+
+  b4r_httpsrv_req_uplds_count: function(req: Pb4r_httpsrv_req): cint; cdecl;
+
+  b4r_httpsrv_req_upld_save: function(req: Pb4r_httpsrv_req;
+     upld: Pb4r_httpsrv_req_upld; overwritten: cbool): cbool; cdecl;
+
+  b4r_httpsrv_req_upld_save_as: function(req: Pb4r_httpsrv_req;
+     upld: Pb4r_httpsrv_req_upld; const name: Pcchar;
+     overwritten: cbool): cbool; cdecl;
+
+  b4r_httpsrv_req_upld_stream: function(
+     upld: Pb4r_httpsrv_req_upld): Pcvoid; cdecl;
+
+  b4r_httpsrv_req_upld_size: function(
+     upld: Pb4r_httpsrv_req_upld): cuint64; cdecl;
+
+  b4r_httpsrv_req_upld_name: function(upld: Pb4r_httpsrv_req_upld): Pcchar; cdecl;
+
+  b4r_httpsrv_req_upld_orig_name: function(
+     upld: Pb4r_httpsrv_req_upld): Pcchar; cdecl;
+
+  b4r_httpsrv_req_upld_dir: function(upld: Pb4r_httpsrv_req_upld): Pcchar; cdecl;
+
+  b4r_httpsrv_req_upld_dest_name: function(
+     upld: Pb4r_httpsrv_req_upld): Pcchar; cdecl;
+
+  b4r_httpsrv_req_upld_field: function(
+     upld: Pb4r_httpsrv_req_upld): Pcchar; cdecl;
+
+  b4r_httpsrv_req_upld_mime: function(upld: Pb4r_httpsrv_req_upld): Pcchar; cdecl;
+
+  b4r_httpsrv_req_upld_encoding: function(
+     upld: Pb4r_httpsrv_req_upld): Pcchar; cdecl;
+
+  b4r_httpsrv_req_upld_err: function(upld: Pb4r_httpsrv_req_upld): Pcchar; cdecl;
+
+  b4r_httpsrv_req_upld_failf_va: function(upld: Pb4r_httpsrv_req_upld;
+     const fmt: Pcchar; va: cva_list): cint; cdecl;
+
+  b4r_httpsrv_req_upld_failf: function(upld: Pb4r_httpsrv_req_upld;
+     const fmt: Pcchar): cint; cdecl varargs;
+
+  b4r_httpsrv_res_headers_ref: function(res: Pb4r_httpsrv_res): Pcvoid; cdecl;
+
+  b4r_httpsrv_res_header: function(res: Pb4r_httpsrv_res; const name: Pcchar; const val: Pcchar): cbool; cdecl;
+
+  b4r_httpsrv_res_status: function(res: Pb4r_httpsrv_res;
+    code: cuint16): cbool; cdecl;
+
+  b4r_httpsrv_res_content_type: function(res: Pb4r_httpsrv_res;
+    const content_type: Pcchar): cbool; cdecl;
+
+  b4r_httpsrv_res_write_raw: function(res: Pb4r_httpsrv_res; const data: Pcvoid;
+    size: csize): cbool; cdecl varargs;
+
+  b4r_httpsrv_res_write_va: function(res: Pb4r_httpsrv_res; const fmt: Pcchar;
+    va: cva_list): cbool; cdecl;
+
+  b4r_httpsrv_res_write: function(res: Pb4r_httpsrv_res;
+    const fmt: Pcchar): cbool; cdecl varargs;
+
+  b4r_httpsrv_res_send_va: function(res: Pb4r_httpsrv_res; const fmt: Pcchar;
+    va: cva_list): cbool; cdecl;
+
+  b4r_httpsrv_res_send: function(res: Pb4r_httpsrv_res;
+    const fmt: Pcchar): cbool; cdecl varargs;
+
+  b4r_httpsrv_res_send_file: function(res: Pb4r_httpsrv_res;
+    filename: Pcchar): cbool; cdecl;
+
+  b4r_httpsrv_res_json: function(res: Pb4r_httpsrv_res;
+    const json: Pcchar): cbool; cdecl;
+
+  b4r_alloc: function(size: csize): Pcvoid; cdecl;
+
+  b4r_free: procedure(ptr: Pcvoid); cdecl;
+
+  b4r_is_empty: function(const str: Pcchar): cbool; cdecl;
+
+  b4r_asprintf_va: function(const fmt: Pcchar; va: cva_list): Pcchar; cdecl;
+
+  b4r_asprintf: function(const fmt: Pcchar): Pcchar; cdecl varargs;
+
+  b4r_tmp_dir: function: pcchar; cdecl;
+
+  b4r_uuid: function(uuid: Pcchar): cbool; cdecl;
+
+function C2B(const S: Pcchar): TBytes; inline;
+
+function C2S(const S: pcchar): string; inline;
+
+function S2C(const S: string): pcchar; inline;
+
+function BFLoadLibrary(const AFileName: TFileName): TLibHandle;
+
+function BFUnloadLibrary: TLibHandle;
+
+procedure BFCheckLibrary;
+
+implementation
+
+var
+  GLock: TCriticalSection = nil;
+  GLibHandle: TLibHandle = NilHandle;
+  GLastLibName: TFileName = B4R_LIB_NAME;
+
+function C2B(const S: Pcchar): TBytes;
+var
+  L: Integer;
+begin
+  L := Length(S);
+  if L = 0 then
+    Exit(nil);
+  SetLength(Result, L);
+  Move(S^, Result[0], L);
+end;
+
+function C2S(const S: pcchar): string;
+//var
+//  R: RawByteString;
+begin
+//  if not Assigned(S) then
+//    Exit('');
+//  SetString(R, S, Length(S) * SizeOf(AnsiChar));
+//  SetCodePage(R, CP_UTF8, False);
+//  Result := string(R);
+  Result := string({$IFNDEF FPC}AnsiString({$ENDIF}S{$IFNDEF FPC}){$ENDIF});
+end;
+
+function S2C(const S: string): pcchar;
+begin
+  Result := pcchar({$IFNDEF FPC}AnsiString({$ENDIF}S{$IFNDEF FPC}){$ENDIF});
+end;
+
+function BFLoadLibrary(const AFileName: TFileName): TLibHandle;
+begin
+  GLock.Acquire;
+  try
+    if Trim(AFileName) = '' then
+      Exit(NilHandle);
+    if GLibHandle <> NilHandle then
+      Exit(GLibHandle);
+    //TODO: pesquisar na net se tem como saber que não leu por falta de alguma
+    // dependência, pois no Windows fala que o módulo não foi encontrado, daí
+    // complica para o programador adivinhar o que está acontecendo.
+    // Outra coisa, testar se versão da lib é compatível com binding.
+    GLastLibName := ExtractFileName(AFileName);
+    GLibHandle := SafeLoadLibrary(AFileName);
+    if GLibHandle = NilHandle then
+      Exit(NilHandle);
+    b4r_hs_name := GetProcAddress(GLibHandle, 'b4r_hs_name');
+    b4r_hs_val := GetProcAddress(GLibHandle, 'b4r_hs_val');
+    b4r_hs_name_val := GetProcAddress(GLibHandle, 'b4r_hs_name_val');
+    b4r_hs_add := GetProcAddress(GLibHandle, 'b4r_hs_add');
+    b4r_hs_add_or_set := GetProcAddress(GLibHandle, 'b4r_hs_add_or_set');
+    b4r_hs_rm := GetProcAddress(GLibHandle, 'b4r_hs_rm');
+    b4r_hs_find := GetProcAddress(GLibHandle, 'b4r_hs_find');
+    b4r_hs_find_val := GetProcAddress(GLibHandle, 'b4r_hs_find_val');
+    b4r_hs_try := GetProcAddress(GLibHandle, 'b4r_hs_try');
+    b4r_hs_has := GetProcAddress(GLibHandle, 'b4r_hs_has');
+    b4r_hs_iter := GetProcAddress(GLibHandle, 'b4r_hs_iter');
+    b4r_hs_next := GetProcAddress(GLibHandle, 'b4r_hs_next');
+    b4r_hs_count := GetProcAddress(GLibHandle, 'b4r_hs_count');
+    b4r_hs_sort := GetProcAddress(GLibHandle, 'b4r_hs_sort');
+    b4r_hs_cleanup := GetProcAddress(GLibHandle, 'b4r_hs_cleanup');
+    b4r_httpsrv_cfg_new := GetProcAddress(GLibHandle, 'b4r_httpsrv_cfg_new');
+    b4r_httpsrv_cfg_free := GetProcAddress(GLibHandle, 'b4r_httpsrv_cfg_free');
+    b4r_httpsrv_cfg_set_va := GetProcAddress(GLibHandle, 'b4r_httpsrv_cfg_set_va');
+    b4r_httpsrv_cfg_set := GetProcAddress(GLibHandle, 'b4r_httpsrv_cfg_set');
+    b4r_httpsrv_cfg_get := GetProcAddress(GLibHandle, 'b4r_httpsrv_cfg_get');
+    b4r_httpsrv_new := GetProcAddress(GLibHandle, 'b4r_httpsrv_new');
+    b4r_httpsrv_free := GetProcAddress(GLibHandle, 'b4r_httpsrv_free');
+    b4r_httpsrv_listen := GetProcAddress(GLibHandle, 'b4r_httpsrv_listen');
+    b4r_httpsrv_listening := GetProcAddress(GLibHandle, 'b4r_httpsrv_listening');
+    b4r_httpsrv_shutdown := GetProcAddress(GLibHandle, 'b4r_httpsrv_shutdown');
+    b4r_httpsrv_setopt := GetProcAddress(GLibHandle, 'b4r_httpsrv_setopt');
+    b4r_httpsrv_active_conns := GetProcAddress(GLibHandle, 'b4r_httpsrv_active_conns');
+    b4r_httpsrv_req_version := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_version');
+    b4r_httpsrv_req_uri := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_uri');
+    b4r_httpsrv_req_id := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_id');
+    b4r_httpsrv_req_path := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_path');
+    b4r_httpsrv_req_method := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_method');
+    b4r_httpsrv_req_content_type := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_content_type');
+    b4r_httpsrv_req_up := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_up');
+    b4r_httpsrv_req_header := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_header');
+    b4r_httpsrv_req_param := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_param');
+    b4r_httpsrv_req_try_param := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_try_param');
+    b4r_httpsrv_req_headers_ref := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_headers_ref');
+    b4r_httpsrv_req_params_ref := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_params_ref');
+    b4r_httpsrv_req_fields_ref := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_fields_ref');
+    b4r_httpsrv_req_payld := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_payld');
+    b4r_httpsrv_req_iter_uplds := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_iter_uplds');
+    b4r_httpsrv_req_uplds_first := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_uplds_first');
+    b4r_httpsrv_req_uplds_next := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_uplds_next');
+    b4r_httpsrv_req_uplds_count := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_uplds_count');
+    b4r_httpsrv_req_upld_save := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_save');
+    b4r_httpsrv_req_upld_save_as := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_save_as');
+    b4r_httpsrv_req_upld_stream := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_stream');
+    b4r_httpsrv_req_upld_size := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_size');
+    b4r_httpsrv_req_upld_name := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_name');
+    b4r_httpsrv_req_upld_orig_name := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_orig_name');
+    b4r_httpsrv_req_upld_dir := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_dir');
+    b4r_httpsrv_req_upld_dest_name := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_dest_name');
+    b4r_httpsrv_req_upld_field := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_field');
+    b4r_httpsrv_req_upld_mime := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_mime');
+    b4r_httpsrv_req_upld_encoding := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_encoding');
+    b4r_httpsrv_req_upld_err := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_err');
+    b4r_httpsrv_req_upld_failf_va := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_failf_va');
+    b4r_httpsrv_req_upld_failf := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_failf');
+    b4r_httpsrv_res_headers_ref := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_headers_ref');
+    b4r_httpsrv_res_header := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_header');
+    b4r_httpsrv_res_status := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_status');
+    b4r_httpsrv_res_content_type := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_content_type');
+    b4r_httpsrv_res_write_raw := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_write_raw');
+    b4r_httpsrv_res_write_va := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_write_va');
+    b4r_httpsrv_res_write := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_write');
+    b4r_httpsrv_res_send_va := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_send_va');
+    b4r_httpsrv_res_send := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_send');
+    b4r_httpsrv_res_send_file := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_send_file');
+    b4r_httpsrv_res_json := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_json');
+    b4r_alloc := GetProcAddress(GLibHandle, 'b4r_alloc');
+    b4r_free := GetProcAddress(GLibHandle, 'b4r_free');
+    b4r_is_empty := GetProcAddress(GLibHandle, 'b4r_is_empty');
+    b4r_asprintf_va := GetProcAddress(GLibHandle, 'b4r_asprintf_va');
+    b4r_asprintf := GetProcAddress(GLibHandle, 'b4r_asprintf');
+    b4r_tmp_dir := GetProcAddress(GLibHandle, 'b4r_tmp_dir');
+    b4r_uuid := GetProcAddress(GLibHandle, 'b4r_uuid');
+    Result := GLibHandle;
+  finally
+    GLock.Release;
+  end;
+end;
+
+function BFUnloadLibrary: TLibHandle;
+begin
+  GLock.Acquire;
+  try
+    if GLibHandle = NilHandle then
+      Exit(NilHandle);
+    if not FreeLibrary(GLibHandle) then
+      Exit(GLibHandle);
+    GLibHandle := NilHandle;
+    b4r_hs_name := nil;
+    b4r_hs_val := nil;
+    b4r_hs_name_val := nil;
+    b4r_hs_add := nil;
+    b4r_hs_add_or_set := nil;
+    b4r_hs_rm := nil;
+    b4r_hs_find := nil;
+    b4r_hs_find_val := nil;
+    b4r_hs_try := nil;
+    b4r_hs_has := nil;
+    b4r_hs_iter := nil;
+    b4r_hs_next := nil;
+    b4r_hs_count := nil;
+    b4r_hs_sort := nil;
+    b4r_hs_cleanup := nil;
+    b4r_httpsrv_cfg_new := nil;
+    b4r_httpsrv_cfg_free := nil;
+    b4r_httpsrv_cfg_set_va := nil;
+    b4r_httpsrv_cfg_set := nil;
+    b4r_httpsrv_cfg_get := nil;
+    b4r_httpsrv_new := nil;
+    b4r_httpsrv_free := nil;
+    b4r_httpsrv_listen := nil;
+    b4r_httpsrv_listening := nil;
+    b4r_httpsrv_shutdown := nil;
+    b4r_httpsrv_setopt := nil;
+    b4r_httpsrv_active_conns := nil;
+    b4r_httpsrv_req_version := nil;
+    b4r_httpsrv_req_uri := nil;
+    b4r_httpsrv_req_id := nil;
+    b4r_httpsrv_req_path := nil;
+    b4r_httpsrv_req_method := nil;
+    b4r_httpsrv_req_content_type := nil;
+    b4r_httpsrv_req_up := nil;
+    b4r_httpsrv_req_header := nil;
+    b4r_httpsrv_req_param := nil;
+    b4r_httpsrv_req_try_param := nil;
+    b4r_httpsrv_req_headers_ref := nil;
+    b4r_httpsrv_req_params_ref := nil;
+    b4r_httpsrv_req_fields_ref := nil;
+    b4r_httpsrv_req_payld := nil;
+    b4r_httpsrv_req_iter_uplds := nil;
+    b4r_httpsrv_req_uplds_first := nil;
+    b4r_httpsrv_req_uplds_next := nil;
+    b4r_httpsrv_req_uplds_count := nil;
+    b4r_httpsrv_req_upld_save := nil;
+    b4r_httpsrv_req_upld_save_as := nil;
+    b4r_httpsrv_req_upld_stream := nil;
+    b4r_httpsrv_req_upld_size := nil;
+    b4r_httpsrv_req_upld_name := nil;
+    b4r_httpsrv_req_upld_orig_name := nil;
+    b4r_httpsrv_req_upld_dir := nil;
+    b4r_httpsrv_req_upld_dest_name := nil;
+    b4r_httpsrv_req_upld_field := nil;
+    b4r_httpsrv_req_upld_mime := nil;
+    b4r_httpsrv_req_upld_encoding := nil;
+    b4r_httpsrv_req_upld_err := nil;
+    b4r_httpsrv_req_upld_failf_va := nil;
+    b4r_httpsrv_req_upld_failf := nil;
+    b4r_httpsrv_res_write_va := nil;
+    b4r_httpsrv_res_headers_ref := nil;
+    b4r_httpsrv_res_header := nil;
+    b4r_httpsrv_res_status := nil;
+    b4r_httpsrv_res_content_type := nil;
+    b4r_httpsrv_res_write_raw := nil;
+    b4r_httpsrv_res_write := nil;
+    b4r_httpsrv_res_send_va := nil;
+    b4r_httpsrv_res_send := nil;
+    b4r_httpsrv_res_send_file := nil;
+    b4r_httpsrv_res_json := nil;
+    b4r_alloc := nil;
+    b4r_free := nil;
+    b4r_is_empty := nil;
+    b4r_asprintf_va := nil;
+    b4r_asprintf := nil;
+    b4r_tmp_dir := nil;
+    b4r_uuid := nil;
+    Result := GLibHandle;
+  finally
+    GLock.Release;
+  end;
+end;
+
+procedure BFCheckLibrary;
+begin
+  if GLibHandle = NilHandle then
+    raise EBFLibraryNotLoaded.CreateResFmt(@SBFLibraryNotLoaded, [GLastLibName]);
+end;
+
+initialization
+  GLock := TCriticalSection.Create;
+  BFLoadLibrary(B4R_LIB_NAME);
+
+finalization
+  BFUnloadLibrary;
+  FreeAndNil(GLock);
+
+end.

@@ -1,0 +1,41 @@
+/*    _____   _____    _____   _____   _   __
+ *   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
+ *   | |_) | | |_) |  | | | | | | | | | |/ /
+ *   |  _ <  |  _ <   | | | | | | | | |   (
+ *   | |_) | | | \ \  | |_| | | |_| | | |\ \
+ *   |_____/ |_|  \_\ \_____/ \_____/ |_| \_\ 4-REST.
+ *
+ *   –– a small tool which helps you write quickly REST APIs.
+ *
+ * Copyright (c) 2012-2017 Silvio Clecio, et al.
+ *
+ * This software is licensed as described in the file COPYING, which
+ * you should have received as part of this distribution. The terms
+ * are also available at https://brookframework.org/docs/copyright.html.
+ *
+ * You may opt to use, copy, modify, merge, publish, distribute and/or sell
+ * copies of the Software, and permit persons to whom the Software is
+ * furnished to do so, under the terms of the COPYING file.
+ *
+ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
+ * KIND, either express or implied.
+ */
+
+#ifndef B4R_HTTPSRV_RES_CACHE_H
+#define B4R_HTTPSRV_RES_CACHE_H
+
+#include <stdbool.h>
+#include "b4r_hs.h"
+
+struct b4r_httpsrv_res_cache {
+    struct b4r_hs *req_headers;
+    struct b4r_hs *res_headers;
+    bool active;
+    bool weak;
+};
+
+struct b4r_httpsrv_res_cache *_b4r_httpsrv_res_cache_new(struct b4r_hs *req_headers, struct b4r_hs *res_headers);
+
+void _b4r_httpsrv_res_cache_free(struct b4r_httpsrv_res_cache *cache);
+
+#endif
