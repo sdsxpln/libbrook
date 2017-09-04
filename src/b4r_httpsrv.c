@@ -250,24 +250,24 @@ bool b4r_httpsrv_setopt(struct b4r_httpsrv *srv, enum B4R_HTTPSRV_OPT opt, ...) 
             srv->req_err_cls = va_arg(va, void *);
             return srv->req_err_cb != NULL;
         case B4R_HTTPSRV_OPT_REQ_ALLOWED_POST:
-            srv->req_allowed_post = va_arg(va, int);
+            srv->req_allowed_post = (bool) va_arg(va, int);
             return true;
         case B4R_HTTPSRV_OPT_ERR_CB:
             srv->err_cb = va_arg(va, b4r_httpsrv_err_cb);
             srv->err_cls = va_arg(va, void *);
             return srv->req_err_cb != NULL;
         case B4R_HTTPSRV_OPT_PORT:
-            srv->port = va_arg(va, unsigned int);
+            srv->port = (uint16_t) va_arg(va, unsigned int);
             return srv->port > 0;
         case B4R_HTTPSRV_OPT_SHUTDOWN_ATTEMPTS:
-            srv->shutdown_attempts = va_arg(va, unsigned int);
+            srv->shutdown_attempts = (uint8_t) va_arg(va, unsigned int);
             return srv->shutdown_attempts > 0;
         case B4R_HTTPSRV_OPT_FORCED_SHUTDOWN:
-            srv->forced_shutdown = va_arg(va, int);
+            srv->forced_shutdown = (bool) va_arg(va, int);
             return true;
         case B4R_HTTPSRV_OPT_AUTH:
             srv->auth->type = va_arg(va, enum B4R_HTTPSRV_AUTH_TYPE);
-            srv->auth->active = va_arg(va, int);
+            srv->auth->active = (bool) va_arg(va, int);
             srv->auth->realm = b4r_dup(va_arg(va, const char *));
             srv->auth->err = b4r_dup(va_arg(va, const char *));
             srv->auth->user = b4r_dup(va_arg(va, const char *));
@@ -282,7 +282,7 @@ bool b4r_httpsrv_setopt(struct b4r_httpsrv *srv, enum B4R_HTTPSRV_OPT opt, ...) 
             }
             return !b4r_is_empty(srv->auth->user) && srv->auth->pwd;
         case B4R_HTTPSRV_OPT_ENABLED_LOG:
-            srv->enabled_log = va_arg(va, int);
+            srv->enabled_log = (bool) va_arg(va, int);
             return true;
         default:
             return false;
