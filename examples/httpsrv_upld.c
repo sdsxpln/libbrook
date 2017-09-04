@@ -111,7 +111,7 @@ int main(int argc, const char **argv) {
 #else
     mkdir(UPLOADS_DIR, ALLPERMS);
 #endif
-    port = (uint16_t) atoi(argv[1]);
+    port = (uint16_t) strtol(argv[1], NULL, 10);
     b4r_httpsrv_setopt(srv, B4R_HTTPSRV_OPT_PORT, port);
     b4r_httpsrv_setopt(srv, B4R_HTTPSRV_OPT_FORCED_SHUTDOWN, true);
     if ((success = b4r_httpsrv_listen(srv))) {

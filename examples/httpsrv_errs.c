@@ -88,7 +88,7 @@ int main(int argc, const char **argv) {
         fprintf(stderr, "Failed creating server.\n");
         return EXIT_FAILURE;
     }
-    port = (uint16_t) atoi(argv[1]);
+    port = (uint16_t) strtol(argv[1], NULL, 10);
     b4r_httpsrv_setopt(srv, B4R_HTTPSRV_OPT_PORT, port);
     if ((success = b4r_httpsrv_listen(srv))) {
         printf("Server listening at http://localhost:%d/\n", port);
