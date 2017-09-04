@@ -1,4 +1,4 @@
-- update license headers;
+- change old 'bf_' prefixes to new 'b4r_' ones;
 - add autogen script;
 - new examples;
 - coverage;
