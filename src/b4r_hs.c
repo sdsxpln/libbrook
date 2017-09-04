@@ -33,15 +33,15 @@
 #define _B4R_HS_NEW_KEY(name) !b4r_is_empty(name) ? b4r_lower(b4r_dup(name)) : NULL
 
 #define _B4R_HS_FIND(hsl, name, key, hs) do { \
-    *key = _B4R_HS_NEW_KEY(name); \
-    if (hsl && *key) \
-        HASH_FIND_STR(hsl, *key, *hs); \
+    *(key) = _B4R_HS_NEW_KEY(name); \
+    if ((hsl) && *(key)) \
+        HASH_FIND_STR(hsl, *(key), *(hs)); \
     else \
-        *hs = NULL; \
+        *(hs) = NULL; \
 } while (0)
 
 #define _B4R_HS_DEL(hsl, hs) do { \
-    HASH_DEL(*hsl, hs); \
+    HASH_DEL(*(hsl), hs); \
     _b4r_hs_free(hs); \
 } while (0)
 
