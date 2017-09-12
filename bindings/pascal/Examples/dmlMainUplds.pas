@@ -98,7 +98,7 @@ var
   VSavedOL, VErrOL: string;
   VUpload: TBrookHTTPServerRequestUpload;
 begin
-  //TODO: fazer download do arquivo assim que o método AResponse.Download estiver pronto.
+  //TODO: download file as soon as the AResponse.Download() method was done.
   if ARequest.Up then
   begin
     VSavedOL := '<ol>';
