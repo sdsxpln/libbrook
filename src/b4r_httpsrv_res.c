@@ -48,10 +48,10 @@ do { \
 } while (0)*/
 
 #define _B4R_HTTPSRV_RES_PRINTF_VA(res, ct, fmt, va) do { \
-    utstring_clear(res->body); \
+    utstring_clear((res)->body); \
     _B4R_HTTPSRV_RES_RESET(res); \
-    res->content_type = ct; \
-    utstring_printf_va(res->body, fmt, va); \
+    (res)->content_type = ct; \
+    utstring_printf_va((res)->body, fmt, va); \
 } while (0)
 
 #define _B4R_HTTPSRV_RES_PRINTF(res, ct, fmt, ...) do { \
@@ -61,9 +61,9 @@ do { \
     va_end(va); \
 } while (0)
 
-#define _B4R_HTTPSRV_RES_GET_BODY(res) (res) ? utstring_body(res->body) : NULL
+#define _B4R_HTTPSRV_RES_GET_BODY(res) (res) ? utstring_body((res)->body) : NULL
 
-#define _B4R_HTTPSRV_RES_REF(el, mb) (el) ? el->mb : NULL
+#define _B4R_HTTPSRV_RES_REF(el, mb) (el) ? (el)->mb : NULL
 
 struct b4r_httpsrv_res *_b4r_httpsrv_res_new(struct b4r_httpsrv_req *req) {
     struct b4r_httpsrv_res *res;
