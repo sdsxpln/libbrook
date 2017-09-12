@@ -82,12 +82,12 @@ type
     Fhs: Pb4r_hs;
     Fhsl: Pb4r_hs;
     FExHandle: Boolean;
-    function GetValue(const AName: string): string;
-    procedure SetValue(const AName: string; const AValue: string);
   protected
     class function DoIterCb(Acls: Pcvoid; Ahs: Pb4r_hs): cbool; cdecl; static;
     class function DoSortCb(Acls: Pcvoid; Aa, Ab: Pb4r_hs): cint; cdecl; static;
     class function CreateItem(Ahs: Pb4r_hs): TBrookHashStringsItem; inline;
+    function Get(const AName: string): string; virtual;
+    procedure Put(const AName: string; const AValue: string); virtual;
     function GetHandle: Pointer; override;
     function GetCount: Integer; virtual;
     function IsEOF: Boolean; virtual;
@@ -112,8 +112,7 @@ type
     procedure Sort(ACmpCb: TBrookHashStringsSortEvent; AData: Pointer); virtual;
     property EOF: Boolean read IsEOF;
     property Count: Integer read GetCount;
-    property Values[const AName: string]: string read GetValue
-      write SetValue; default;
+    property Values[const AName: string]: string read Get write Put; default;
   end;
 
 implementation
@@ -302,12 +301,12 @@ begin
   b4r_hs_sort(@Fhsl, {$IFNDEF VER3_0}@{$ENDIF}DoSortCb, @VMethod);
 end;
 
-function TBrookHashStrings.GetValue(const AName: string): string;
+function TBrookHashStrings.Get(const AName: string): string;
 begin
   Result := Find(AName);
 end;
 
-procedure TBrookHashStrings.SetValue(const AName: string; const AValue: string);
+procedure TBrookHashStrings.Put(const AName: string; const AValue: string);
 begin
   AddOrSet(AName, AValue);
 end;
