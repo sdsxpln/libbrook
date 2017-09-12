@@ -58,11 +58,11 @@ extern "C" {
 # define __nonnull(params)
 #endif
 
-#ifndef __null_term
+#ifndef __variadic
 # ifdef _WIN32
-#  define __null_term
+#  define __variadic
 # else
-#  define __null_term __attribute__((__sentinel__))
+#  define __variadic __attribute__((__sentinel__))
 # endif
 #endif
 
@@ -463,7 +463,7 @@ B4R_EXTERN char *b4r_trim(char *str) __nonnull((1)) __malloc;
 
 B4R_EXTERN char *b4r_cat(const char *str1, const char *str2) __nonnull((1, 2)) __malloc;
 
-B4R_EXTERN char *b4r_concat(const char *str1, ...) __nonnull((1)) __null_term __malloc;
+B4R_EXTERN char *b4r_concat(const char *str1, ...) __nonnull((1)) __variadic __malloc;
 
 B4R_EXTERN bool b4r_has_suffix(const char *str, const char *suf) __nonnull((1, 2));
 
