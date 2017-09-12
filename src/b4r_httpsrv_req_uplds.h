@@ -47,9 +47,9 @@ struct b4r_httpsrv_req_upld {
     char err[B4R_ERR_SIZE];
 };
 
-bool _b4r_httpsrv_req_uplds_new(struct b4r_httpsrv_req_upld **uplds, struct b4r_httpsrv_req_upld **upld,
-                                b4r_uuid_func uuid_func, const char *uplds_dir, const char *name, const char *field,
-                                const char *mime, const char *encoding);
+bool _b4r_httpsrv_req_uplds_try_new(struct b4r_httpsrv_req_upld **uplds, struct b4r_httpsrv_req_upld **upld,
+                                    b4r_uuid_func uuid_func, const char *uplds_dir, const char *name, const char *field,
+                                    const char *mime, const char *encoding);
 
 void _b4r_httpsrv_req_uplds_free(struct b4r_httpsrv_req_upld *upld);
 

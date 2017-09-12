@@ -34,9 +34,9 @@
 
 #define _B4R_HTTPSRV_REQ_UPLDS_GET_PROP(el, mb, def) (el) ? el->mb : def
 
-bool _b4r_httpsrv_req_uplds_new(struct b4r_httpsrv_req_upld **uplds, struct b4r_httpsrv_req_upld **upld,
-                                b4r_uuid_func uuid_func, const char *uplds_dir, const char *name, const char *field,
-                                const char *mime, const char *encoding) {
+bool _b4r_httpsrv_req_uplds_try_new(struct b4r_httpsrv_req_upld **uplds, struct b4r_httpsrv_req_upld **upld,
+                                    b4r_uuid_func uuid_func, const char *uplds_dir, const char *name, const char *field,
+                                    const char *mime, const char *encoding) {
     char uuid[B4R_UUID_STR_LEN + 1];
     _B4R_NEW(upld);
     (*upld)->failed = true;
@@ -117,9 +117,9 @@ static int _b4r_httpsrv_req_uplds_iter(void *cls, enum MHD_ValueKind kind, const
         req = cls;
         if (filename) {
             if (offset == 0) {
-                if (!_b4r_httpsrv_req_uplds_new(&req->uplds, &req->cur_upld, req->owner->cfg->uuid_func,
-                                                req->owner->cfg->uplds_dir, filename, key, content_type,
-                                                transfer_encoding)) {
+                if (!_b4r_httpsrv_req_uplds_try_new(&req->uplds, &req->cur_upld, req->owner->cfg->uuid_func,
+                                                    req->owner->cfg->uplds_dir, filename, key, content_type,
+                                                    transfer_encoding)) {
                     _b4r_httpsrv_req_err(req, S_B4R_UPLD_FAILED, filename);
                     return MHD_NO;
                 }
