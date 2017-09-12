@@ -64,11 +64,11 @@ int main(int argc, const char **argv) {
         fprintf(stderr, USAGE_FMT, argv[0]);
         return 1;
     }
-    if (NULL == (cfg = b4r_httpsrv_cfg_new(NULL))) {
+    if (!(cfg = b4r_httpsrv_cfg_new(NULL))) {
         fprintf(stderr, "Failed creating configuration.\n");
         return EXIT_FAILURE;
     }
-    if (NULL == (srv = b4r_httpsrv_new(cfg, &srv_req_cb, NULL, NULL, NULL, NULL, NULL))) {
+    if (!(srv = b4r_httpsrv_new(cfg, &srv_req_cb, NULL, NULL, NULL, NULL, NULL))) {
         b4r_httpsrv_cfg_free(cfg);
         fprintf(stderr, "Failed creating server.\n");
         return EXIT_FAILURE;

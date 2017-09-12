@@ -62,14 +62,14 @@ bool b4r_httpsrv_cfg_set_va(struct b4r_httpsrv_cfg *cfg, const char *name, va_li
     bool ret;
     if (!cfg || b4r_is_empty(name))
         return false;
-#define _IS_OPT(op) strcmp(name, op) == 0
-#define _SET_ORD_OPT(mb, ex, def, tp) do { \
+#define IS_OPT(op) strcmp(name, op) == 0
+#define SET_ORD_OPT(mb, ex, def, tp) do { \
     cfg->mb = va_arg(va, tp); \
     ret = (ex); \
     if (!ret) \
         cfg->mb = def; \
 } while (0)
-#define _SET_STR_OPT(mb, ex, def, tp) do { \
+#define SET_STR_OPT(mb, ex, def, tp) do { \
     _B4R_FREE(cfg->mb); \
     char *s = va_arg(va, tp); \
     cfg->mb = b4r_dup(s); \
@@ -77,28 +77,28 @@ bool b4r_httpsrv_cfg_set_va(struct b4r_httpsrv_cfg *cfg, const char *name, va_li
     if (!ret) \
         cfg->mb = b4r_dup(def); \
 } while (0)
-    if (_IS_OPT(B4R_HTTPSRV_CFG_PORT))
-        _SET_ORD_OPT(port, cfg->port > 0, B4R_HTTPSRV_PORT, unsigned int);
-    else if (_IS_OPT(B4R_HTTPSRV_CFG_UPLDS_DIR)) {
-        _SET_STR_OPT(uplds_dir, !b4r_is_empty(cfg->uplds_dir), b4r_tmp_dir(), char *);
-    } else if (_IS_OPT(B4R_HTTPSRV_CFG_POST_BUF_SIZE))
-        _SET_ORD_OPT(post_buffer_size, cfg->post_buffer_size >= 0, B4R_HTTPSRV_POST_BUF_SIZE, size_t);
-    else if (_IS_OPT(B4R_HTTPSRV_CFG_MAX_BODY_SIZE))
-        _SET_ORD_OPT(max_body_size, cfg->max_body_size >= 0, B4R_HTTPSRV_MAX_BODY_SIZE, unsigned long);
-    else if (_IS_OPT(B4R_HTTPSRV_CFG_MAX_PAYLD_SIZE))
-        _SET_ORD_OPT(max_payld_size, cfg->max_payld_size >= 0, B4R_HTTPSRV_MAX_PAYLD_SIZE, unsigned long);
-    else if (_IS_OPT(B4R_HTTPSRV_CFG_MAX_UPLD_SIZE))
-        _SET_ORD_OPT(max_upld_size, cfg->max_upld_size >= 0, B4R_HTTPSRV_MAX_UPLD_SIZE, uint64_t);
-    else if (_IS_OPT(B4R_HTTPSRV_CFG_CONTENT_TYPE))
-        _SET_STR_OPT(content_type, !b4r_is_empty(cfg->content_type), B4R_HTTPSRV_HTML_CONTENT_TYPE, char *);
-    else if (_IS_OPT(B4R_HTTPSRV_CFG_UUID_FUNC)) {
-        _SET_ORD_OPT(uuid_func, cfg->uuid_func, b4r_uuid, b4r_uuid_func);
+    if (IS_OPT(B4R_HTTPSRV_CFG_PORT))
+        SET_ORD_OPT(port, cfg->port > 0, B4R_HTTPSRV_PORT, unsigned int);
+    else if (IS_OPT(B4R_HTTPSRV_CFG_UPLDS_DIR)) {
+        SET_STR_OPT(uplds_dir, !b4r_is_empty(cfg->uplds_dir), b4r_tmp_dir(), char *);
+    } else if (IS_OPT(B4R_HTTPSRV_CFG_POST_BUF_SIZE))
+        SET_ORD_OPT(post_buffer_size, cfg->post_buffer_size >= 0, B4R_HTTPSRV_POST_BUF_SIZE, size_t);
+    else if (IS_OPT(B4R_HTTPSRV_CFG_MAX_BODY_SIZE))
+        SET_ORD_OPT(max_body_size, cfg->max_body_size >= 0, B4R_HTTPSRV_MAX_BODY_SIZE, unsigned long);
+    else if (IS_OPT(B4R_HTTPSRV_CFG_MAX_PAYLD_SIZE))
+        SET_ORD_OPT(max_payld_size, cfg->max_payld_size >= 0, B4R_HTTPSRV_MAX_PAYLD_SIZE, unsigned long);
+    else if (IS_OPT(B4R_HTTPSRV_CFG_MAX_UPLD_SIZE))
+        SET_ORD_OPT(max_upld_size, cfg->max_upld_size >= 0, B4R_HTTPSRV_MAX_UPLD_SIZE, uint64_t);
+    else if (IS_OPT(B4R_HTTPSRV_CFG_CONTENT_TYPE))
+        SET_STR_OPT(content_type, !b4r_is_empty(cfg->content_type), B4R_HTTPSRV_HTML_CONTENT_TYPE, char *);
+    else if (IS_OPT(B4R_HTTPSRV_CFG_UUID_FUNC)) {
+        SET_ORD_OPT(uuid_func, cfg->uuid_func, b4r_uuid, b4r_uuid_func);
         if (!cfg->uuid_func)
             cfg->uuid_func = b4r_uuid;
-#undef _IS_OPT
+#undef IS_OPT
     }
-#undef _SET_ORD_OPT
-#undef _SET_STR_OPT
+#undef SET_ORD_OPT
+#undef SET_STR_OPT
     else
         ret = false;
     return ret;
@@ -121,31 +121,31 @@ bool b4r_httpsrv_cfg_get(struct b4r_httpsrv_cfg *cfg, const char *name, ...) {
     if (!cfg || b4r_is_empty(name))
         return false;
     va_start(va, name);
-#define _IS_OPT(op) strcmp(name, op) == 0
-#define _GET_OPT(mb, tp) do { \
+#define IS_OPT(op) strcmp(name, op) == 0
+#define GET_OPT(mb, tp) do { \
     tp *val = va_arg(va, tp*); \
     ret = (val); \
     if (ret) \
         *val = cfg->mb; \
 } while (0)
-    if (_IS_OPT(B4R_HTTPSRV_CFG_PORT))
-        _GET_OPT(port, uint16_t);
-    else if (_IS_OPT(B4R_HTTPSRV_CFG_UPLDS_DIR))
-        _GET_OPT(uplds_dir, char *);
-    else if (_IS_OPT(B4R_HTTPSRV_CFG_POST_BUF_SIZE))
-        _GET_OPT(post_buffer_size, size_t);
-    else if (_IS_OPT(B4R_HTTPSRV_CFG_MAX_BODY_SIZE))
-        _GET_OPT(max_body_size, unsigned long);
-    else if (_IS_OPT(B4R_HTTPSRV_CFG_MAX_PAYLD_SIZE))
-        _GET_OPT(max_payld_size, unsigned long);
-    else if (_IS_OPT(B4R_HTTPSRV_CFG_MAX_UPLD_SIZE))
-        _GET_OPT(max_upld_size, uint64_t);
-    else if (_IS_OPT(B4R_HTTPSRV_CFG_CONTENT_TYPE))
-        _GET_OPT(content_type, char *);
-    else if (_IS_OPT(B4R_HTTPSRV_CFG_UUID_FUNC))
-        _GET_OPT(uuid_func, b4r_uuid_func);
-#undef _IS_OPT
-#undef _GET_OPT
+    if (IS_OPT(B4R_HTTPSRV_CFG_PORT))
+        GET_OPT(port, uint16_t);
+    else if (IS_OPT(B4R_HTTPSRV_CFG_UPLDS_DIR))
+        GET_OPT(uplds_dir, char *);
+    else if (IS_OPT(B4R_HTTPSRV_CFG_POST_BUF_SIZE))
+        GET_OPT(post_buffer_size, size_t);
+    else if (IS_OPT(B4R_HTTPSRV_CFG_MAX_BODY_SIZE))
+        GET_OPT(max_body_size, unsigned long);
+    else if (IS_OPT(B4R_HTTPSRV_CFG_MAX_PAYLD_SIZE))
+        GET_OPT(max_payld_size, unsigned long);
+    else if (IS_OPT(B4R_HTTPSRV_CFG_MAX_UPLD_SIZE))
+        GET_OPT(max_upld_size, uint64_t);
+    else if (IS_OPT(B4R_HTTPSRV_CFG_CONTENT_TYPE))
+        GET_OPT(content_type, char *);
+    else if (IS_OPT(B4R_HTTPSRV_CFG_UUID_FUNC))
+        GET_OPT(uuid_func, b4r_uuid_func);
+#undef IS_OPT
+#undef GET_OPT
     else
         ret = false;
     va_end(va);

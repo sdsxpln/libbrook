@@ -57,7 +57,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror")
 
 option(ENABLE_HTTPS_SUPPORT "Enable HTTPS support" OFF)
 
-# includes
+# cmake modules
 
 include(GNUInstallDirs)
 include(CheckSymbolExists)
