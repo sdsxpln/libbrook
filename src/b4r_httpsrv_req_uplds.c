@@ -152,23 +152,23 @@ bool _b4r_httpsrv_req_uplds_process(struct b4r_httpsrv_req *req, struct MHD_Conn
     char *max_payld_size_str;
     char err[B4R_ERR_SIZE];
     if (*upld_data_size > 0) {
-        if (req->uploading) {
+        if (req->is_post) {
             if (req->owner->req_upld_data_cb) {
-                req->uploading = req->owner->req_upld_data_cb(req->owner->req_upld_data_cls, req, upld_data,
-                                                              *upld_data_size, err);
-                if (!req->uploading)
+                req->is_post = req->owner->req_upld_data_cb(req->owner->req_upld_data_cls, req, upld_data,
+                                                            *upld_data_size, err);
+                if (!req->is_post)
                     _b4r_httpsrv_req_err(req, "%s", err);
             } else {
                 if (!req->post_proc)
                     req->post_proc = MHD_create_post_processor(con, req->owner->cfg->post_buffer_size,
                                                                &_b4r_httpsrv_req_uplds_iter, *con_cls);
                 if (req->post_proc)
-                    req->uploading = MHD_post_process(req->post_proc, upld_data, *upld_data_size) == MHD_YES;
+                    req->is_post = MHD_post_process(req->post_proc, upld_data, *upld_data_size) == MHD_YES;
                 else {
                     utstring_bincpy(req->payload, upld_data, *upld_data_size);
                     if (req->owner->cfg->max_payld_size > 0) {
                         if (utstring_len(req->payload) > req->owner->cfg->max_payld_size) {
-                            req->uploading = false;
+                            req->is_post = false;
                             max_payld_size_str = b4r_fmt_size(req->owner->cfg->max_payld_size);
                             _b4r_httpsrv_req_err(req, S_B4R_MAX_ALLOWED_PAYLD, max_payld_size_str);
                             _B4R_FREE(max_payld_size_str);
@@ -221,7 +221,7 @@ bool b4r_httpsrv_req_upld_save(struct b4r_httpsrv_req *req, struct b4r_httpsrv_r
 }
 
 bool b4r_httpsrv_req_upld_save_as(struct b4r_httpsrv_req *req, struct b4r_httpsrv_req_upld *upld, const char *name,
-                                 bool overwritten) {
+                                  bool overwritten) {
     if (!b4r_httpsrv_req_upld_save(req, upld, overwritten) || (upld->failed = b4r_is_empty(name)))
         return false;
     if ((upld->failed = (overwritten && access(name, F_OK) != -1 && unlink(name) != 0) ||

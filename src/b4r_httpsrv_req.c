@@ -68,7 +68,7 @@ void *_b4r_httpsrv_req_init_cb(void *cls, const char *uri, struct MHD_Connection
 }
 
 void _b4r_httpsrv_req_fini_cb(void *cls, struct MHD_Connection *con, void **con_cls,
-                             enum MHD_RequestTerminationCode toe) {
+                              enum MHD_RequestTerminationCode toe) {
     struct b4r_httpsrv_req *req;
     if (con_cls) {
         req = *con_cls;
@@ -108,8 +108,8 @@ static int _b4r_httpsrv_req_iter_kv(void *cls, enum MHD_ValueKind kind, const ch
 static int _b4r_httpsrv_req_prepare(struct b4r_httpsrv_req *req, const char *url, const char *method,
                                     const char *version) {
     struct _b4r_hs_kv_holder *kv_hldr;
-    req->uploading = b4r_is_post(method);
-    if (req->uploading && !req->owner->req_allowed_post)
+    req->is_post = b4r_is_post(method);
+    if (req->is_post && !req->owner->req_allowed_post)
         return MHD_NO;
     req->receiving = true;
     req->done = true;
@@ -192,8 +192,8 @@ size_t b4r_httpsrv_req_content_len(struct b4r_httpsrv_req *req) {
     return _B4R_HTTPSRV_REQ_GET_PROP(req, content_len, 0);
 }
 
-bool b4r_httpsrv_req_up(struct b4r_httpsrv_req *req) {
-    return (bool) (_B4R_HTTPSRV_REQ_GET_PROP(req, uploading, false));
+bool b4r_httpsrv_req_is_post(struct b4r_httpsrv_req *req) {
+    return (bool) (_B4R_HTTPSRV_REQ_GET_PROP(req, is_post, false));
 }
 
 const char *b4r_httpsrv_req_header(struct b4r_httpsrv_req *req, const char *name) {

@@ -46,7 +46,7 @@ struct b4r_httpsrv_req {
     struct b4r_httpsrv_req_upld *uplds;
     struct b4r_httpsrv_req_upld *cur_upld;
     bool receiving;
-    bool uploading;
+    bool is_post;
     bool aborted;
     bool done;
     size_t total_upld_size;

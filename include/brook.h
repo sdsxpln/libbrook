@@ -225,7 +225,8 @@ typedef void (*b4r_httpsrv_req_fini_cb)(void *cls, bool finished);
 
 typedef void (*b4r_httpsrv_req_cb)(void *cls, struct b4r_httpsrv_req *req, struct b4r_httpsrv_res *res, bool *done);
 
-typedef void (*b4r_httpsrv_req_prep_cb)(void *cls, struct b4r_httpsrv_req *req, struct b4r_httpsrv_res *res, bool *done);
+typedef void (*b4r_httpsrv_req_prep_cb)(void *cls, struct b4r_httpsrv_req *req, struct b4r_httpsrv_res *res,
+                                        bool *done);
 
 typedef bool (*b4r_httpsrv_req_upld_data_cb)(void *cls, struct b4r_httpsrv_req *req, const char *buf, size_t size,
                                              char *err);
@@ -292,15 +293,15 @@ B4R_EXTERN const char *b4r_httpsrv_req_content_type(struct b4r_httpsrv_req *req)
 
 B4R_EXTERN size_t b4r_httpsrv_req_content_len(struct b4r_httpsrv_req *req) __nonnull((1));
 
-B4R_EXTERN bool b4r_httpsrv_req_up(struct b4r_httpsrv_req *req) __nonnull((1));
+B4R_EXTERN bool b4r_httpsrv_req_is_post(struct b4r_httpsrv_req *req) __nonnull((1));
 
 B4R_EXTERN const char *b4r_httpsrv_req_header(struct b4r_httpsrv_req *req, const char *name) __nonnull((1, 2));
 
 B4R_EXTERN bool b4r_httpsrv_req_try_header(struct b4r_httpsrv_req *req, const char *name,
-                                         const char **val) __nonnull((1, 2));
+                                           const char **val) __nonnull((1, 2));
 
 B4R_EXTERN bool b4r_httpsrv_req_iter_headers(struct b4r_httpsrv_req *req,
-                                           b4r_hs_iter_cb iter_cb, void *iter_cls) __nonnull((1, 2));
+                                             b4r_hs_iter_cb iter_cb, void *iter_cls) __nonnull((1, 2));
 
 B4R_EXTERN void *b4r_httpsrv_req_headers_ref(struct b4r_httpsrv_req *req) __nonnull((1));
 
@@ -341,7 +342,7 @@ B4R_EXTERN bool b4r_httpsrv_req_write(struct b4r_httpsrv_req *req, const char *b
 B4R_EXTERN bool b4r_httpsrv_req_send(struct b4r_httpsrv_req *req, const char *buf) __nonnull((1, 2));
 
 B4R_EXTERN bool b4r_httpsrv_req_iter_uplds(struct b4r_httpsrv_req *req,
-                                          b4r_httpsrv_req_uplds_iter_cb iter_cb, void *iter_cls) __nonnull((1));
+                                           b4r_httpsrv_req_uplds_iter_cb iter_cb, void *iter_cls) __nonnull((1));
 
 B4R_EXTERN bool b4r_httpsrv_req_uplds_first(struct b4r_httpsrv_req *req,
                                             struct b4r_httpsrv_req_upld **upld) __nonnull((1, 2));
@@ -403,7 +404,8 @@ B4R_EXTERN bool b4r_httpsrv_res_write(struct b4r_httpsrv_res *res, const char *f
 
 B4R_EXTERN bool b4r_httpsrv_res_send_va(struct b4r_httpsrv_res *res, const char *fmt, va_list va) __nonnull((1, 2));
 
-B4R_EXTERN bool b4r_httpsrv_res_send(struct b4r_httpsrv_res *res, const char *fmt, ...) __nonnull((1, 2)) __format(2, 3);
+B4R_EXTERN bool b4r_httpsrv_res_send(struct b4r_httpsrv_res *res, const char *fmt,
+                                     ...) __nonnull((1, 2)) __format(2, 3);
 
 B4R_EXTERN bool b4r_httpsrv_res_send_file(struct b4r_httpsrv_res *res, const char *filename) __nonnull((1, 2));
 
