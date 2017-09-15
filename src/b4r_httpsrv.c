@@ -150,7 +150,6 @@ bool b4r_httpsrv_listen(struct b4r_httpsrv *srv) {
             srv->req_upld_file_save_cb = _b4r_httpsrv_req_upld_file_save_cb;
             srv->req_upld_file_write_cb = _b4r_httpsrv_req_upld_file_write_cb;
         }
-        //TODO: refatorar conforme implementação em Pascal.
         srv->listening = (srv->mhd = MHD_start_daemon(
                 MHD_USE_SELECT_INTERNALLY | MHD_USE_ITC | MHD_USE_ERROR_LOG, srv->port, NULL, NULL,
                 &_b4r_httpsrv_req_cb, srv,
