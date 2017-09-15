@@ -98,6 +98,7 @@ static void test_file_free_callback(void *cls) {
     fclose(file);
 }
 
+/* TODO: the macro below is transitory. */
 #define EMPTY_PAGE "{\"status\":\"ERROR\",\"error\":\"Not Found\"}"
 
 int _b4r_httpsrv_res_dispatch(struct b4r_httpsrv_req *req) {
@@ -106,6 +107,8 @@ int _b4r_httpsrv_res_dispatch(struct b4r_httpsrv_req *req) {
     size_t body_size;
     char *max_body_size_str;
     int ret;
+
+    /* TODO: the whole below is transitory. */
 
     req->owner->req_cb(req->owner->req_cls, req, req->res, &req->done);
 
@@ -163,7 +166,6 @@ int _b4r_httpsrv_res_dispatch(struct b4r_httpsrv_req *req) {
     }
     res = MHD_create_response_from_buffer(body_size, utstring_body(req->res->body), MHD_RESPMEM_MUST_COPY);
 
-    /* TODO: the code below is temporary. */
     MHD_add_response_header(res, MHD_HTTP_HEADER_CONTENT_TYPE, req->res->content_type);
     HASH_ITER(hh, req->res->headers, hs, hs_tmp) {
         MHD_add_response_header(res, hs->name, hs->val);
