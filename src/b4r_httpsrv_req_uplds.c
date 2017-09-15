@@ -149,15 +149,14 @@ static int _b4r_httpsrv_req_uplds_iter(void *cls, enum MHD_ValueKind kind, const
 
 bool _b4r_httpsrv_req_uplds_process(struct b4r_httpsrv_req *req, struct MHD_Connection *con, void **con_cls,
                                     const char *upld_data, size_t *upld_data_size, int *ret) {
-    char *max_payld_size_str;
-    char err[B4R_ERR_SIZE];
+    char *err;
+    char err_buf[B4R_ERR_SIZE];
     if (*upld_data_size > 0) {
         if (req->is_post) {
             if (req->owner->req_upld_data_cb) {
-                req->is_post = req->owner->req_upld_data_cb(req->owner->req_upld_data_cls, req, upld_data,
-                                                            *upld_data_size, err);
-                if (!req->is_post)
-                    _b4r_httpsrv_req_err(req, "%s", err);
+                if (!(req->is_post = req->owner->req_upld_data_cb(req->owner->req_upld_data_cls, req, upld_data,
+                                                                  *upld_data_size, err_buf)))
+                    _b4r_httpsrv_req_err(req, "%s", err_buf);
             } else {
                 if (!req->post_proc)
                     req->post_proc = MHD_create_post_processor(con, req->owner->cfg->post_buffer_size,
@@ -169,9 +168,9 @@ bool _b4r_httpsrv_req_uplds_process(struct b4r_httpsrv_req *req, struct MHD_Conn
                     if (req->owner->cfg->max_payld_size > 0) {
                         if (utstring_len(req->payload) > req->owner->cfg->max_payld_size) {
                             req->is_post = false;
-                            max_payld_size_str = b4r_fmt_size(req->owner->cfg->max_payld_size);
-                            _b4r_httpsrv_req_err(req, S_B4R_MAX_ALLOWED_PAYLD, max_payld_size_str);
-                            _B4R_FREE(max_payld_size_str);
+                            err = b4r_fmt_size(req->owner->cfg->max_payld_size);
+                            _b4r_httpsrv_req_err(req, S_B4R_MAX_ALLOWED_PAYLD, err);
+                            _B4R_FREE(err);
                         }
                     }
                 }
