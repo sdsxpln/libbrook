@@ -337,7 +337,7 @@ var
 
   b4r_httpsrv_req_content_type: function(req: Pb4r_httpsrv_req): Pcchar; cdecl;
 
-  b4r_httpsrv_req_up: function(req: Pb4r_httpsrv_req): cbool; cdecl;
+  b4r_httpsrv_req_is_post: function(req: Pb4r_httpsrv_req): cbool; cdecl;
 
   b4r_httpsrv_req_header: function(req: Pb4r_httpsrv_req;
     const name: Pcchar): Pcchar; cdecl;
@@ -544,7 +544,7 @@ begin
     b4r_httpsrv_req_path := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_path');
     b4r_httpsrv_req_method := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_method');
     b4r_httpsrv_req_content_type := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_content_type');
-    b4r_httpsrv_req_up := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_up');
+    b4r_httpsrv_req_is_post := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_is_post');
     b4r_httpsrv_req_header := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_header');
     b4r_httpsrv_req_param := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_param');
     b4r_httpsrv_req_try_param := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_try_param');
@@ -636,7 +636,7 @@ begin
     b4r_httpsrv_req_path := nil;
     b4r_httpsrv_req_method := nil;
     b4r_httpsrv_req_content_type := nil;
-    b4r_httpsrv_req_up := nil;
+    b4r_httpsrv_req_is_post := nil;
     b4r_httpsrv_req_header := nil;
     b4r_httpsrv_req_param := nil;
     b4r_httpsrv_req_try_param := nil;

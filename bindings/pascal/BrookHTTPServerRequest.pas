@@ -56,7 +56,7 @@ type
     FPaths: TArray<string>;
     FApp: TObject;
     FPayload: TBytes;
-    FUp: Boolean;
+    FIsPost: Boolean;
     FUploads: TBrookHTTPServerRequestUploads;
     FURI: string;
     FVersion: string;
@@ -90,7 +90,7 @@ type
     property Uploads: TBrookHTTPServerRequestUploads read FUploads
       write FUploads;
     property Paths: TArray<string> read FPaths;
-    property Up: Boolean read FUp;
+    property IsPost: Boolean read FIsPost;
   end;
 
 implementation
@@ -114,7 +114,7 @@ begin
   FID := C2S(b4r_httpsrv_req_id(Freq));
   FPath := C2S(b4r_httpsrv_req_path(Freq));
   FPayload := C2B(b4r_httpsrv_req_payld(AHandle));
-  FUp := b4r_httpsrv_req_up(Freq);
+  FIsPost := b4r_httpsrv_req_is_post(Freq);
   FPaths := C2S(b4r_httpsrv_req_path(AHandle)).Split(['/'],
     TStringSplitOptions.ExcludeEmpty);
 end;
@@ -141,7 +141,7 @@ begin
     FURI := VReq.FURI;
     FID := VReq.FID;
     FPath := VReq.FPath;
-    FUp := VReq.FUp;
+    FIsPost := VReq.FIsPost;
     FPayload := VReq.FPayload;
     FPaths := VReq.FPaths;
   end
