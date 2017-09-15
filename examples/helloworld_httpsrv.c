@@ -62,7 +62,7 @@ int main(int argc, const char **argv) {
     bool success;
     if (argc != 2) {
         fprintf(stderr, USAGE_FMT, argv[0]);
-        return 1;
+        return EXIT_FAILURE;
     }
     if (!(cfg = b4r_httpsrv_cfg_new(NULL))) {
         fprintf(stderr, "Failed creating configuration.\n");

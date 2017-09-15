@@ -103,7 +103,7 @@ static void test_file_free_callback(void *cls) {
 int _b4r_httpsrv_res_dispatch(struct b4r_httpsrv_req *req) {
     struct MHD_Response *res;
     struct b4r_hs *hs, *hs_tmp;
-    size_t max_body_size;
+    size_t body_size;
     char *max_body_size_str;
     int ret;
 
@@ -152,16 +152,16 @@ int _b4r_httpsrv_res_dispatch(struct b4r_httpsrv_req *req) {
     }
 
 
-    max_body_size = utstring_len(req->res->body);
-    if (req->owner->cfg->max_body_size > 0 && max_body_size > req->owner->cfg->max_body_size) {
+    body_size = utstring_len(req->res->body);
+    if (req->owner->cfg->max_body_size > 0 && body_size > req->owner->cfg->max_body_size) {
         max_body_size_str = b4r_fmt_size(req->owner->cfg->max_body_size);
         _b4r_httpsrv_req_err(req, S_B4R_MAX_ALLOWED_BODY, max_body_size_str);
         _B4R_FREE(max_body_size_str);
-        max_body_size = utstring_len(req->res->body);
-        if (max_body_size > req->owner->cfg->max_body_size)
+        body_size = utstring_len(req->res->body);
+        if (body_size > req->owner->cfg->max_body_size)
             return MHD_NO;
     }
-    res = MHD_create_response_from_buffer(max_body_size, utstring_body(req->res->body), MHD_RESPMEM_MUST_COPY);
+    res = MHD_create_response_from_buffer(body_size, utstring_body(req->res->body), MHD_RESPMEM_MUST_COPY);
 
     /* TODO: the code below is temporary. */
     MHD_add_response_header(res, MHD_HTTP_HEADER_CONTENT_TYPE, req->res->content_type);
