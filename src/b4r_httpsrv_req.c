@@ -88,15 +88,20 @@ void _b4r_httpsrv_req_fini_cb(void *cls, struct MHD_Connection *con, void **con_
     }
 }
 
-void _b4r_httpsrv_req_err(struct b4r_httpsrv_req *req, const char *fmt, ...) {
-    va_list va;
+void _b4r_httpsrv_req_err(struct b4r_httpsrv_req *req, const char *err) {
     if (req->owner->req_err_cb) {
-        va_start(va, fmt);
         utstring_clear(req->res->body);
         req->res->status_code = MHD_HTTP_INTERNAL_SERVER_ERROR;
-        req->owner->req_err_cb(req->owner->req_err_cls, req, req->res, &req->done, fmt, va);
-        va_end(va);
+        req->owner->req_err_cb(req->owner->req_err_cls, req, req->res, &req->done, err);
     }
+}
+
+void _b4r_httpsrv_req_errf(struct b4r_httpsrv_req *req, const char *fmt, ...) {
+    va_list va;
+    char err[B4R_ERR_SIZE];
+    va_start(va, fmt);
+    _b4r_httpsrv_req_err(req, err);
+    va_end(va);
 }
 
 static int _b4r_httpsrv_req_iter_kv(void *cls, enum MHD_ValueKind kind, const char *key, const char *val) {

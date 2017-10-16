@@ -34,7 +34,7 @@
 
     $ ./httpsrv_upld 8080
 
-    and open http://localhost:8080 on your browser
+    and open http://localhost:8080 on your browser.
 */
 
 #include <stdlib.h>
@@ -73,18 +73,14 @@ static void srv_req_cb(void *cls, struct b4r_httpsrv_req *req, struct b4r_httpsr
     utstring_printf(saved_ol, "</ol>");
     utstring_printf(err_ol, "</ol>");
     b4r_httpsrv_res_send(res, "<html><body>Uploads directory '" UPLOADS_DIR "': %s %s</body></html>",
-                        utstring_body(saved_ol), utstring_body(err_ol));
+                         utstring_body(saved_ol), utstring_body(err_ol));
     utstring_free(saved_ol);
     utstring_free(err_ol);
 }
 
 static void srv_req_err_cb(void *cls, struct b4r_httpsrv_req *req, struct b4r_httpsrv_res *res, bool *done,
-                           const char *fmt, va_list va) {
-    char err[B4R_ERR_SIZE];
-    if (vsnprintf(err, sizeof(err), fmt, va) != -1)
-        b4r_httpsrv_res_send(res, "<html><body><font color='red'>%s</font></body></html>", err);
-    else
-        b4r_httpsrv_res_send_va(res, fmt, va);
+                           const char *err) {
+    b4r_httpsrv_res_send(res, "<html><body><font color='red'>%s</font></body></html>", err);
 }
 
 int main(int argc, const char **argv) {

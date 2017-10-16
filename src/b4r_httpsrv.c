@@ -44,8 +44,11 @@
 
 static void _b4r_httpsrv_err_va_cb(void *cls, const char *fmt, va_list va) {
     struct b4r_httpsrv *srv = cls;
-    if (srv->err_cb)
-        srv->err_cb(srv->err_cls, fmt, va);
+    char err[B4R_ERR_SIZE];
+    if (srv->err_cb) {
+        vsnprintf(err, sizeof(err), fmt, va);
+        srv->err_cb(srv->err_cls, err);
+    }
     else if (srv->enabled_log)
         vfprintf(stdout, fmt, va);
 }

@@ -120,7 +120,7 @@ static int _b4r_httpsrv_req_uplds_iter(void *cls, enum MHD_ValueKind kind, const
                 if (!_b4r_httpsrv_req_uplds_try_new(&req->uplds, &req->cur_upld, req->owner->cfg->uuid_func,
                                                     req->owner->cfg->uplds_dir, filename, key, content_type,
                                                     transfer_encoding)) {
-                    _b4r_httpsrv_req_err(req, S_B4R_UPLD_FAILED, filename);
+                    _b4r_httpsrv_req_errf(req, S_B4R_UPLD_FAILED, filename);
                     return MHD_NO;
                 }
                 if (!(req->cur_upld->stream = req->owner->req_upld_file_prepare_cb(
@@ -134,13 +134,13 @@ static int _b4r_httpsrv_req_uplds_iter(void *cls, enum MHD_ValueKind kind, const
                 req->total_upld_size += size;
                 if (req->total_upld_size > req->owner->cfg->max_upld_size) {
                     max_upld_size_str = b4r_fmt_size(req->owner->cfg->max_upld_size);
-                    _b4r_httpsrv_req_err(req, S_B4R_MAX_ALLOWED_UPLD, max_upld_size_str);
+                    _b4r_httpsrv_req_errf(req, S_B4R_MAX_ALLOWED_UPLD, max_upld_size_str);
                     _B4R_FREE(max_upld_size_str);
                     return MHD_NO;
                 }
             }
         } else if (!b4r_hs_add_or_set(&req->fields, key, buf)) {
-            _b4r_httpsrv_req_err(req, S_B4R_FIELD_FAILED, key);
+            _b4r_httpsrv_req_errf(req, S_B4R_FIELD_FAILED, key);
             return MHD_NO;
         }
     }
@@ -156,7 +156,7 @@ bool _b4r_httpsrv_req_uplds_process(struct b4r_httpsrv_req *req, struct MHD_Conn
             if (req->owner->req_upld_data_cb) {
                 if (!(req->is_post = req->owner->req_upld_data_cb(req->owner->req_upld_data_cls, req, upld_data,
                                                                   *upld_data_size, err_buf)))
-                    _b4r_httpsrv_req_err(req, "%s", err_buf);
+                    _b4r_httpsrv_req_err(req, err_buf);
             } else {
                 if (!req->post_proc)
                     req->post_proc = MHD_create_post_processor(con, req->owner->cfg->post_buffer_size,
@@ -169,7 +169,7 @@ bool _b4r_httpsrv_req_uplds_process(struct b4r_httpsrv_req *req, struct MHD_Conn
                         if (utstring_len(req->payload) > req->owner->cfg->max_payld_size) {
                             req->is_post = false;
                             err = b4r_fmt_size(req->owner->cfg->max_payld_size);
-                            _b4r_httpsrv_req_err(req, S_B4R_MAX_ALLOWED_PAYLD, err);
+                            _b4r_httpsrv_req_errf(req, S_B4R_MAX_ALLOWED_PAYLD, err);
                             _B4R_FREE(err);
                         }
                     }

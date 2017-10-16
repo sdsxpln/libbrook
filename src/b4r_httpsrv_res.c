@@ -105,10 +105,11 @@ int _b4r_httpsrv_res_dispatch(struct b4r_httpsrv_req *req) {
     struct MHD_Response *res;
     struct b4r_hs *hs, *hs_tmp;
     size_t body_size;
-    char *max_body_size_str;
+    char *body_size_str;
+    char err[B4R_ERR_SIZE];
     int ret;
 
-    /* TODO: the whole below is transitory. */
+    /* TODO: the whole code below is transitory. */
 
     req->owner->req_cb(req->owner->req_cls, req, req->res, &req->done);
 
@@ -154,15 +155,19 @@ int _b4r_httpsrv_res_dispatch(struct b4r_httpsrv_req *req) {
         return ret;
     }
 
-
     body_size = utstring_len(req->res->body);
-    if (req->owner->cfg->max_body_size > 0 && body_size > req->owner->cfg->max_body_size) {
-        max_body_size_str = b4r_fmt_size(req->owner->cfg->max_body_size);
-        _b4r_httpsrv_req_err(req, S_B4R_MAX_ALLOWED_BODY, max_body_size_str);
-        _B4R_FREE(max_body_size_str);
+    if (req->owner->cfg->max_body_size > 0 && body_size > req->owner->cfg->max_body_size &&
+        (body_size_str = b4r_fmt_size(req->owner->cfg->max_body_size))) {
+        sprintf(err, S_B4R_MAX_ALLOWED_BODY, body_size_str);
+        _b4r_httpsrv_req_err(req, err);
         body_size = utstring_len(req->res->body);
-        if (body_size > req->owner->cfg->max_body_size)
+        if (body_size > req->owner->cfg->max_body_size) {
+            if (req->owner->err_cb)
+                req->owner->err_cb(req->owner->err_cls, err);
+            _B4R_FREE(body_size_str);
             return MHD_NO;
+        }
+        _B4R_FREE(body_size_str);
     }
     res = MHD_create_response_from_buffer(body_size, utstring_body(req->res->body), MHD_RESPMEM_MUST_COPY);
 

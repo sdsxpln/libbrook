@@ -42,7 +42,7 @@
 
     $ wget -qO- http://localhost:8080
 
-    or just open http://localhost:8080 on your browser
+    or just open http://localhost:8080 on your browser.
 */
 
 #include <stdlib.h>

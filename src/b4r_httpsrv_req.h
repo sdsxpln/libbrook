@@ -68,6 +68,8 @@ void _b4r_httpsrv_req_fini_cb(void *cls, struct MHD_Connection *con, void **con_
 int _b4r_httpsrv_req_cb(void *cls, struct MHD_Connection *con, const char *url, const char *method, const char *version,
                         const char *upld_data, size_t *upld_data_size, void **con_cls);
 
-void _b4r_httpsrv_req_err(struct b4r_httpsrv_req *req, const char *fmt, ...) __format(2, 3);
+void _b4r_httpsrv_req_err(struct b4r_httpsrv_req *req, const char *err) __nonnull((1, 2));
+
+void _b4r_httpsrv_req_errf(struct b4r_httpsrv_req *req, const char *fmt, ...) __format(2, 3);
 
 #endif

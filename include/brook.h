@@ -229,7 +229,7 @@ typedef void (*b4r_httpsrv_req_prep_cb)(void *cls, struct b4r_httpsrv_req *req, 
                                         bool *done);
 
 typedef bool (*b4r_httpsrv_req_upld_data_cb)(void *cls, struct b4r_httpsrv_req *req, const char *buf, size_t size,
-                                             char *err);
+                                             const char *err);
 
 typedef void *(*b4r_httpsrv_req_upld_file_prepare_cb)(void *cls, struct b4r_httpsrv_req_upld *upld);
 
@@ -239,9 +239,9 @@ typedef bool (*b4r_httpsrv_req_upld_file_write_cb)(void *cls, struct b4r_httpsrv
                                                    const char *buf, size_t size);
 
 typedef void (*b4r_httpsrv_req_err_cb)(void *cls, struct b4r_httpsrv_req *req, struct b4r_httpsrv_res *res, bool *done,
-                                       const char *fmt, va_list va);
+                                       const char *err);
 
-typedef void (*b4r_httpsrv_err_cb)(void *cls, const char *fmt, va_list va);
+typedef void (*b4r_httpsrv_err_cb)(void *cls, const char *err);
 
 typedef void (*b4r_httpsrv_req_uplds_iter_cb)(void *cls, struct b4r_httpsrv_req_upld *upld);
 

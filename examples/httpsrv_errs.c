@@ -42,7 +42,7 @@
 
     $ wget -qO- http://localhost:8080
 
-    or just open http://localhost:8080 on your browser
+    or just open http://localhost:8080 on your browser.
 */
 
 #include <stdlib.h>
@@ -53,17 +53,13 @@
 
 #define HTML_TPL "<html><body><font color=\"%s\">%s</font></body></html>"
 
-static void srv_err_cb(void *cls, const char *fmt, va_list va) {
-    vfprintf(stderr, fmt, va);
+static void srv_err_cb(void *cls, const char *err) {
+    fprintf(stderr, "%s", err);
 }
 
 static void srv_req_err_cb(void *cls, struct b4r_httpsrv_req *req, struct b4r_httpsrv_res *res, bool *done,
-                           const char *fmt, va_list va) {
-    char err[B4R_ERR_SIZE];
-    if (vsnprintf(err, sizeof(err), fmt, va) != -1)
-        b4r_httpsrv_res_send(res, HTML_TPL, "red", err);
-    else
-        b4r_httpsrv_res_send_va(res, fmt, va);
+                           const char *err) {
+    b4r_httpsrv_res_send(res, HTML_TPL, "red", err);
 }
 
 static void srv_req_cb(void *cls, struct b4r_httpsrv_req *req, struct b4r_httpsrv_res *res, bool *done) {
