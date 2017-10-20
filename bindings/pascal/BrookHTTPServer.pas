@@ -122,10 +122,8 @@ type
     class procedure DoReqCb(Acls: Pcvoid; Areq: Pb4r_httpsrv_req;
       Ares: Pb4r_httpsrv_res; Adone: Pcbool); cdecl; static;
     class procedure DoReqErrCb(Acls: Pcvoid; Areq: Pb4r_httpsrv_req;
-      Ares: Pb4r_httpsrv_res; Adone: Pcbool; const Afmt: Pcchar;
-      Ava: cva_list); cdecl; static;
-    class procedure DoErrCb(Acls: Pcvoid; const Afmt: Pcchar;
-      Ava: cva_list); cdecl; static;
+      Ares: Pb4r_httpsrv_res; Adone: Pcbool; const Aerr: Pcchar); cdecl; static;
+    class procedure DoErrCb(Acls: Pcvoid; const Aerr: Pcchar); cdecl; static;
     function CreateRequest(ASrv: TBrookHTTPServer;
       AHandle: Pointer): TBrookHTTPServerRequest; virtual;
     procedure FreeRequest(AReq: TBrookHTTPServerRequest); virtual;
@@ -333,22 +331,17 @@ end;
 
 class procedure TBrookHTTPServer.DoReqErrCb(Acls: Pcvoid;
   Areq: Pb4r_httpsrv_req; Ares: Pb4r_httpsrv_res; Adone: Pcbool;
-  const Afmt: Pcchar; Ava: cva_list);
+  const Aerr: Pcchar);
 var
   VSrv: TBrookHTTPServer absolute Acls;
   VReq: TBrookHTTPServerRequest;
   VRes: TBrookHTTPServerResponse;
-  VErr: Pcchar;
-  VMsg: string;
 begin
   VReq := VSrv.CreateRequest(VSrv, Areq);
   VRes := VSrv.CreateResponse(VSrv, Ares);
   try
     BFCheckLibrary;
-    VErr := b4r_asprintf_va(Afmt, Ava);
-    VMsg := C2S(VErr);
-    b4r_free(VErr);
-    VSrv.DoRequestError(VSrv, VReq, VRes, VMsg, Adone^);
+    VSrv.DoRequestError(VSrv, VReq, VRes, C2S(Aerr), Adone^);
   finally
     VSrv.FreeResponse(VRes);
     VSrv.FreeRequest(VReq);
@@ -391,18 +384,12 @@ begin
     FOnRequestError(ASender, ARequest, AResponse, AErrorMsg, ADone);
 end;
 
-class procedure TBrookHTTPServer.DoErrCb(Acls: Pcvoid; const Afmt: Pcchar;
-  Ava: cva_list);
+class procedure TBrookHTTPServer.DoErrCb(Acls: Pcvoid; const Aerr: Pcchar);
 var
   VSrv: TBrookHTTPServer absolute Acls;
-  VErr: Pcchar;
-  VMsg: string;
 begin
   BFCheckLibrary;
-  VErr := b4r_asprintf_va(Afmt, Ava);
-  VMsg := C2S(VErr);
-  b4r_free(VErr);
-  VSrv.DoError(VSrv, VMsg);
+  VSrv.DoError(VSrv, C2S(Aerr));
 end;
 
 procedure TBrookHTTPServer.DoError(ASender: TObject; const AErrorMsg: string);

@@ -273,7 +273,7 @@ type
     res: Pb4r_httpsrv_res; done: Pcbool); cdecl;
 
   b4r_httpsrv_req_upld_data_cb = procedure(cls: Pcvoid; req: Pb4r_httpsrv_req;
-    const buf: Pcchar; size: csize; err: Pcchar); cdecl;
+    const buf: Pcchar; size: csize; const err: Pcchar); cdecl;
 
   b4r_httpsrv_req_upld_file_prepare_cb = function(cls: Pcvoid;
     upld: Pb4r_httpsrv_req_upld): Pcvoid; cdecl;
@@ -285,10 +285,9 @@ type
     upld: Pb4r_httpsrv_req_upld; const buf: Pcchar; size: csize): cbool; cdecl;
 
   b4r_httpsrv_req_err_cb = procedure(cls: Pcvoid; req: Pb4r_httpsrv_req;
-    res: Pb4r_httpsrv_res; done: Pcbool; const fmt: Pcchar; va: cva_list); cdecl;
+    res: Pb4r_httpsrv_res; done: Pcbool; const err: Pcchar); cdecl;
 
-  b4r_httpsrv_err_cb = procedure(cls: Pcvoid; const fmt: Pcchar;
-    va: cva_list); cdecl;
+  b4r_httpsrv_err_cb = procedure(cls: Pcvoid; const err: Pcchar); cdecl;
 
   b4r_httpsrv_req_uplds_iter_cb = procedure(cls: Pcvoid;
     upld: Pb4r_httpsrv_req_upld); cdecl;
