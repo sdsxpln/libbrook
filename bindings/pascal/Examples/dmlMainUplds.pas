@@ -99,7 +99,7 @@ var
   VUpload: TBrookHTTPServerRequestUpload;
 begin
   //TODO: download file as soon as the AResponse.Download() method was done.
-  if ARequest.Up then
+  if ARequest.IsPost then
   begin
     VSavedOL := '<ol>';
     VErrOL := '<ol style="color: red;">';
