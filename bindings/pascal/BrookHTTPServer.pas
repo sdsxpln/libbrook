@@ -244,19 +244,19 @@ begin
   if not Assigned(Fsrv) then
   begin
     Fsrv := b4r_httpsrv_new(FConfiguration.Handle,
-{$IFNDEF VER3_0}@{$ENDIF}DoReqCb, Self,
-{$IFNDEF VER3_0}@{$ENDIF}DoReqErrCb, Self,
-{$IFNDEF VER3_0}@{$ENDIF}DoErrCb, Self);
+      @TBrookHTTPServer.DoReqCb, Self,
+      @TBrookHTTPServer.DoReqErrCb, Self,
+      @TBrookHTTPServer.DoErrCb, Self);
     if not b4r_httpsrv_setopt(Fsrv, B4R_HTTPSRV_OPT_CON_CB,
-      @DoConCb, Pointer(Self)) then
+      @TBrookHTTPServer.DoConCb, Pointer(Self)) then
       raise EInvalidOpException.CreateResFmt(@SBrookServerCannotSetOption,
         ['B4R_HTTPSRV_OPT_CON_CB']);
     if not b4r_httpsrv_setopt(Fsrv, B4R_HTTPSRV_OPT_REQ_INIT_CB,
-      @DoReqInitCb, Pointer(Self)) then
+      @TBrookHTTPServer.DoReqInitCb, Pointer(Self)) then
       raise EInvalidOpException.CreateResFmt(@SBrookServerCannotSetOption,
         ['B4R_HTTPSRV_OPT_REQ_INIT_CB']);
     if not b4r_httpsrv_setopt(Fsrv, B4R_HTTPSRV_OPT_REQ_FINI_CB,
-      @DoReqFiniCb, Pointer(Self)) then
+      @TBrookHTTPServer.DoReqFiniCb, Pointer(Self)) then
       raise EInvalidOpException.CreateResFmt(@SBrookServerCannotSetOption,
         ['B4R_HTTPSRV_OPT_REQ_FINI_CB']);
     if not Assigned(Fsrv) then
