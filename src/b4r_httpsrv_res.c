@@ -159,15 +159,14 @@ int _b4r_httpsrv_res_dispatch(struct b4r_httpsrv_req *req) {
     if (req->owner->cfg->max_body_size > 0 && body_size > req->owner->cfg->max_body_size &&
         (body_size_str = b4r_fmt_size(req->owner->cfg->max_body_size))) {
         sprintf(err, S_B4R_MAX_ALLOWED_BODY, body_size_str);
+        _B4R_FREE(body_size_str);
         _b4r_httpsrv_req_err(req, err);
         body_size = utstring_len(req->res->body);
         if (body_size > req->owner->cfg->max_body_size) {
             if (req->owner->err_cb)
                 req->owner->err_cb(req->owner->err_cls, err);
-            _B4R_FREE(body_size_str);
             return MHD_NO;
         }
-        _B4R_FREE(body_size_str);
     }
     res = MHD_create_response_from_buffer(body_size, utstring_body(req->res->body), MHD_RESPMEM_MUST_COPY);
 
