@@ -35,5 +35,6 @@
 //{$LINKLIB asan}
 //{$LINKLIB lsan}
 //{$ENDIF}
+ {$WARN 5024 OFF: Parameter "$1" not used}
 {$ENDIF}
 {$R-}
