@@ -31,6 +31,7 @@
  {$IFDEF VER3_0}
   {$DEFINE EInvalidOpException := EInvalidOperation}
  {$ENDIF}
+  {$DEFINE TMessage := TLMessage}
 //{$IF DEFINED(UNIX) AND DEFINED(DEBUG)}
 //{$LINKLIB asan}
 //{$LINKLIB lsan}

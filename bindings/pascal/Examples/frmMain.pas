@@ -35,9 +35,11 @@ uses
   SysUtils,
   Classes,
 {$IFDEF FPC}
+  LMessages,
   LCLIntf,
 {$ELSE}
   Windows,
+  Messages,
   ShellAPI,
   Actions,
   Controls,
@@ -46,12 +48,16 @@ uses
   Graphics,
   StdCtrls,
   ActnList,
+  ExtCtrls,
   Spin,
   Forms,
   BrookHTTPServerConfiguration,
   BrookHTTPServerRequest,
   BrookHTTPServerResponse,
   BrookHTTPServer;
+
+const
+  WM_SHOW_ERROR_MSG = WM_USER + $0001;
 
 type
 
@@ -65,9 +71,13 @@ type
     BrookHTTPServerConfiguration1: TBrookHTTPServerConfiguration;
     btStart: TButton;
     btStop: TButton;
+    btErrorsClose: TButton;
     lbLink: TLabel;
     lbPort: TLabel;
     edPort: TSpinEdit;
+    txErrors: TMemo;
+    pnErrorsCap: TPanel;
+    pnErrors: TPanel;
     procedure acStartExecute(Sender: TObject);
     procedure acStopExecute(Sender: TObject);
     procedure BrookHTTPServer1AfterClose(Sender: TObject);
@@ -79,11 +89,13 @@ type
     procedure BrookHTTPServer1RequestError(ASender: TObject;
       ARequest: TBrookHTTPServerRequest; AResponse: TBrookHTTPServerResponse;
       const AErrorMsg: string; var ADone: Boolean);
+    procedure btErrorsCloseClick(Sender: TObject);
     procedure lbLinkClick(Sender: TObject);
     procedure lbLinkMouseEnter(Sender: TObject);
     procedure lbLinkMouseLeave(Sender: TObject);
   protected
     procedure DoUpdateActions(AEnabled: Boolean);
+    procedure WMShowErrorMsg(var AMessage: TMessage); message WM_SHOW_ERROR_MSG;
   end;
 
 var
@@ -129,6 +141,23 @@ begin
   lbLink.Caption := Concat('http://localhost:', IntToStr(BrookHTTPServer1.Port));
 end;
 
+procedure TfrMain.WMShowErrorMsg(var AMessage: TMessage);
+begin
+  with TStringStream(AMessage.WParam) do
+  try
+    txErrors.Lines.BeginUpdate;
+    try
+      if txErrors.Lines.Count < 10 then
+        txErrors.Lines.Add(Concat('[', DateTimeToStr(Now), ']: ', DataString));
+      pnErrors.Show;
+    finally
+      txErrors.Lines.EndUpdate;
+    end;
+  finally
+    Free;
+  end;
+end;
+
 procedure TfrMain.BrookHTTPServer1Request(ASender: TObject;
   ARequest: TBrookHTTPServerRequest; AResponse: TBrookHTTPServerResponse;
   var ADone: Boolean);
@@ -144,10 +173,17 @@ begin
     '<html><body><font color="red">%s</font></body></html>', [AErrorMsg]);
 end;
 
+procedure TfrMain.btErrorsCloseClick(Sender: TObject);
+begin
+  txErrors.Clear;
+  pnErrors.Hide;
+end;
+
 procedure TfrMain.BrookHTTPServer1Error(ASender: TObject;
   const AErrorMsg: string);
 begin
-  raise EInvalidOpException.Create(AErrorMsg);
+  PostMessage(Handle, WM_SHOW_ERROR_MSG,
+    NativeInt(TStringStream.Create(AErrorMsg)), 0);
 end;
 
 procedure TfrMain.lbLinkMouseEnter(Sender: TObject);

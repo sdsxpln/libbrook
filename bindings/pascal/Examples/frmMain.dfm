@@ -4,7 +4,7 @@ object frMain: TfrMain
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'HTTP server'
-  ClientHeight = 167
+  ClientHeight = 220
   ClientWidth = 347
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -70,6 +70,62 @@ object frMain: TfrMain
     MinValue = 1
     TabOrder = 2
     Value = 8080
+  end
+  object pnErrors: TPanel
+    Left = 0
+    Top = 96
+    Width = 347
+    Height = 124
+    Align = alBottom
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    BevelOuter = bvNone
+    TabOrder = 3
+    Visible = False
+    object pnErrorsCap: TPanel
+      Left = 0
+      Top = 0
+      Width = 347
+      Height = 24
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      Caption = 'Errors'
+      Color = clSilver
+      Constraints.MaxHeight = 24
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      object btErrorsClose: TButton
+        Left = 327
+        Top = 0
+        Width = 20
+        Height = 24
+        Align = alRight
+        Caption = 'X'
+        TabOrder = 0
+        OnClick = btErrorsCloseClick
+      end
+    end
+    object txErrors: TMemo
+      Left = 0
+      Top = 24
+      Width = 347
+      Height = 100
+      Align = alClient
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clMaroon
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 1
+      WordWrap = False
+    end
   end
   object alMain: TActionList
     Left = 32

@@ -1,15 +1,13 @@
 object frMain: TfrMain
   Left = 248
-  Height = 171
+  Height = 220
   Top = 137
-  Width = 347
-  BorderIcons = [biSystemMenu, biMinimize]
-  BorderStyle = bsSingle
+  Width = 340
   Caption = 'HTTP server'
-  ClientHeight = 171
-  ClientWidth = 347
+  ClientHeight = 220
+  ClientWidth = 340
   Position = poDesktopCenter
-  LCLVersion = '1.7'
+  LCLVersion = '1.9.0.0'
   object btStart: TButton
     AnchorSideLeft.Control = edPort
     AnchorSideLeft.Side = asrBottom
@@ -76,6 +74,61 @@ object frMain: TfrMain
     OnClick = lbLinkClick
     OnMouseEnter = lbLinkMouseEnter
     OnMouseLeave = lbLinkMouseLeave
+  end
+  object pnErrors: TPanel
+    Left = 0
+    Height = 124
+    Top = 96
+    Width = 340
+    Align = alBottom
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BevelOuter = bvNone
+    ClientHeight = 124
+    ClientWidth = 340
+    TabOrder = 3
+    Visible = False
+    object pnErrorsCap: TPanel
+      Left = 0
+      Height = 24
+      Top = 0
+      Width = 340
+      Align = alTop
+      AutoSize = True
+      BevelOuter = bvNone
+      Caption = 'Errors'
+      ClientHeight = 24
+      ClientWidth = 340
+      Color = clSilver
+      Constraints.MaxHeight = 24
+      Font.Style = [fsBold]
+      ParentColor = False
+      ParentFont = False
+      TabOrder = 0
+      object btErrorsClose: TButton
+        Left = 318
+        Height = 20
+        Top = 2
+        Width = 20
+        Align = alRight
+        BorderSpacing.Around = 2
+        Caption = 'X'
+        OnClick = btErrorsCloseClick
+        TabOrder = 0
+      end
+    end
+    object txErrors: TMemo
+      Left = 0
+      Height = 100
+      Top = 24
+      Width = 340
+      Align = alClient
+      Font.Color = clMaroon
+      ParentFont = False
+      ReadOnly = True
+      ScrollBars = ssAutoBoth
+      TabOrder = 1
+      WordWrap = False
+    end
   end
   object alMain: TActionList
     Left = 32
