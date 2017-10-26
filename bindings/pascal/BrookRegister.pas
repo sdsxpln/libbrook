@@ -45,7 +45,7 @@ uses
   libbrook;
 
 resourcestring
-  SBrookSelectLibrary = 'Select a library';
+  SBrookSelectLibrary = 'Select Brook library';
   SBrookLibraryFiles = 'Library files (%s)|%s|All files (*.*)|*.*';
 
 type
@@ -78,6 +78,9 @@ type
   public
     procedure Edit; override;
     function GetVerb(AIndex: Integer): string; override;
+{$IFNDEF LCL}
+    function GetVerbCount: Integer; override;
+{$ENDIF}
     procedure ExecuteVerb(AIndex: Integer); override;
   end;
 
@@ -235,6 +238,15 @@ begin
   else
     Result := inherited GetVerb(AIndex);
 end;
+
+{$IFNDEF LCL}
+
+function TBrookLibraryFileNameComponentEditor.GetVerbCount: Integer;
+begin
+  Result := Succ(inherited GetVerbCount);
+end;
+
+{$ENDIF}
 
 procedure TBrookLibraryFileNameComponentEditor.ExecuteVerb(AIndex: Integer);
 begin
