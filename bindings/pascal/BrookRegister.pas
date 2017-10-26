@@ -55,9 +55,11 @@ type
   TBrookLibraryFileNamePropertyEditor = class(
 {$IFDEF LCL}TFileNamePropertyEditor{$ELSE}TStringProperty{$ENDIF})
   public
+{$IFDEF LCL}
     function GetVerbCount: Integer; override;
     function GetVerb(AIndex: Integer): string; override;
     procedure ExecuteVerb(AIndex: Integer); override;
+{$ENDIF}
     function GetFilter: string; {$IFDEF LCL}override{$ELSE}virtual{$ENDIF};
     function GetDialogTitle: string; {$IFDEF LCL}override{$ELSE}virtual{$ENDIF};
 {$IFNDEF LCL}
@@ -111,6 +113,8 @@ begin
   RegisterComponentEditor(TBrookHTTPServer, TBrookOnRequestComponentEditor);
 end;
 
+{$IFDEF LCL}
+
 { TBrookLibraryFileNamePropertyEditor }
 
 function TBrookLibraryFileNamePropertyEditor.GetVerbCount: Integer;
@@ -133,6 +137,8 @@ begin
   else
     inherited ExecuteVerb(AIndex);
 end;
+
+{$ENDIF}
 
 function TBrookLibraryFileNamePropertyEditor.GetFilter: string;
 var
