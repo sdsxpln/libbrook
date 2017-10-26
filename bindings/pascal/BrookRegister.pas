@@ -34,25 +34,33 @@ interface
 uses
   SysUtils,
   Classes,
-{$IFDEF FPC}
+  Dialogs,
+{$IFDEF LCL}
   PropEdits,
   ComponentEditors
 {$ELSE}
-  Dialogs,
   DesignIntf,
   DesignEditors
-{$ENDIF};
+{$ENDIF},
+  libbrook;
+
+resourcestring
+  SBrookSelectLibrary = 'Select a library';
+  SBrookLibraryFiles = 'Library files (%s)|%s|All files (*.*)|*.*';
 
 type
 
   { TBrookLibraryFileNamePropertyEditor }
 
   TBrookLibraryFileNamePropertyEditor = class(
-{$IFDEF FPC}TFileNamePropertyEditor{$ELSE}TStringProperty{$ENDIF})
+{$IFDEF LCL}TFileNamePropertyEditor{$ELSE}TStringProperty{$ENDIF})
   public
-    function GetFilter: string; {$IFDEF FPC}override{$ELSE}virtual{$ENDIF};
-    function GetDialogTitle: string; {$IFDEF FPC}override{$ELSE}virtual{$ENDIF};
-{$IFNDEF FPC}
+    function GetVerbCount: Integer; override;
+    function GetVerb(AIndex: Integer): string; override;
+    procedure ExecuteVerb(AIndex: Integer); override;
+    function GetFilter: string; {$IFDEF LCL}override{$ELSE}virtual{$ENDIF};
+    function GetDialogTitle: string; {$IFDEF LCL}override{$ELSE}virtual{$ENDIF};
+{$IFNDEF LCL}
     function CreateFileDialog: TOpenDialog; virtual;
     procedure Edit; override;
     function GetAttributes: TPropertyAttributes; override;
@@ -62,12 +70,21 @@ type
 {$ENDIF}
   end;
 
+  { TBrookLibraryFileNameComponentEditor }
+
+  TBrookLibraryFileNameComponentEditor = class(TDefaultEditor)
+  public
+    procedure Edit; override;
+    function GetVerb(AIndex: Integer): string; override;
+    procedure ExecuteVerb(AIndex: Integer); override;
+  end;
+
   { TBrookOnRequestComponentEditor }
 
   TBrookOnRequestComponentEditor = class(TDefaultEditor)
   protected
     procedure EditProperty(const AProperty:
-      {$IFDEF FPC}TPropertyEditor{$ELSE}IProperty{$ENDIF};
+      {$IFDEF LCL}TPropertyEditor{$ELSE}IProperty{$ENDIF};
       var AContinue: Boolean); override;
   end;
 
@@ -89,22 +106,50 @@ begin
   ]);
   RegisterPropertyEditor(TypeInfo(TFileName), TBrookLibraryLoader,
     'FileName', TBrookLibraryFileNamePropertyEditor);
+  RegisterComponentEditor(TBrookLibraryLoader,
+    TBrookLibraryFileNameComponentEditor);
   RegisterComponentEditor(TBrookHTTPServer, TBrookOnRequestComponentEditor);
 end;
 
 { TBrookLibraryFileNamePropertyEditor }
 
-function TBrookLibraryFileNamePropertyEditor.GetFilter: string;
+function TBrookLibraryFileNamePropertyEditor.GetVerbCount: Integer;
 begin
-  Result := 'Library files (*.dll;*.so)|*.dll;*.so';
+  Result := Succ(inherited GetVerbCount);
+end;
+
+function TBrookLibraryFileNamePropertyEditor.GetVerb(AIndex: Integer): string;
+begin
+  if AIndex = 0 then
+    Result := LoadResString(@SBrookSelectLibrary)
+  else
+    Result := inherited GetVerb(AIndex);
+end;
+
+procedure TBrookLibraryFileNamePropertyEditor.ExecuteVerb(AIndex: Integer);
+begin
+  if AIndex = 0 then
+    Edit
+  else
+    inherited ExecuteVerb(AIndex);
+end;
+
+function TBrookLibraryFileNamePropertyEditor.GetFilter: string;
+var
+  VSharedSuffix: string;
+begin
+  VSharedSuffix := Concat('*.', SharedSuffix);
+  Result := Format(LoadResString(@SBrookLibraryFiles), [VSharedSuffix,
+{$IFDEF LINUX}Concat({$ENDIF}VSharedSuffix
+{$IFDEF LINUX}, ';', VSharedSuffix, '.*'){$ENDIF}]);
 end;
 
 function TBrookLibraryFileNamePropertyEditor.GetDialogTitle: string;
 begin
-  Result := 'Select a library';
+  Result := LoadResString(@SBrookSelectLibrary);
 end;
 
-{$IFNDEF FPC}
+{$IFNDEF LCL}
 
 function TBrookLibraryFileNamePropertyEditor.CreateFileDialog: TOpenDialog;
 begin
@@ -149,10 +194,54 @@ end;
 
 {$ENDIF}
 
+{ TBrookLibraryFileNameComponentEditor }
+
+procedure TBrookLibraryFileNameComponentEditor.Edit;
+var
+  VDialog: TOpenDialog;
+  VLibraryLoader: TBrookLibraryLoader;
+  VPropertyEditor: TBrookLibraryFileNamePropertyEditor;
+begin
+  VLibraryLoader := Component as TBrookLibraryLoader;
+  if not Assigned(VLibraryLoader) then Exit;
+  VPropertyEditor := TBrookLibraryFileNamePropertyEditor.Create(nil, 0);
+  VDialog := VPropertyEditor.CreateFileDialog;
+  try
+    VDialog.Filter := VPropertyEditor.GetFilter;
+    VDialog.Options := VPropertyEditor.GetDialogOptions;
+    VDialog.InitialDir := VPropertyEditor.GetInitialDirectory;
+    VDialog.Title := VPropertyEditor.GetDialogTitle;
+    VDialog.FileName := VLibraryLoader.FileName;
+    if VDialog.Execute then
+    begin
+      VLibraryLoader.FileName := VDialog.FileName;
+      Designer.Modified;
+    end;
+  finally
+    VPropertyEditor.Free;
+  end;
+end;
+
+function TBrookLibraryFileNameComponentEditor.GetVerb(AIndex: Integer): string;
+begin
+  if AIndex = 0 then
+    Result := LoadResString(@SBrookSelectLibrary)
+  else
+    Result := inherited GetVerb(AIndex);
+end;
+
+procedure TBrookLibraryFileNameComponentEditor.ExecuteVerb(AIndex: Integer);
+begin
+  if AIndex = 0 then
+    Edit
+  else
+    inherited ExecuteVerb(AIndex);
+end;
+
 { TBrookOnRequestComponentEditor }
 
 procedure TBrookOnRequestComponentEditor.EditProperty(const AProperty:
-{$IFDEF FPC}TPropertyEditor{$ELSE}IProperty{$ENDIF}; var AContinue: Boolean);
+{$IFDEF LCL}TPropertyEditor{$ELSE}IProperty{$ENDIF}; var AContinue: Boolean);
 begin
   if SameText(AProperty.GetName, 'OnRequest') then
     inherited EditProperty(AProperty, AContinue);
