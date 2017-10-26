@@ -100,7 +100,7 @@ implementation
 constructor TBrookHTTPServerRequest.Create(AApp: TObject; AHandle: Pointer);
 begin
   inherited Create;
-  BFCheckLibrary;
+  B4RCheckLibrary;
   FHeaders := CreateHeaders(b4r_httpsrv_req_headers_ref(AHandle));
   FFields := CreateFields(b4r_httpsrv_req_fields_ref(AHandle));
   FParams := CreateParams(b4r_httpsrv_req_params_ref(AHandle));
@@ -199,7 +199,7 @@ function TBrookHTTPServerRequest.TryParam(const AName: string;
 var
   VVal: Pcchar;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_httpsrv_req_try_param(Freq, S2C(AName), @VVal);
   if Result then
     AValue := C2S(VVal);

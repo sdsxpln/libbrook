@@ -179,7 +179,7 @@ end;
 
 function TBrookHTTPServerRequestUpload.Save(AOverwritten: Boolean): Boolean;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_httpsrv_req_upld_save(Freq, Fupld, AOverwritten);
 end;
 
@@ -191,7 +191,7 @@ end;
 function TBrookHTTPServerRequestUpload.SaveAs(const AName: TFileName;
   AOverwritten: Boolean): Boolean;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_httpsrv_req_upld_save_as(Freq, Fupld, S2C(AName), AOverwritten);
 end;
 
@@ -202,7 +202,7 @@ end;
 
 procedure TBrookHTTPServerRequestUpload.Fail(const S: string);
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   b4r_httpsrv_req_upld_failf(Fupld, '%s', S2C(S));
 end;
 
@@ -214,7 +214,7 @@ end;
 
 function TBrookHTTPServerRequestUpload.GetError: string;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := C2S(b4r_httpsrv_req_upld_err(Fupld));
 end;
 
@@ -270,7 +270,7 @@ end;
 function TBrookHTTPServerRequestUploads.First(
   out AUpload: TBrookHTTPServerRequestUpload): Boolean;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_httpsrv_req_uplds_first(Freq, @Fupld);
   if Result and Assigned(Fupld) then
     AUpload := CreateItem(Self, Freq, Fupld);
@@ -279,7 +279,7 @@ end;
 function TBrookHTTPServerRequestUploads.Next(
   out AUpload: TBrookHTTPServerRequestUpload): Boolean;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_httpsrv_req_uplds_next(@Fupld);
   if Result and Assigned(Fupld) then
     AUpload := CreateItem(Self, Freq, Fupld);
@@ -287,7 +287,7 @@ end;
 
 function TBrookHTTPServerRequestUploads.GetCount: Integer;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_httpsrv_req_uplds_count(Freq);
 end;
 

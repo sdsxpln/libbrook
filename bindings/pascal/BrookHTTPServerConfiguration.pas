@@ -145,7 +145,7 @@ procedure TBrookHTTPServerConfiguration.Prepare;
 begin
   if FPrepared then
     Exit;
-  BFCheckLibrary;
+  B4RCheckLibrary;
   if (FFileName <> '') and (not FileExists(FFileName)) then
     raise EFileNotFoundException.CreateResFmt(@SFOpenError, [FFileName]);
   Fcfg := b4r_httpsrv_cfg_new(S2C(FFileName));
@@ -167,7 +167,7 @@ procedure TBrookHTTPServerConfiguration.Unprepare;
 begin
   if not FPrepared then
     Exit;
-  BFCheckLibrary;
+  B4RCheckLibrary;
   b4r_httpsrv_cfg_free(Fcfg);
   FPrepared := False;
 end;

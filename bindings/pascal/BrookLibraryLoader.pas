@@ -100,12 +100,12 @@ procedure TBrookLibraryLoader.DoLoad;
 begin
   if FLibLoaded then
     Exit;
-  BFUnloadLibrary;
+  B4RUnloadLibrary;
   FHandle := NilHandle;
   FLibLoaded := False;
   if (FFileName = '') or (not FileExists(FFileName)) then
     Exit;
-  FHandle := BFLoadLibrary(FFileName);
+  FHandle := B4RLoadLibrary(FFileName);
   FLibLoaded := FHandle <> NilHandle;
   if FLibLoaded then
     { TODO: get version. }

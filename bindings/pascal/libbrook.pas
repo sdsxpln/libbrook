@@ -91,10 +91,10 @@ const
 {$ENDIF}, '.', SharedSuffix);
 
 resourcestring
-  SBFLibraryNotLoaded = 'Brook library ''%s'' not loaded.';
+  SB4RLibraryNotLoaded = 'Brook library ''%s'' not loaded.';
 
 type
-  EBFLibraryNotLoaded = class(Exception);
+  EB4RLibraryNotLoaded = class(Exception);
 
 type
   cchar = AnsiChar;
@@ -456,11 +456,11 @@ function C2S(const S: pcchar): string; inline;
 
 function S2C(const S: string): pcchar; inline;
 
-function BFLoadLibrary(const AFileName: TFileName): TLibHandle;
+function B4RLoadLibrary(const AFileName: TFileName): TLibHandle;
 
-function BFUnloadLibrary: TLibHandle;
+function B4RUnloadLibrary: TLibHandle;
 
-procedure BFCheckLibrary;
+procedure B4RCheckLibrary;
 
 implementation
 
@@ -497,7 +497,7 @@ begin
   Result := pcchar({$IFNDEF FPC}AnsiString({$ENDIF}S{$IFNDEF FPC}){$ENDIF});
 end;
 
-function BFLoadLibrary(const AFileName: TFileName): TLibHandle;
+function B4RLoadLibrary(const AFileName: TFileName): TLibHandle;
 begin
   GLock.Acquire;
   try
@@ -593,7 +593,7 @@ begin
   end;
 end;
 
-function BFUnloadLibrary: TLibHandle;
+function B4RUnloadLibrary: TLibHandle;
 begin
   GLock.Acquire;
   try
@@ -685,18 +685,18 @@ begin
   end;
 end;
 
-procedure BFCheckLibrary;
+procedure B4RCheckLibrary;
 begin
   if GLibHandle = NilHandle then
-    raise EBFLibraryNotLoaded.CreateResFmt(@SBFLibraryNotLoaded, [GLastLibName]);
+    raise EB4RLibraryNotLoaded.CreateResFmt(@SB4RLibraryNotLoaded, [GLastLibName]);
 end;
 
 initialization
   GLock := TCriticalSection.Create;
-  BFLoadLibrary(B4R_LIB_NAME);
+  B4RLoadLibrary(B4R_LIB_NAME);
 
 finalization
-  BFUnloadLibrary;
+  B4RUnloadLibrary;
   FreeAndNil(GLock);
 
 end.

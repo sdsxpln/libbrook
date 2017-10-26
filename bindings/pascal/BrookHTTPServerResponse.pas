@@ -83,7 +83,7 @@ implementation
 constructor TBrookHTTPServerResponse.Create(AApp: TObject; AHandle: Pointer);
 begin
   inherited Create;
-  BFCheckLibrary;
+  B4RCheckLibrary;
   FHeaders := CreateHeaders(b4r_httpsrv_res_headers_ref(AHandle));
   FApp := AApp;
   Fres := AHandle;
@@ -129,14 +129,14 @@ procedure TBrookHTTPServerResponse.SetStatus(AValue: UInt16);
 begin
   if FStatus = AValue then
     Exit;
-  BFCheckLibrary;
+  B4RCheckLibrary;
   FStatus := AValue;
   b4r_httpsrv_res_status(Fres, FStatus);
 end;
 
 procedure TBrookHTTPServerResponse.Header(const AName, AValue: string);
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   b4r_httpsrv_res_header(Fres, S2C(AName), S2C(AValue));
 end;
 
@@ -144,21 +144,21 @@ procedure TBrookHTTPServerResponse.SetContentType(const AValue: string);
 begin
   if FContentType = AValue then
     Exit;
-  BFCheckLibrary;
+  B4RCheckLibrary;
   FContentType := AValue;
   b4r_httpsrv_res_content_type(Fres, S2C(FContentType));
 end;
 
 procedure TBrookHTTPServerResponse.WriteBuffer(const ABuffer; ASize: LongInt);
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   b4r_httpsrv_res_write_raw(Fres, @ABuffer, csize(ASize));
 end;
 
 procedure TBrookHTTPServerResponse.WriteBytes(const ABytes: TBytes;
   ASize: LongInt);
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   b4r_httpsrv_res_write_raw(Fres, @ABytes[0], csize(ASize));
 end;
 
@@ -167,7 +167,7 @@ procedure TBrookHTTPServerResponse.Write(const AString: string;
 var
   VBytes: TBytes;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   if Assigned(AEncoding) then
     VBytes := AEncoding.GetBytes(UnicodeString(AString))
   else
@@ -179,7 +179,7 @@ procedure TBrookHTTPServerResponse.Write(const AString: string);
 var
   S: AnsiString;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   S := AnsiString(AString);
   b4r_httpsrv_res_write_raw(Fres, @S[1], csize(Length(S)));
 end;
@@ -199,25 +199,25 @@ end;
 procedure TBrookHTTPServerResponse.Send(const AFmt: string;
   const AArgs: array of const);
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   b4r_httpsrv_res_send(Fres, '%s', S2C(Format(AFmt, AArgs)));
 end;
 
 procedure TBrookHTTPServerResponse.Send(const AString: string);
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   b4r_httpsrv_res_send(Fres, '%s', S2C(AString));
 end;
 
 procedure TBrookHTTPServerResponse.SendFile(const AFileName: TFileName);
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   b4r_httpsrv_res_send_file(Fres, S2C(AFileName));
 end;
 
 procedure TBrookHTTPServerResponse.Json(const AJson: string);
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   b4r_httpsrv_res_json(Fres, S2C(AJson));
 end;
 

@@ -48,19 +48,19 @@ implementation
 
 function BrookAlloc(ASize: NativeUInt): Pointer;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_alloc(ASize);
 end;
 
 procedure BrookFree(APtr: Pointer);
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   b4r_free(APtr);
 end;
 
 function BrookIsEmpty(const AStr: string): Boolean;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_is_empty(S2C(AStr));
 end;
 
@@ -68,7 +68,7 @@ function BrookASprintfVA(const AFmt: string; AVA: Pointer): string;
 var
   VRes: Pcchar;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   VRes := b4r_asprintf_va(S2C(AFmt), AVA);
   Result := C2S(VRes);
   b4r_free(VRes);
@@ -76,7 +76,7 @@ end;
 
 function BrookTmpDir: string;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := C2S(b4r_tmp_dir);
 end;
 
@@ -84,7 +84,7 @@ function BrookUuid(out AUuid: string): Boolean;
 var
   Vuuid: array[0..B4R_UUID_STR_LEN] of cchar;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_uuid(Vuuid);
   if Result then
     AUuid := C2S(Vuuid);

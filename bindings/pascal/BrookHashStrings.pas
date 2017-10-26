@@ -162,7 +162,7 @@ destructor TBrookHashStrings.Destroy;
 begin
   if not FExHandle then
   begin
-    BFCheckLibrary;
+    B4RCheckLibrary;
     b4r_hs_cleanup(@Fhsl);
   end;
   inherited Destroy;
@@ -186,25 +186,25 @@ end;
 
 function TBrookHashStrings.Add(const AName, AValue: string): Boolean;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_hs_add(@Fhsl, S2C(AName), S2C(AValue));
 end;
 
 function TBrookHashStrings.AddOrSet(const AName, AValue: string): Boolean;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_hs_add_or_set(@Fhsl, S2C(AName), S2C(AValue));
 end;
 
 function TBrookHashStrings.Remove(const AName: string): Boolean;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_hs_rm(@Fhsl, S2C(AName));
 end;
 
 function TBrookHashStrings.Find(const AName: string): string;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := C2S(b4r_hs_find_val(Fhsl, S2C(AName)));
 end;
 
@@ -213,7 +213,7 @@ function TBrookHashStrings.TryValue(const AName: string;
 var
   VVal: Pcchar;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_hs_try(Fhsl, S2C(AName), @VVal);
   if Result then
     AValue := C2S(VVal);
@@ -221,7 +221,7 @@ end;
 
 function TBrookHashStrings.Has(const AName: string): Boolean;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_hs_has(Fhsl, S2C(AName));
 end;
 
@@ -240,7 +240,7 @@ function TBrookHashStrings.ForEach(ACb: TBrookHashStringsIteratorEvent;
 var
   VMethod: TMethod;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   VMethod.Code := @ACb;
   VMethod.Data := AData;
   Result := b4r_hs_iter(Fhsl,{$IFNDEF VER3_0}@{$ENDIF}DoIterCb, @VMethod);
@@ -248,7 +248,7 @@ end;
 
 function TBrookHashStrings.First(out AItem: TBrookHashStringsItem): Boolean;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Fhs := Fhsl;
   Result := Assigned(Fhs);
   if Result then
@@ -257,7 +257,7 @@ end;
 
 function TBrookHashStrings.Next(out AItem: TBrookHashStringsItem): Boolean;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_hs_next(@Fhs);
   if Result and Assigned(Fhs) then
     AItem := CreateItem(Fhs);
@@ -265,7 +265,7 @@ end;
 
 function TBrookHashStrings.GetCount: Integer;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_hs_count(Fhsl);
 end;
 
@@ -276,7 +276,7 @@ end;
 
 procedure TBrookHashStrings.Clear;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   b4r_hs_cleanup(@Fhsl);
 end;
 
@@ -295,7 +295,7 @@ procedure TBrookHashStrings.Sort(ACmpCb: TBrookHashStringsSortEvent;
 var
   VMethod: TMethod;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   VMethod.Code := @ACmpCb;
   VMethod.Data := AData;
   b4r_hs_sort(@Fhsl, {$IFNDEF VER3_0}@{$ENDIF}DoSortCb, @VMethod);

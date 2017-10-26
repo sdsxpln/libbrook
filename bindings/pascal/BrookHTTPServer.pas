@@ -340,7 +340,7 @@ begin
   VReq := VSrv.CreateRequest(VSrv, Areq);
   VRes := VSrv.CreateResponse(VSrv, Ares);
   try
-    BFCheckLibrary;
+    B4RCheckLibrary;
     VSrv.DoRequestError(VSrv, VReq, VRes, C2S(Aerr), Adone^);
   finally
     VSrv.FreeResponse(VRes);
@@ -388,7 +388,7 @@ class procedure TBrookHTTPServer.DoErrCb(Acls: Pcvoid; const Aerr: Pcchar);
 var
   VSrv: TBrookHTTPServer absolute Acls;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   VSrv.DoError(VSrv, C2S(Aerr));
 end;
 
@@ -439,13 +439,13 @@ procedure TBrookHTTPServer.DoOpen;
 begin
   CheckConfiguration;
   FConfiguration.Prepare;
-  BFCheckLibrary;
+  B4RCheckLibrary;
   CreateServer;
 end;
 
 procedure TBrookHTTPServer.DoClose;
 begin
-  BFCheckLibrary;
+  B4RCheckLibrary;
   FreeServer;
 end;
 
@@ -491,7 +491,7 @@ begin
   if csDesigning in ComponentState then
   begin
     CheckConfiguration;
-    BFCheckLibrary;
+    B4RCheckLibrary;
   end
   else
     if AValue then
@@ -524,7 +524,7 @@ end;
 function TBrookHTTPServer.GetActiveConnections: Cardinal;
 begin
   CheckActive;
-  BFCheckLibrary;
+  B4RCheckLibrary;
   Result := b4r_httpsrv_active_conns(Fsrv);
 end;
 
