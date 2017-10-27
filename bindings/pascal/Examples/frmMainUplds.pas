@@ -32,6 +32,7 @@ unit frmMainUplds;
 interface
 
 uses
+  SysUtils,
   Classes,
 {$IFDEF FPC}
   LCLIntf,
