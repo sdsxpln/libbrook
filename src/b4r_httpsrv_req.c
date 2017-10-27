@@ -34,17 +34,17 @@
 #include "b4r_httpsrv_res.h"
 #include "b4r_httpsrv.h"
 
-#define _B4R_HTTPSRV_REQ_GET_PROP(el, mb, def) (el) ? el->mb : def
+#define _B4R_HTTPSRV_REQ_GET_PROP(el, mb, def) (el) ? (el)->mb : def
 
-#define _B4R_HTTPSRV_REQ_GET_VAL(el, mb, name) (el) ? b4r_hs_find_val(el->mb, name) : NULL
+#define _B4R_HTTPSRV_REQ_GET_VAL(el, mb, name) (el) ? b4r_hs_find_val((el)->mb, name) : NULL
 
-#define _B4R_HTTPSRV_REQ_TRY_VAL(el, mb, name, val) (el) && b4r_hs_try(el->mb, name, val)
+#define _B4R_HTTPSRV_REQ_TRY_VAL(el, mb, name, val) (el) && b4r_hs_try((el)->mb, name, val)
 
-#define _B4R_HTTPSRV_REQ_ITER(el, mb, iter_cb, iter_cls) (el) && b4r_hs_iter(el->mb, iter_cb, iter_cls)
+#define _B4R_HTTPSRV_REQ_ITER(el, mb, iter_cb, iter_cls) (el) && b4r_hs_iter((el)->mb, iter_cb, iter_cls)
 
-#define _B4R_HTTPSRV_REQ_REF(el, mb) (el) ? el->mb : NULL
+#define _B4R_HTTPSRV_REQ_REF(el, mb) (el) ? (el)->mb : NULL
 
-#define _B4R_HTTPSRV_REQ_PAYLOAD(el) (el) ? utstring_body(el->payload) : NULL
+#define _B4R_HTTPSRV_REQ_PAYLOAD(el) (el) ? utstring_body((el)->payload) : NULL
 
 struct _b4r_hs_kv_holder {
     struct b4r_hs **hsl;
