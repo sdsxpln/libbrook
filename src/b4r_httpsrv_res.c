@@ -63,7 +63,7 @@ do { \
 
 #define _B4R_HTTPSRV_RES_GET_BODY(res) (res) ? utstring_body((res)->body) : NULL
 
-#define _B4R_HTTPSRV_RES_REF(el, mb) (el) ? (el)->mb : NULL
+#define _B4R_HTTPSRV_RES_REF(el, mb) (el) ? (void **)(&(el)->mb) : NULL
 
 struct b4r_httpsrv_res *_b4r_httpsrv_res_new(struct b4r_httpsrv_req *req) {
     struct b4r_httpsrv_res *res;
@@ -184,7 +184,7 @@ void *b4r_httpsrv_res_owner(struct b4r_httpsrv_res *res) {
     return res ? res->req->owner : NULL;
 }
 
-void *b4r_httpsrv_res_headers_ref(struct b4r_httpsrv_res *res) {
+void **b4r_httpsrv_res_headers_ref(struct b4r_httpsrv_res *res) {
     return _B4R_HTTPSRV_RES_REF(res, headers);
 }
 

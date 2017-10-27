@@ -303,7 +303,7 @@ B4R_EXTERN bool b4r_httpsrv_req_try_header(struct b4r_httpsrv_req *req, const ch
 B4R_EXTERN bool b4r_httpsrv_req_iter_headers(struct b4r_httpsrv_req *req,
                                              b4r_hs_iter_cb iter_cb, void *iter_cls) __nonnull((1, 2));
 
-B4R_EXTERN void *b4r_httpsrv_req_headers_ref(struct b4r_httpsrv_req *req) __nonnull((1));
+B4R_EXTERN void **b4r_httpsrv_req_headers_ref(struct b4r_httpsrv_req *req) __nonnull((1));
 
 B4R_EXTERN const char *b4r_httpsrv_req_cookie(struct b4r_httpsrv_req *req, const char *name) __nonnull((1, 2));
 
@@ -313,7 +313,7 @@ B4R_EXTERN bool b4r_httpsrv_req_try_cookie(struct b4r_httpsrv_req *req, const ch
 B4R_EXTERN bool b4r_httpsrv_req_iter_cookies(struct b4r_httpsrv_req *req,
                                              b4r_hs_iter_cb iter_cb, void *iter_cls) __nonnull((1, 2));
 
-B4R_EXTERN void *b4r_httpsrv_req_cookies_ref(struct b4r_httpsrv_req *req) __nonnull((1));
+B4R_EXTERN void **b4r_httpsrv_req_cookies_ref(struct b4r_httpsrv_req *req) __nonnull((1));
 
 B4R_EXTERN const char *b4r_httpsrv_req_param(struct b4r_httpsrv_req *req, const char *name) __nonnull((1, 2));
 
@@ -323,7 +323,7 @@ B4R_EXTERN bool b4r_httpsrv_req_try_param(struct b4r_httpsrv_req *req, const cha
 B4R_EXTERN bool b4r_httpsrv_req_iter_params(struct b4r_httpsrv_req *req,
                                             b4r_hs_iter_cb iter_cb, void *iter_cls) __nonnull((1, 2));
 
-B4R_EXTERN void *b4r_httpsrv_req_params_ref(struct b4r_httpsrv_req *req) __nonnull((1));
+B4R_EXTERN void **b4r_httpsrv_req_params_ref(struct b4r_httpsrv_req *req) __nonnull((1));
 
 B4R_EXTERN const char *b4r_httpsrv_req_field(struct b4r_httpsrv_req *req, const char *name) __nonnull((1, 2));
 
@@ -333,7 +333,7 @@ B4R_EXTERN bool b4r_httpsrv_req_try_field(struct b4r_httpsrv_req *req, const cha
 B4R_EXTERN bool b4r_httpsrv_req_iter_fields(struct b4r_httpsrv_req *req,
                                             b4r_hs_iter_cb iter_cb, void *iter_cls) __nonnull((1, 2));
 
-B4R_EXTERN void *b4r_httpsrv_req_fields_ref(struct b4r_httpsrv_req *req) __nonnull((1));
+B4R_EXTERN void **b4r_httpsrv_req_fields_ref(struct b4r_httpsrv_req *req) __nonnull((1));
 
 B4R_EXTERN const char *b4r_httpsrv_req_payld(struct b4r_httpsrv_req *req) __nonnull((1));
 
@@ -385,7 +385,7 @@ B4R_EXTERN int b4r_httpsrv_req_upld_failf(struct b4r_httpsrv_req_upld *upld,
 
 B4R_EXTERN void *b4r_httpsrv_res_owner(struct b4r_httpsrv_res *res) __nonnull((1));
 
-B4R_EXTERN void *b4r_httpsrv_res_headers_ref(struct b4r_httpsrv_res *res) __nonnull((1));
+B4R_EXTERN void **b4r_httpsrv_res_headers_ref(struct b4r_httpsrv_res *res) __nonnull((1));
 
 B4R_EXTERN bool b4r_httpsrv_res_header(struct b4r_httpsrv_res *res, const char *name,
                                        const char *val) __nonnull((1, 2, 3));

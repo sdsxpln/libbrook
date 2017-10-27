@@ -42,7 +42,7 @@
 
 #define _B4R_HTTPSRV_REQ_ITER(el, mb, iter_cb, iter_cls) (el) && b4r_hs_iter((el)->mb, iter_cb, iter_cls)
 
-#define _B4R_HTTPSRV_REQ_REF(el, mb) (el) ? (el)->mb : NULL
+#define _B4R_HTTPSRV_REQ_REF(el, mb) (el) ? (void **)(&(el)->mb) : NULL
 
 #define _B4R_HTTPSRV_REQ_PAYLOAD(el) (el) ? utstring_body((el)->payload) : NULL
 
@@ -213,7 +213,7 @@ bool b4r_httpsrv_req_iter_headers(struct b4r_httpsrv_req *req, b4r_hs_iter_cb it
     return _B4R_HTTPSRV_REQ_ITER(req, headers, iter_cb, iter_cls);
 }
 
-void *b4r_httpsrv_req_headers_ref(struct b4r_httpsrv_req *req) {
+void **b4r_httpsrv_req_headers_ref(struct b4r_httpsrv_req *req) {
     return _B4R_HTTPSRV_REQ_REF(req, headers);
 }
 
@@ -229,7 +229,7 @@ bool b4r_httpsrv_req_iter_params(struct b4r_httpsrv_req *req, b4r_hs_iter_cb ite
     return _B4R_HTTPSRV_REQ_ITER(req, params, iter_cb, iter_cls);
 }
 
-void *b4r_httpsrv_req_params_ref(struct b4r_httpsrv_req *req) {
+void **b4r_httpsrv_req_params_ref(struct b4r_httpsrv_req *req) {
     return _B4R_HTTPSRV_REQ_REF(req, params);
 }
 
@@ -245,7 +245,7 @@ bool b4r_httpsrv_req_iter_cookies(struct b4r_httpsrv_req *req, b4r_hs_iter_cb it
     return _B4R_HTTPSRV_REQ_ITER(req, cookies, iter_cb, iter_cls);
 }
 
-void *b4r_httpsrv_req_cookies_ref(struct b4r_httpsrv_req *req) {
+void **b4r_httpsrv_req_cookies_ref(struct b4r_httpsrv_req *req) {
     return _B4R_HTTPSRV_REQ_REF(req, cookies);
 }
 
@@ -261,7 +261,7 @@ bool b4r_httpsrv_req_iter_fields(struct b4r_httpsrv_req *req, b4r_hs_iter_cb ite
     return _B4R_HTTPSRV_REQ_ITER(req, fields, iter_cb, iter_cls);
 }
 
-void *b4r_httpsrv_req_fields_ref(struct b4r_httpsrv_req *req) {
+void **b4r_httpsrv_req_fields_ref(struct b4r_httpsrv_req *req) {
     return _B4R_HTTPSRV_REQ_REF(req, fields);
 }
 
