@@ -79,6 +79,8 @@ begin
   begin
     lbDirectory.Caption := BrookHTTPServerConfiguration1.UploadsDir;
     BrookHTTPServer1.Open;
+    lbLink.Caption := Concat('http://localhost:',
+      dmMainUplds.BrookHTTPServer1.Port.ToString);
     lbLink.Enabled := True;
   end;
 end;
