@@ -57,8 +57,11 @@ bool _b4r_httpsrv_req_uplds_try_new(struct b4r_httpsrv_req_upld **uplds, struct 
 }
 
 void _b4r_httpsrv_req_uplds_free(struct b4r_httpsrv_req_upld *upld) {
-    if (upld->failed)
+    if (upld->failed) {
+        if (upld->stream)
+            fclose(upld->stream);
         unlink(upld->name);
+    }
     _B4R_FREE(upld->dir);
     _B4R_FREE(upld->name);
     _B4R_FREE(upld->orig_name);
@@ -96,6 +99,7 @@ bool _b4r_httpsrv_req_upld_file_save_cb(void *cls, struct b4r_httpsrv_req_upld *
         _b4r_httpsrv_req_upld_file_fail(upld, S_B4R_UPLD_FILE_FAILED_SAVE);
         return false;
     }
+    upld->stream = NULL;
     return true;
 }
 
