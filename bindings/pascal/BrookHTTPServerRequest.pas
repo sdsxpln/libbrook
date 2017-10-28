@@ -61,14 +61,14 @@ type
     FURI: string;
     FVersion: string;
   protected
-    function CreateHeaders(AHandle: Pointer): TBrookHashStrings; virtual;
+    function CreateHeaders(AHandle: PPointer): TBrookHashStrings; virtual;
     procedure FreeHeaders(AHeaders: TBrookHashStrings); virtual;
     function CreateUploads(
       AHandle: Pointer): TBrookHTTPServerRequestUploads; virtual;
     procedure FreeUploads(AUploads: TBrookHTTPServerRequestUploads); virtual;
-    function CreateFields(AHandle: Pointer): TBrookHashStrings; virtual;
+    function CreateFields(AHandle: PPointer): TBrookHashStrings; virtual;
     procedure FreeFields(AFields: TBrookHashStrings); virtual;
-    function CreateParams(AHandle: Pointer): TBrookHashStrings; virtual;
+    function CreateParams(AHandle: PPointer): TBrookHashStrings; virtual;
     procedure FreeParams(AParams: TBrookHashStrings); virtual;
     function GetHandle: Pointer; override;
   public
@@ -150,7 +150,7 @@ begin
 end;
 
 function TBrookHTTPServerRequest.CreateHeaders(
-  AHandle: Pointer): TBrookHashStrings;
+  AHandle: PPointer): TBrookHashStrings;
 begin
   Result := TBrookHashStrings.Create(AHandle);
 end;
@@ -173,7 +173,7 @@ begin
 end;
 
 function TBrookHTTPServerRequest.CreateFields(
-  AHandle: Pointer): TBrookHashStrings;
+  AHandle: PPointer): TBrookHashStrings;
 begin
   Result := TBrookHashStrings.Create(AHandle);
 end;
@@ -184,7 +184,7 @@ begin
 end;
 
 function TBrookHTTPServerRequest.CreateParams(
-  AHandle: Pointer): TBrookHashStrings;
+  AHandle: PPointer): TBrookHashStrings;
 begin
   Result := TBrookHashStrings.Create(AHandle);
 end;

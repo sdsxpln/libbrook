@@ -52,7 +52,7 @@ type
     procedure SetContentType(const AValue: string);
     procedure SetStatus(AValue: UInt16);
   protected
-    function CreateHeaders(AHandle: Pointer): TBrookHashStrings; virtual;
+    function CreateHeaders(AHandle: PPointer): TBrookHashStrings; virtual;
     procedure FreeHeaders(AHeaders: TBrookHashStrings); virtual;
     function GetHandle: Pointer; override;
   public
@@ -110,7 +110,7 @@ begin
 end;
 
 function TBrookHTTPServerResponse.CreateHeaders(
-  AHandle: Pointer): TBrookHashStrings;
+  AHandle: PPointer): TBrookHashStrings;
 begin
   Result := TBrookHashStrings.Create(AHandle);
 end;

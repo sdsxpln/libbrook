@@ -32,8 +32,10 @@ unit BrookHashStrings;
 interface
 
 uses
+  RTLConsts,
   SysUtils,
   libbrook,
+  Brook,
   BrookHandledClasses;
 
 type
@@ -80,7 +82,7 @@ type
   TBrookHashStrings = class(TBrookHandledPersistent)
   private
     Fhs: Pb4r_hs;
-    Fhsl: Pb4r_hs;
+    Fhsl: PPb4r_hs;
     FExHandle: Boolean;
   protected
     class function DoIterCb(Acls: Pcvoid; Ahs: Pb4r_hs): cbool; cdecl; static;
@@ -94,7 +96,7 @@ type
     property hs: Pb4r_hs read Fhs;
     property ExHandle: Boolean read FExHandle;
   public
-    constructor Create(AHandle: Pointer); virtual;
+    constructor Create(AHandle: PPointer); virtual;
     destructor Destroy; override;
     function GetEnumerator: TBrookHashStringsEnumerator;
     function Add(const AName, AValue: string): Boolean; virtual;
@@ -151,10 +153,12 @@ end;
 
 { TBrookHashStrings }
 
-constructor TBrookHashStrings.Create(AHandle: Pointer);
+constructor TBrookHashStrings.Create(AHandle: PPointer);
 begin
   inherited Create;
-  Fhsl := AHandle;
+  if not Assigned(AHandle) then
+    raise EArgumentNilException.CreateResFmt(@SParamIsNil, ['AHandle']);
+  PPointer(Fhsl) := AHandle;
   FExHandle := Assigned(Fhsl);
 end;
 
@@ -163,7 +167,7 @@ begin
   if not FExHandle then
   begin
     B4RCheckLibrary;
-    b4r_hs_cleanup(@Fhsl);
+    b4r_hs_cleanup(Fhsl);
   end;
   inherited Destroy;
 end;
@@ -187,25 +191,25 @@ end;
 function TBrookHashStrings.Add(const AName, AValue: string): Boolean;
 begin
   B4RCheckLibrary;
-  Result := b4r_hs_add(@Fhsl, S2C(AName), S2C(AValue));
+  Result := b4r_hs_add(Fhsl, S2C(AName), S2C(AValue));
 end;
 
 function TBrookHashStrings.AddOrSet(const AName, AValue: string): Boolean;
 begin
   B4RCheckLibrary;
-  Result := b4r_hs_add_or_set(@Fhsl, S2C(AName), S2C(AValue));
+  Result := b4r_hs_add_or_set(Fhsl, S2C(AName), S2C(AValue));
 end;
 
 function TBrookHashStrings.Remove(const AName: string): Boolean;
 begin
   B4RCheckLibrary;
-  Result := b4r_hs_rm(@Fhsl, S2C(AName));
+  Result := b4r_hs_rm(Fhsl, S2C(AName));
 end;
 
 function TBrookHashStrings.Find(const AName: string): string;
 begin
   B4RCheckLibrary;
-  Result := C2S(b4r_hs_find_val(Fhsl, S2C(AName)));
+  Result := C2S(b4r_hs_find_val(Fhsl^, S2C(AName)));
 end;
 
 function TBrookHashStrings.TryValue(const AName: string;
@@ -214,7 +218,7 @@ var
   VVal: Pcchar;
 begin
   B4RCheckLibrary;
-  Result := b4r_hs_try(Fhsl, S2C(AName), @VVal);
+  Result := b4r_hs_try(Fhsl^, S2C(AName), @VVal);
   if Result then
     AValue := C2S(VVal);
 end;
@@ -222,7 +226,7 @@ end;
 function TBrookHashStrings.Has(const AName: string): Boolean;
 begin
   B4RCheckLibrary;
-  Result := b4r_hs_has(Fhsl, S2C(AName));
+  Result := b4r_hs_has(Fhsl^, S2C(AName));
 end;
 
 class function TBrookHashStrings.DoIterCb(Acls: Pcvoid; Ahs: Pb4r_hs): cbool;
@@ -243,13 +247,13 @@ begin
   B4RCheckLibrary;
   VMethod.Code := @ACb;
   VMethod.Data := AData;
-  Result := b4r_hs_iter(Fhsl,{$IFNDEF VER3_0}@{$ENDIF}DoIterCb, @VMethod);
+  Result := b4r_hs_iter(Fhsl^,{$IFNDEF VER3_0}@{$ENDIF}DoIterCb, @VMethod);
 end;
 
 function TBrookHashStrings.First(out AItem: TBrookHashStringsItem): Boolean;
 begin
   B4RCheckLibrary;
-  Fhs := Fhsl;
+  Fhs := Fhsl^;
   Result := Assigned(Fhs);
   if Result then
     AItem := CreateItem(Fhs);
@@ -266,7 +270,7 @@ end;
 function TBrookHashStrings.GetCount: Integer;
 begin
   B4RCheckLibrary;
-  Result := b4r_hs_count(Fhsl);
+  Result := b4r_hs_count(Fhsl^);
 end;
 
 function TBrookHashStrings.IsEOF: Boolean;
@@ -277,7 +281,7 @@ end;
 procedure TBrookHashStrings.Clear;
 begin
   B4RCheckLibrary;
-  b4r_hs_cleanup(@Fhsl);
+  b4r_hs_cleanup(Fhsl);
 end;
 
 class function TBrookHashStrings.DoSortCb(Acls: Pcvoid; Aa, Ab: Pb4r_hs): cint;
@@ -298,7 +302,7 @@ begin
   B4RCheckLibrary;
   VMethod.Code := @ACmpCb;
   VMethod.Data := AData;
-  b4r_hs_sort(@Fhsl, {$IFNDEF VER3_0}@{$ENDIF}DoSortCb, @VMethod);
+  b4r_hs_sort(Fhsl, {$IFNDEF VER3_0}@{$ENDIF}DoSortCb, @VMethod);
 end;
 
 function TBrookHashStrings.Get(const AName: string): string;

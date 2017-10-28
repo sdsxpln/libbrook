@@ -122,6 +122,7 @@ type
 {$ENDIF}.size_t;
   cenum = cint;
   Pcvoid = Pointer;
+  PPcvoid = PPointer;
   cva_list = Pointer;
 
 const
@@ -347,11 +348,11 @@ var
   b4r_httpsrv_req_try_param: function(req: Pb4r_httpsrv_req; const name: Pcchar;
      const val: PPcchar): cbool; cdecl;
 
-  b4r_httpsrv_req_headers_ref: function(req: Pb4r_httpsrv_req): Pcvoid; cdecl;
+  b4r_httpsrv_req_headers_ref: function(req: Pb4r_httpsrv_req): PPcvoid; cdecl;
 
-  b4r_httpsrv_req_params_ref: function(req: Pb4r_httpsrv_req): Pcvoid; cdecl;
+  b4r_httpsrv_req_params_ref: function(req: Pb4r_httpsrv_req): PPcvoid; cdecl;
 
-  b4r_httpsrv_req_fields_ref: function(req: Pb4r_httpsrv_req): Pcvoid; cdecl;
+  b4r_httpsrv_req_fields_ref: function(req: Pb4r_httpsrv_req): PPcvoid; cdecl;
 
   b4r_httpsrv_req_payld: function(req: Pb4r_httpsrv_req): Pcchar; cdecl;
 
@@ -405,7 +406,7 @@ var
   b4r_httpsrv_req_upld_failf: function(upld: Pb4r_httpsrv_req_upld;
      const fmt: Pcchar): cint; cdecl varargs;
 
-  b4r_httpsrv_res_headers_ref: function(res: Pb4r_httpsrv_res): Pcvoid; cdecl;
+  b4r_httpsrv_res_headers_ref: function(res: Pb4r_httpsrv_res): PPcvoid; cdecl;
 
   b4r_httpsrv_res_header: function(res: Pb4r_httpsrv_res; const name: Pcchar; const val: Pcchar): cbool; cdecl;
 
