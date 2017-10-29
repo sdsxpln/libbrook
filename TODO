@@ -1,4 +1,3 @@
-- use literal string in all err_cb instead of valist;
 - add autogen script;
 - new examples;
 - coverage;
