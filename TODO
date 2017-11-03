@@ -1,4 +1,11 @@
-- add autogen script;
+- add autogen/autotools scripts;
+- doxygen docs;
+- automatic testing;
+- byte-serving;
+- media-types;
+- aptget/pacman availability;
+- regex-router;
+- restful-router;
 - new examples;
 - coverage;
 - delete this TODO. :-)
