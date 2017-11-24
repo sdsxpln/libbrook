@@ -88,7 +88,7 @@ extern "C" {
 
 #define B4R_ERR_SIZE 256
 
-#define B4R_UUID_STR_LEN 36
+#define B4R_UUID_STR_SIZE 36
 
 #define B4R_MD5_SIZE 16
 
