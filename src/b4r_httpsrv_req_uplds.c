@@ -37,7 +37,7 @@
 bool _b4r_httpsrv_req_uplds_try_new(struct b4r_httpsrv_req_upld **uplds, struct b4r_httpsrv_req_upld **upld,
                                     b4r_uuid_func uuid_func, const char *uplds_dir, const char *name, const char *field,
                                     const char *mime, const char *encoding) {
-    char uuid[B4R_UUID_STR_SIZE + 1];
+    char uuid[B4R_UUID_SIZE + 1];
     _B4R_NEW(upld);
     (*upld)->failed = true;
     if (!uuid_func(uuid))
