@@ -90,9 +90,9 @@ extern "C" {
 
 #define B4R_UUID_SIZE 36
 
-#define B4R_MD5_SIZE 16
+#define B4R_MD5_BUF_SIZE 16
 
-#define B4R_MD5_HASH_SIZE 32
+#define B4R_MD5_SIZE 32
 
 /* common */
 

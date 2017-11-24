@@ -381,7 +381,7 @@ bool b4r_uuid(char *uuid) {
 
 bool b4r_md5(const void *buf, unsigned long size, char *hash) {
     MD5_CTX ctx;
-    unsigned char ret[B4R_MD5_SIZE];
+    unsigned char ret[B4R_MD5_BUF_SIZE];
     if (buf || size > 0 || hash) {
         MD5_Init(&ctx);
         MD5_Update(&ctx, buf, size);
@@ -400,9 +400,9 @@ bool b4r_md5_hex(const void *buf, char *hash) {
     int8_t i;
     if (!buf || !hash)
         return false;
-    for (i = 0; i < B4R_MD5_SIZE; i++)
+    for (i = 0; i < B4R_MD5_BUF_SIZE; i++)
         _B4R_UI8H(((uint8_t *) buf)[i], hash + i * 2);
 #undef _B4R_UI8H
-    hash[B4R_MD5_HASH_SIZE] = '\0';
+    hash[B4R_MD5_SIZE] = '\0';
     return true;
 }
