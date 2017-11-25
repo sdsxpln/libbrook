@@ -165,3 +165,19 @@ target_link_libraries(httpsrv_upld ${LIBS})
 
 #add_executable(test_cfg ${TST_DIR}/test_cfg.c)
 #target_link_libraries(test_cfg ${LIBS})
+
+# doc (HTML/PDF)
+
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+    add_custom_target(doc ALL
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/doc
+            COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
+            COMMENT "Generating API HTML reference..." VERBATIM)
+    add_custom_target(doc-pdf ALL
+            DEPENDS doc
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/doc/latex
+            COMMAND $(MAKE)
+            COMMAND ${CMAKE_COMMAND} -E rename refman.pdf brook4rest-ref.pdf
+            COMMENT "Generating API PDF reference..." VERBATIM)
+endif ()
