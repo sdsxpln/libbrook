@@ -163,8 +163,12 @@ target_link_libraries(httpsrv_upld ${LIBS})
 
 # tests
 
-#add_executable(test_cfg ${TST_DIR}/test_cfg.c)
-#target_link_libraries(test_cfg ${LIBS})
+add_executable(test_utils ${TST_DIR}/test_utils.c)
+target_link_libraries(test_utils ${LIBS})
+enable_testing()
+add_test(NAME test_utils
+        WORKING_DIRECTORY ${TST_DIR}
+        COMMAND test_utils)
 
 # doc (HTML/PDF)
 
