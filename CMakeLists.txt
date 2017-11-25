@@ -82,6 +82,8 @@ set(EXP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/examples)
 
 set(TST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
+set(DOC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/doc)
+
 set(LIB_FILES
         ${INC_DIR}/brook.h
         ${SRC_DIR}/md5.c
@@ -171,12 +173,12 @@ target_link_libraries(httpsrv_upld ${LIBS})
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
     add_custom_target(doc ALL
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/doc
+            WORKING_DIRECTORY ${DOC_DIR}
             COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
             COMMENT "Generating API HTML reference..." VERBATIM)
     add_custom_target(doc-pdf ALL
             DEPENDS doc
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/doc/latex
+            WORKING_DIRECTORY ${DOC_DIR}/latex
             COMMAND $(MAKE)
             COMMAND ${CMAKE_COMMAND} -E rename refman.pdf brook4rest-ref.pdf
             COMMENT "Generating API PDF reference..." VERBATIM)
