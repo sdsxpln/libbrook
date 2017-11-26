@@ -26,9 +26,9 @@
 #
 
 AC_PREREQ([2.69])
-AC_INIT([libbrook], [0.0.0], [https://github.com/silvioprog/brook4rest/issues])
+AC_INIT([libbrook], [0.1.0], [https://github.com/silvioprog/brook4rest/issues])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADERS([config.h])
 
 AC_GNU_SOURCE
@@ -51,5 +51,10 @@ AC_TYPE_UINT64_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([floor memmove memset stpcpy strdup strerror strtoumax])
+
+AC_CONFIG_FILES([Makefile
+                 bindings/pascal/Makefile
+                 bindings/pascal/Examples/Makefile
+                 bindings/python/Makefile])
 
 AC_OUTPUT
