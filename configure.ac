@@ -55,6 +55,9 @@ AC_CHECK_FUNCS([floor memmove memset stpcpy strdup strerror strtoumax])
 AC_CONFIG_FILES([Makefile
                  bindings/pascal/Makefile
                  bindings/pascal/Examples/Makefile
-                 bindings/python/Makefile])
+                 bindings/python/Makefile
+                 cmake-modules/Makefile
+                 doc/Makefile
+                 include/Makefile])
 
 AC_OUTPUT
