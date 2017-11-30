@@ -34,7 +34,9 @@ AC_CONFIG_HEADERS([config.h])
 AC_GNU_SOURCE
 
 # Checks for programs.
+AM_PROG_AR
 AC_PROG_CC
+LT_INIT
 
 # Checks for libraries.
 
@@ -53,11 +55,22 @@ AC_FUNC_MALLOC
 AC_CHECK_FUNCS([floor memmove memset stpcpy strdup strerror strtoumax])
 
 AC_CONFIG_FILES([Makefile
-                 bindings/pascal/Makefile
                  bindings/pascal/Examples/Makefile
+                 bindings/pascal/Makefile
                  bindings/python/Makefile
                  cmake-modules/Makefile
                  doc/Makefile
-                 include/Makefile])
+                 include/Makefile
+                 src/Makefile])
+AX_SUBDIRS_CONFIGURE([libmicrohttpd], [
+  [--enable-static=yes],
+  [--enable-shared=no],
+  [--disable-doc],
+  [--disable-examples],
+  [--disable-curl],
+  [--disable-httpupgrade],
+  [--enable-https=no],
+  [--enable-asserts=no]
+])
 
 AC_OUTPUT

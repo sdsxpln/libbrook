@@ -5,4 +5,5 @@ SUBDIRS = \
   cmake-modules \
   doc \
   include \
+  src \
   .
