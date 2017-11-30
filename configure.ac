@@ -62,15 +62,13 @@ AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  include/Makefile
                  src/Makefile])
-AX_SUBDIRS_CONFIGURE([libmicrohttpd], [
-  [--enable-static=yes],
-  [--enable-shared=no],
-  [--disable-doc],
-  [--disable-examples],
-  [--disable-curl],
-  [--disable-httpupgrade],
-  [--enable-https=no],
-  [--enable-asserts=no]
-])
+AX_SUBDIRS_CONFIGURE([libmicrohttpd], [[--enable-static=yes],
+                                       [--enable-shared=no],
+                                       [--disable-doc],
+                                       [--disable-examples],
+                                       [--disable-curl],
+                                       [--disable-httpupgrade],
+                                       [--enable-https=no],
+                                       [--enable-asserts=no]])
 
 AC_OUTPUT
