@@ -54,6 +54,14 @@ AC_TYPE_UINT64_T
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([floor memmove memset stpcpy strdup strerror strtoumax])
 
+AX_SUBDIRS_CONFIGURE([libmicrohttpd], [[--enable-static=yes],
+                                       [--enable-shared=no],
+                                       [--disable-doc],
+                                       [--disable-examples],
+                                       [--disable-curl],
+                                       [--enable-https=no],
+                                       [--enable-asserts=no]])
+
 AC_CONFIG_FILES([Makefile
                  bindings/pascal/Examples/Makefile
                  bindings/pascal/Makefile
@@ -62,13 +70,5 @@ AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  include/Makefile
                  src/Makefile])
-AX_SUBDIRS_CONFIGURE([libmicrohttpd], [[--enable-static=yes],
-                                       [--enable-shared=no],
-                                       [--disable-doc],
-                                       [--disable-examples],
-                                       [--disable-curl],
-                                       [--disable-httpupgrade],
-                                       [--enable-https=no],
-                                       [--enable-asserts=no]])
 
 AC_OUTPUT
