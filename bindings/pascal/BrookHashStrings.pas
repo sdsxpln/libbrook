@@ -35,7 +35,6 @@ uses
   RTLConsts,
   SysUtils,
   libbrook,
-  Brook,
   BrookHandledClasses;
 
 type
