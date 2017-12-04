@@ -54,6 +54,35 @@ AC_TYPE_UINT64_T
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([floor memmove memset stpcpy strdup strerror strtoumax])
 
+AC_CANONICAL_HOST
+
+build_linux=no
+build_windows=no
+build_mac=no
+
+case "${host_os}" in
+    *linux*)
+        build_linux=yes
+        ;;
+    *cygwin*|*mingw*)
+        build_windows=yes
+        ;;
+    *darwin*)
+        build_mac=yes
+        ;;
+    *)
+        AC_MSG_ERROR(["OS $host_os is not supported"])
+        ;;
+esac
+
+AM_CONDITIONAL([LINUX], [test "x$build_linux" = "xyes"])
+AM_CONDITIONAL([WINDOWS], [test "x$build_windows" = "xyes"])
+AM_CONDITIONAL([OSX], [test "x$build_mac" = "xyes"])
+
+AM_COND_IF([WINDOWS], [CFLAGS="-static -Wno-nonnull-compare"], [CFLAGS=""])
+
+CFLAGS="-Wall -Werror $CFLAGS"
+
 AX_SUBDIRS_CONFIGURE([libmicrohttpd], [[--enable-static=yes],
                                        [--enable-shared=no],
                                        [--disable-doc],
