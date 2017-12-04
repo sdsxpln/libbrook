@@ -26,12 +26,12 @@
  */
 
 #include <libgen.h>
-#if defined(unix) || defined(__unix__) || defined(__unix)
-#include <limits.h>
-#endif
 #include <sys/stat.h>
 #include <microhttpd.h>
 #include "b4r_macros.h"
+#ifdef UNIX
+#include <limits.h>
+#endif
 #include "b4r_httpsrv_strs.h"
 #include <b4r_httpsrv_res_cache.h>
 #include "b4r_httpsrv_req.h"

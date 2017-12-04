@@ -29,7 +29,8 @@
 #include <stdbool.h>
 #include <inttypes.h>
 #include <string.h>
-#ifdef WIN32
+#include "b4r_macros.h"
+#ifdef WIN
 #include <unistd.h>
 #include <in6addr.h>
 #include <ws2tcpip.h>

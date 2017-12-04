@@ -32,13 +32,13 @@
 #include <string.h>
 #include <ctype.h>
 #include "md5.h"
-#ifdef WIN32
+#include "b4r_macros.h"
+#ifdef WIN
 #include <wchar.h>
 #include <rpc.h>
 #else
 #include <uuid/uuid.h>
 #endif
-#include "b4r_macros.h"
 #include <brook.h>
 
 #ifndef HAVE_STPCPY
@@ -58,7 +58,7 @@ char *stpcpy(char *dest, const char *src) {
 
 #endif
 
-#ifdef WIN32
+#ifdef WIN
 
 wchar_t *stow(const char *str) {
     wchar_t *res = NULL;
@@ -305,7 +305,7 @@ unknown:
 #if defined(__ANDROID__)
     return "/data/local/tmp";
 #else
-#ifdef _WIN32
+#ifdef WIN
     return "tmp";
 #else
     return "/tmp";
@@ -359,7 +359,7 @@ char *b4r_fmt_size(uint64_t size) {
 bool b4r_uuid(char *uuid) {
     if (!uuid)
         return NULL;
-#ifdef WIN32
+#ifdef WIN
     UUID buf;
     unsigned char *hash;
     int i;

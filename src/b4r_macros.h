@@ -44,7 +44,7 @@
 # define UNIX 1
 #endif
 #if !defined(WIN) && (defined(WIN32) || defined(_WIN32) || defined(_WIN64))
-#define WIN 1
+# define WIN 1
 #endif
 
 #ifndef _
