@@ -39,6 +39,14 @@
  * it easy to create a ".po" file so that applications that do
  * want to translate error messages can do so.
  */
+
+#if !defined(UNIX) && (defined(unix) || defined(__unix__) || defined(__unix))
+# define UNIX 1
+#endif
+#if !defined(WIN) && (defined(WIN32) || defined(_WIN32) || defined(_WIN64))
+#define WIN 1
+#endif
+
 #ifndef _
 # define _(String) (String)
 #endif
@@ -58,7 +66,7 @@
 #define PRIoS __PRIS_PREFIX "o"
 
 #ifndef DIR_SEP
-# if defined(WIN32) || defined(_WIN32)
+# ifdef WIN
 #  define DIR_SEP "\\"
 # else
 #  define DIR_SEP "/"
