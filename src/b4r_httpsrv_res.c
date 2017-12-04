@@ -25,9 +25,8 @@
  * along with Brook4-REST.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef WIN32
 #include <libgen.h>
-#else
+#if defined(unix) || defined(__unix__) || defined(__unix)
 #include <limits.h>
 #endif
 #include <sys/stat.h>
