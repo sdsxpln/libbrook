@@ -87,8 +87,8 @@
 } while (0)
 
 #define _B4R_NEW(p) do { \
-    *p = calloc(1, sizeof(**p)); \
-    if (!*p) { \
+    *(p) = calloc(1, sizeof(**(p))); \
+    if (!*(p)) { \
         errno = ENOMEM; \
         _B4R_DIE("%s", strerror(errno)); \
     } \
