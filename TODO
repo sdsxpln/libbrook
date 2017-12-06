@@ -1,3 +1,4 @@
+- consider usinf MarshaledAString on Pascal low-level binding;
 - add autogen/autotools scripts;
 - doxygen docs;
 - automatic testing;
