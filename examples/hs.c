@@ -62,7 +62,7 @@ static bool hs_iter_cb(void *cls, struct b4r_hs *hs) {
 static void chat(struct b4r_hs **hsl, const char *name, const char *msg) {
     b4r_hs_add_or_set(hsl, name, msg);
     if (!b4r_is_empty(msg))
-        printf("%c:\t%s\n", *name, b4r_hs_find_val(*hsl, name));
+        printf("%c:\t%s\n", *name, b4r_hs_get(*hsl, name));
 }
 
 int main() {

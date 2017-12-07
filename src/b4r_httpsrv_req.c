@@ -36,15 +36,7 @@
 
 #define _B4R_HTTPSRV_REQ_GET_PROP(el, mb, def) (el) ? (el)->mb : def
 
-#define _B4R_HTTPSRV_REQ_GET_VAL(el, mb, name) (el) ? b4r_hs_find_val((el)->mb, name) : NULL
-
-#define _B4R_HTTPSRV_REQ_TRY_VAL(el, mb, name, val) (el) && b4r_hs_try((el)->mb, name, val)
-
-#define _B4R_HTTPSRV_REQ_ITER(el, mb, iter_cb, iter_cls) (el) && b4r_hs_iter((el)->mb, iter_cb, iter_cls)
-
-#define _B4R_HTTPSRV_REQ_REF(el, mb) (el) ? (void **)(&(el)->mb) : NULL
-
-#define _B4R_HTTPSRV_REQ_PAYLOAD(el) (el) ? utstring_body((el)->payload) : NULL
+#define _B4R_HTTPSRV_REQ_REF(el, mb) (el) ? (&(el)->mb) : NULL
 
 struct _b4r_hs_kv_holder {
     struct b4r_hs **hsl;
@@ -201,72 +193,24 @@ bool b4r_httpsrv_req_is_post(struct b4r_httpsrv_req *req) {
     return (bool) (_B4R_HTTPSRV_REQ_GET_PROP(req, is_post, false));
 }
 
-const char *b4r_httpsrv_req_header(struct b4r_httpsrv_req *req, const char *name) {
-    return _B4R_HTTPSRV_REQ_GET_VAL(req, headers, name);
-}
-
-bool b4r_httpsrv_req_try_header(struct b4r_httpsrv_req *req, const char *name, const char **val) {
-    return _B4R_HTTPSRV_REQ_TRY_VAL(req, headers, name, val);
-}
-
-bool b4r_httpsrv_req_iter_headers(struct b4r_httpsrv_req *req, b4r_hs_iter_cb iter_cb, void *iter_cls) {
-    return _B4R_HTTPSRV_REQ_ITER(req, headers, iter_cb, iter_cls);
-}
-
-void **b4r_httpsrv_req_headers_ref(struct b4r_httpsrv_req *req) {
+struct b4r_hs **b4r_httpsrv_req_headers(struct b4r_httpsrv_req *req) {
     return _B4R_HTTPSRV_REQ_REF(req, headers);
 }
 
-const char *b4r_httpsrv_req_param(struct b4r_httpsrv_req *req, const char *name) {
-    return _B4R_HTTPSRV_REQ_GET_VAL(req, params, name);
-}
-
-bool b4r_httpsrv_req_try_param(struct b4r_httpsrv_req *req, const char *name, const char **val) {
-    return _B4R_HTTPSRV_REQ_TRY_VAL(req, params, name, val);
-}
-
-bool b4r_httpsrv_req_iter_params(struct b4r_httpsrv_req *req, b4r_hs_iter_cb iter_cb, void *iter_cls) {
-    return _B4R_HTTPSRV_REQ_ITER(req, params, iter_cb, iter_cls);
-}
-
-void **b4r_httpsrv_req_params_ref(struct b4r_httpsrv_req *req) {
+struct b4r_hs **b4r_httpsrv_req_params(struct b4r_httpsrv_req *req) {
     return _B4R_HTTPSRV_REQ_REF(req, params);
 }
 
-const char *b4r_httpsrv_req_cookie(struct b4r_httpsrv_req *req, const char *name) {
-    return _B4R_HTTPSRV_REQ_GET_VAL(req, cookies, name);
-}
-
-bool b4r_httpsrv_req_try_cookie(struct b4r_httpsrv_req *req, const char *name, const char **val) {
-    return _B4R_HTTPSRV_REQ_TRY_VAL(req, cookies, name, val);
-}
-
-bool b4r_httpsrv_req_iter_cookies(struct b4r_httpsrv_req *req, b4r_hs_iter_cb iter_cb, void *iter_cls) {
-    return _B4R_HTTPSRV_REQ_ITER(req, cookies, iter_cb, iter_cls);
-}
-
-void **b4r_httpsrv_req_cookies_ref(struct b4r_httpsrv_req *req) {
+struct b4r_hs **b4r_httpsrv_req_cookies(struct b4r_httpsrv_req *req) {
     return _B4R_HTTPSRV_REQ_REF(req, cookies);
 }
 
-const char *b4r_httpsrv_req_field(struct b4r_httpsrv_req *req, const char *name) {
-    return _B4R_HTTPSRV_REQ_GET_VAL(req, fields, name);
-}
-
-bool b4r_httpsrv_req_try_field(struct b4r_httpsrv_req *req, const char *name, const char **val) {
-    return _B4R_HTTPSRV_REQ_TRY_VAL(req, fields, name, val);
-}
-
-bool b4r_httpsrv_req_iter_fields(struct b4r_httpsrv_req *req, b4r_hs_iter_cb iter_cb, void *iter_cls) {
-    return _B4R_HTTPSRV_REQ_ITER(req, fields, iter_cb, iter_cls);
-}
-
-void **b4r_httpsrv_req_fields_ref(struct b4r_httpsrv_req *req) {
+struct b4r_hs **b4r_httpsrv_req_fields(struct b4r_httpsrv_req *req) {
     return _B4R_HTTPSRV_REQ_REF(req, fields);
 }
 
 const char *b4r_httpsrv_req_payld(struct b4r_httpsrv_req *req) {
-    return _B4R_HTTPSRV_REQ_PAYLOAD(req);
+    return req ? utstring_body(req->payload) : NULL;
 }
 
 bool b4r_httpsrv_req_write(struct b4r_httpsrv_req *req, const char *buf, size_t size) {
@@ -296,12 +240,4 @@ bool b4r_httpsrv_req_iter_uplds(struct b4r_httpsrv_req *req, b4r_httpsrv_req_upl
 
 #undef _B4R_HTTPSRV_REQ_GET_PROP
 
-#undef _B4R_HTTPSRV_REQ_GET_VAL
-
-#undef _B4R_HTTPSRV_REQ_TRY_VAL
-
-#undef _B4R_HTTPSRV_REQ_ITER
-
 #undef _B4R_HTTPSRV_REQ_REF
-
-#undef _B4R_HTTPSRV_REQ_PAYLOAD

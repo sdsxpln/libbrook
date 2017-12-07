@@ -152,7 +152,7 @@ struct b4r_hs *b4r_hs_find(struct b4r_hs *hsl, const char *name) {
     return hs;
 }
 
-const char *b4r_hs_find_val(struct b4r_hs *hsl, const char *name) {
+const char *b4r_hs_get(struct b4r_hs *hsl, const char *name) {
     struct b4r_hs *hs;
     hs = b4r_hs_find(hsl, name);
     return hs ? hs->val : NULL;

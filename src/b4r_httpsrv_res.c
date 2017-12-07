@@ -60,10 +60,6 @@ do { \
     va_end(va); \
 } while (0)
 
-#define _B4R_HTTPSRV_RES_GET_BODY(res) (res) ? utstring_body((res)->body) : NULL
-
-#define _B4R_HTTPSRV_RES_REF(el, mb) (el) ? (void **)(&(el)->mb) : NULL
-
 struct b4r_httpsrv_res *_b4r_httpsrv_res_new(struct b4r_httpsrv_req *req) {
     struct b4r_httpsrv_res *res;
     _B4R_NEW(&res);
@@ -183,8 +179,8 @@ void *b4r_httpsrv_res_owner(struct b4r_httpsrv_res *res) {
     return res ? res->req->owner : NULL;
 }
 
-void **b4r_httpsrv_res_headers_ref(struct b4r_httpsrv_res *res) {
-    return _B4R_HTTPSRV_RES_REF(res, headers);
+struct b4r_hs **b4r_httpsrv_res_headers(struct b4r_httpsrv_res *res) {
+    return res ? &res->headers : NULL;
 }
 
 bool b4r_httpsrv_res_header(struct b4r_httpsrv_res *res, const char *name, const char *val) {
@@ -277,11 +273,7 @@ bool b4r_httpsrv_res_json(struct b4r_httpsrv_res *res, const char *json) {
 }
 
 const char *b4r_httpsrv_res_body(struct b4r_httpsrv_res *res) {
-    return _B4R_HTTPSRV_RES_GET_BODY(res);
-}
-
-const char *b4r_httpsrv_res_read(struct b4r_httpsrv_res *res) {
-    return _B4R_HTTPSRV_RES_GET_BODY(res);
+    return res ? utstring_body(res->body) : NULL;
 }
 
 #undef _B4R_HTTPSRV_RES_RESET
@@ -289,7 +281,3 @@ const char *b4r_httpsrv_res_read(struct b4r_httpsrv_res *res) {
 #undef _B4R_HTTPSRV_RES_PRINTF_VA
 
 #undef _B4R_HTTPSRV_RES_PRINTF
-
-#undef _B4R_HTTPSRV_RES_GET_BODY
-
-#undef _B4R_HTTPSRV_RES_REF
