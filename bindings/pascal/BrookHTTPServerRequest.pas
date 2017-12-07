@@ -61,21 +61,20 @@ type
     FURI: string;
     FVersion: string;
   protected
-    function CreateHeaders(AHandle: PPointer): TBrookHashStrings; virtual;
+    function CreateHeaders(AHandle: PPb4r_hs): TBrookHashStrings; virtual;
     procedure FreeHeaders(AHeaders: TBrookHashStrings); virtual;
     function CreateUploads(
-      AHandle: Pointer): TBrookHTTPServerRequestUploads; virtual;
+      AHandle: Pb4r_httpsrv_req): TBrookHTTPServerRequestUploads; virtual;
     procedure FreeUploads(AUploads: TBrookHTTPServerRequestUploads); virtual;
-    function CreateFields(AHandle: PPointer): TBrookHashStrings; virtual;
+    function CreateFields(AHandle: PPb4r_hs): TBrookHashStrings; virtual;
     procedure FreeFields(AFields: TBrookHashStrings); virtual;
-    function CreateParams(AHandle: PPointer): TBrookHashStrings; virtual;
+    function CreateParams(AHandle: PPb4r_hs): TBrookHashStrings; virtual;
     procedure FreeParams(AParams: TBrookHashStrings); virtual;
     function GetHandle: Pointer; override;
   public
-    constructor Create(AApp: TObject; AHandle: Pointer); virtual;
+    constructor Create(AApp: TObject; AHandle: Pb4r_httpsrv_req); virtual;
     destructor Destroy; override;
     procedure Assign(ASource: TPersistent); override;
-    function TryParam(const AName: string; out AValue: string): Boolean;
     property App: TObject read FApp;
     property Version: string read FVersion;
     property Method: string read FMethod;
@@ -97,13 +96,14 @@ implementation
 
 { TBrookHTTPServerRequest }
 
-constructor TBrookHTTPServerRequest.Create(AApp: TObject; AHandle: Pointer);
+constructor TBrookHTTPServerRequest.Create(AApp: TObject;
+  AHandle: Pb4r_httpsrv_req);
 begin
   inherited Create;
   B4RCheckLibrary;
-  FHeaders := CreateHeaders(b4r_httpsrv_req_headers_ref(AHandle));
-  FFields := CreateFields(b4r_httpsrv_req_fields_ref(AHandle));
-  FParams := CreateParams(b4r_httpsrv_req_params_ref(AHandle));
+  FHeaders := CreateHeaders(b4r_httpsrv_req_headers(AHandle));
+  FFields := CreateFields(b4r_httpsrv_req_fields(AHandle));
+  FParams := CreateParams(b4r_httpsrv_req_params(AHandle));
   FUploads := CreateUploads(AHandle);
   Freq := AHandle;
   FApp := AApp;
@@ -150,7 +150,7 @@ begin
 end;
 
 function TBrookHTTPServerRequest.CreateHeaders(
-  AHandle: PPointer): TBrookHashStrings;
+  AHandle: PPb4r_hs): TBrookHashStrings;
 begin
   Result := TBrookHashStrings.Create(AHandle);
 end;
@@ -161,7 +161,7 @@ begin
 end;
 
 function TBrookHTTPServerRequest.CreateUploads(
-  AHandle: Pointer): TBrookHTTPServerRequestUploads;
+  AHandle: Pb4r_httpsrv_req): TBrookHTTPServerRequestUploads;
 begin
   Result := TBrookHTTPServerRequestUploads.Create(AHandle);
 end;
@@ -173,7 +173,7 @@ begin
 end;
 
 function TBrookHTTPServerRequest.CreateFields(
-  AHandle: PPointer): TBrookHashStrings;
+  AHandle: PPb4r_hs): TBrookHashStrings;
 begin
   Result := TBrookHashStrings.Create(AHandle);
 end;
@@ -184,7 +184,7 @@ begin
 end;
 
 function TBrookHTTPServerRequest.CreateParams(
-  AHandle: PPointer): TBrookHashStrings;
+  AHandle: PPb4r_hs): TBrookHashStrings;
 begin
   Result := TBrookHashStrings.Create(AHandle);
 end;
@@ -192,17 +192,6 @@ end;
 procedure TBrookHTTPServerRequest.FreeParams(AParams: TBrookHashStrings);
 begin
   AParams.Free;
-end;
-
-function TBrookHTTPServerRequest.TryParam(const AName: string;
-  out AValue: string): Boolean;
-var
-  VVal: Pcchar;
-begin
-  B4RCheckLibrary;
-  Result := b4r_httpsrv_req_try_param(Freq, S2C(AName), @VVal);
-  if Result then
-    AValue := C2S(VVal);
 end;
 
 function TBrookHTTPServerRequest.GetHandle: Pointer;

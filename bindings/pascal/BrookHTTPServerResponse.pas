@@ -52,14 +52,13 @@ type
     procedure SetContentType(const AValue: string);
     procedure SetStatus(AValue: UInt16);
   protected
-    function CreateHeaders(AHandle: PPointer): TBrookHashStrings; virtual;
+    function CreateHeaders(AHandle: PPb4r_hs): TBrookHashStrings; virtual;
     procedure FreeHeaders(AHeaders: TBrookHashStrings); virtual;
     function GetHandle: Pointer; override;
   public
-    constructor Create(AApp: TObject; AHandle: Pointer); virtual;
+    constructor Create(AApp: TObject; AHandle: Pb4r_httpsrv_res); virtual;
     destructor Destroy; override;
     procedure Assign(ASource: TPersistent); override;
-    procedure Header(const AName, AValue: string);
     procedure WriteBuffer(const ABuffer; ASize: LongInt);
     procedure WriteBytes(const ABytes: TBytes; ASize: LongInt);
     procedure Write(const AString: string; AEncoding: TEncoding); overload;
@@ -80,11 +79,12 @@ implementation
 
 { TBrookHTTPServerResponse }
 
-constructor TBrookHTTPServerResponse.Create(AApp: TObject; AHandle: Pointer);
+constructor TBrookHTTPServerResponse.Create(AApp: TObject;
+  AHandle: Pb4r_httpsrv_res);
 begin
   inherited Create;
   B4RCheckLibrary;
-  FHeaders := CreateHeaders(b4r_httpsrv_res_headers_ref(AHandle));
+  FHeaders := CreateHeaders(b4r_httpsrv_res_headers(AHandle));
   FApp := AApp;
   Fres := AHandle;
 end;
@@ -110,7 +110,7 @@ begin
 end;
 
 function TBrookHTTPServerResponse.CreateHeaders(
-  AHandle: PPointer): TBrookHashStrings;
+  AHandle: PPb4r_hs): TBrookHashStrings;
 begin
   Result := TBrookHashStrings.Create(AHandle);
 end;
@@ -132,12 +132,6 @@ begin
   B4RCheckLibrary;
   FStatus := AValue;
   b4r_httpsrv_res_status(Fres, FStatus);
-end;
-
-procedure TBrookHTTPServerResponse.Header(const AName, AValue: string);
-begin
-  B4RCheckLibrary;
-  b4r_httpsrv_res_header(Fres, S2C(AName), S2C(AValue));
 end;
 
 procedure TBrookHTTPServerResponse.SetContentType(const AValue: string);
@@ -222,4 +216,3 @@ begin
 end;
 
 end.
-

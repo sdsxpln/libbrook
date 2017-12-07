@@ -158,7 +158,7 @@ var
 
   b4r_hs_find: function(hsl: Pb4r_hs; const name: Pcchar): Pb4r_hs; cdecl;
 
-  b4r_hs_find_val: function(hsl: Pb4r_hs; const name: Pcchar): Pcchar; cdecl;
+  b4r_hs_get: function(hsl: Pb4r_hs; const name: Pcchar): Pcchar; cdecl;
 
   b4r_hs_try: function(hsl: Pb4r_hs; const name: Pcchar;
     const val: PPcchar): cbool; cdecl;
@@ -339,20 +339,11 @@ var
 
   b4r_httpsrv_req_is_post: function(req: Pb4r_httpsrv_req): cbool; cdecl;
 
-  b4r_httpsrv_req_header: function(req: Pb4r_httpsrv_req;
-    const name: Pcchar): Pcchar; cdecl;
+  b4r_httpsrv_req_headers: function(req: Pb4r_httpsrv_req): PPb4r_hs; cdecl;
 
-  b4r_httpsrv_req_param: function(req: Pb4r_httpsrv_req;
-    const name: Pcchar): pcchar; cdecl;
+  b4r_httpsrv_req_params: function(req: Pb4r_httpsrv_req): PPb4r_hs; cdecl;
 
-  b4r_httpsrv_req_try_param: function(req: Pb4r_httpsrv_req; const name: Pcchar;
-     const val: PPcchar): cbool; cdecl;
-
-  b4r_httpsrv_req_headers_ref: function(req: Pb4r_httpsrv_req): PPcvoid; cdecl;
-
-  b4r_httpsrv_req_params_ref: function(req: Pb4r_httpsrv_req): PPcvoid; cdecl;
-
-  b4r_httpsrv_req_fields_ref: function(req: Pb4r_httpsrv_req): PPcvoid; cdecl;
+  b4r_httpsrv_req_fields: function(req: Pb4r_httpsrv_req): PPb4r_hs; cdecl;
 
   b4r_httpsrv_req_payld: function(req: Pb4r_httpsrv_req): Pcchar; cdecl;
 
@@ -406,9 +397,7 @@ var
   b4r_httpsrv_req_upld_failf: function(upld: Pb4r_httpsrv_req_upld;
      const fmt: Pcchar): cint; cdecl varargs;
 
-  b4r_httpsrv_res_headers_ref: function(res: Pb4r_httpsrv_res): PPcvoid; cdecl;
-
-  b4r_httpsrv_res_header: function(res: Pb4r_httpsrv_res; const name: Pcchar; const val: Pcchar): cbool; cdecl;
+  b4r_httpsrv_res_headers: function(res: Pb4r_httpsrv_res): PPb4r_hs; cdecl;
 
   b4r_httpsrv_res_status: function(res: Pb4r_httpsrv_res;
     code: cuint16): cbool; cdecl;
@@ -518,7 +507,7 @@ begin
     b4r_hs_add_or_set := GetProcAddress(GLibHandle, 'b4r_hs_add_or_set');
     b4r_hs_rm := GetProcAddress(GLibHandle, 'b4r_hs_rm');
     b4r_hs_find := GetProcAddress(GLibHandle, 'b4r_hs_find');
-    b4r_hs_find_val := GetProcAddress(GLibHandle, 'b4r_hs_find_val');
+    b4r_hs_get := GetProcAddress(GLibHandle, 'b4r_hs_get');
     b4r_hs_try := GetProcAddress(GLibHandle, 'b4r_hs_try');
     b4r_hs_has := GetProcAddress(GLibHandle, 'b4r_hs_has');
     b4r_hs_iter := GetProcAddress(GLibHandle, 'b4r_hs_iter');
@@ -545,12 +534,9 @@ begin
     b4r_httpsrv_req_method := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_method');
     b4r_httpsrv_req_content_type := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_content_type');
     b4r_httpsrv_req_is_post := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_is_post');
-    b4r_httpsrv_req_header := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_header');
-    b4r_httpsrv_req_param := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_param');
-    b4r_httpsrv_req_try_param := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_try_param');
-    b4r_httpsrv_req_headers_ref := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_headers_ref');
-    b4r_httpsrv_req_params_ref := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_params_ref');
-    b4r_httpsrv_req_fields_ref := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_fields_ref');
+    b4r_httpsrv_req_headers := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_headers');
+    b4r_httpsrv_req_params := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_params');
+    b4r_httpsrv_req_fields := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_fields');
     b4r_httpsrv_req_payld := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_payld');
     b4r_httpsrv_req_iter_uplds := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_iter_uplds');
     b4r_httpsrv_req_uplds_first := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_uplds_first');
@@ -570,8 +556,7 @@ begin
     b4r_httpsrv_req_upld_err := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_err');
     b4r_httpsrv_req_upld_failf_va := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_failf_va');
     b4r_httpsrv_req_upld_failf := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_upld_failf');
-    b4r_httpsrv_res_headers_ref := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_headers_ref');
-    b4r_httpsrv_res_header := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_header');
+    b4r_httpsrv_res_headers := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_headers');
     b4r_httpsrv_res_status := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_status');
     b4r_httpsrv_res_content_type := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_content_type');
     b4r_httpsrv_res_write_raw := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_write_raw');
@@ -610,7 +595,7 @@ begin
     b4r_hs_add_or_set := nil;
     b4r_hs_rm := nil;
     b4r_hs_find := nil;
-    b4r_hs_find_val := nil;
+    b4r_hs_get := nil;
     b4r_hs_try := nil;
     b4r_hs_has := nil;
     b4r_hs_iter := nil;
@@ -637,12 +622,9 @@ begin
     b4r_httpsrv_req_method := nil;
     b4r_httpsrv_req_content_type := nil;
     b4r_httpsrv_req_is_post := nil;
-    b4r_httpsrv_req_header := nil;
-    b4r_httpsrv_req_param := nil;
-    b4r_httpsrv_req_try_param := nil;
-    b4r_httpsrv_req_headers_ref := nil;
-    b4r_httpsrv_req_params_ref := nil;
-    b4r_httpsrv_req_fields_ref := nil;
+    b4r_httpsrv_req_headers := nil;
+    b4r_httpsrv_req_params := nil;
+    b4r_httpsrv_req_fields := nil;
     b4r_httpsrv_req_payld := nil;
     b4r_httpsrv_req_iter_uplds := nil;
     b4r_httpsrv_req_uplds_first := nil;
@@ -663,8 +645,7 @@ begin
     b4r_httpsrv_req_upld_failf_va := nil;
     b4r_httpsrv_req_upld_failf := nil;
     b4r_httpsrv_res_write_va := nil;
-    b4r_httpsrv_res_headers_ref := nil;
-    b4r_httpsrv_res_header := nil;
+    b4r_httpsrv_res_headers := nil;
     b4r_httpsrv_res_status := nil;
     b4r_httpsrv_res_content_type := nil;
     b4r_httpsrv_res_write_raw := nil;

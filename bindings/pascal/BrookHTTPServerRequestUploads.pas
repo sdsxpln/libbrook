@@ -51,14 +51,15 @@ type
     FName: string;
     FOriginalName: string;
     FSize: UInt64;
-    FStream: Pointer;
+    FStream: Pcvoid;
     Fupld: Pb4r_httpsrv_req_upld;
     Freq: Pb4r_httpsrv_req;
     function GetError: string;
-    function GetHandle: Pointer;
-    function GetReqHandle: Pointer;
+    function GetHandle: Pb4r_httpsrv_req_upld;
+    function GetReqHandle: Pb4r_httpsrv_req;
   public
-    constructor Create(AReqHandle, AHandle, AStream: Pointer; ASize: UInt64;
+    constructor Create(AReqHandle: Pb4r_httpsrv_req;
+      AHandle: Pb4r_httpsrv_req_upld; AStream: Pcvoid; ASize: UInt64;
       const ADirectory, AName, AOriginalName, ADestinationName, AFieldName,
       AMimeType, AEncoding: string);
     function Save(AOverwritten: Boolean): Boolean; overload;
@@ -68,9 +69,9 @@ type
     function SaveAs(const AName: TFileName): Boolean; overload;
     procedure Fail(const S: string); overload;
     procedure Fail(const AFmt: string; const AArgs: array of const); overload;
-    property ReqHandle: Pointer read GetReqHandle;
-    property Handle: Pointer read GetHandle;
-    property Stream: Pointer read FStream;
+    property ReqHandle: Pb4r_httpsrv_req read GetReqHandle;
+    property Handle: Pb4r_httpsrv_req_upld read GetHandle;
+    property Stream: Pcvoid read FStream;
     property Size: UInt64 read FSize;
     property Directory: string read FDirectory;
     property Name: string read FName;
@@ -106,14 +107,15 @@ type
     class function CreateItem(
       AUplds: TBrookHTTPServerRequestUploads; Areq: Pb4r_httpsrv_req;
       Aupld: Pb4r_httpsrv_req_upld): TBrookHTTPServerRequestUpload; inline;
-    function CreateUpload(AReqHandle, AHandle, AStream: Pointer; ASize: UInt64;
+    function CreateUpload(AReqHandle: Pb4r_httpsrv_req;
+      AHandle: Pb4r_httpsrv_req_upld; AStream: Pcvoid; ASize: UInt64;
       const ADirectory, AName, AOriginalName, ADestinationName, AFieldName,
       AMimeType, AEncoding: string): TBrookHTTPServerRequestUpload; virtual;
     function GetHandle: Pointer; override;
     function IsEOF: Boolean; virtual;
     function GetCount: Integer; virtual;
   public
-    constructor Create(AHandle: Pointer); virtual;
+    constructor Create(AHandle: Pb4r_httpsrv_req); virtual;
     function GetEnumerator: TBrookHTTPServerRequestUploadsEnumerator;
     function First(out AUpload: TBrookHTTPServerRequestUpload): Boolean; virtual;
     function Next(out AUpload: TBrookHTTPServerRequestUpload): Boolean; virtual;
@@ -150,9 +152,10 @@ end;
 
 { TBrookHTTPServerRequestUpload }
 
-constructor TBrookHTTPServerRequestUpload.Create(AReqHandle, AHandle,
-  AStream: Pointer; ASize: UInt64; const ADirectory, AName, AOriginalName,
-  ADestinationName, AFieldName, AMimeType, AEncoding: string);
+constructor TBrookHTTPServerRequestUpload.Create(AReqHandle: Pb4r_httpsrv_req;
+  AHandle: Pb4r_httpsrv_req_upld; AStream: Pcvoid; ASize: UInt64;
+  const ADirectory, AName, AOriginalName, ADestinationName, AFieldName,
+  AMimeType, AEncoding: string);
 begin
   Freq := AReqHandle;
   Fupld := AHandle;
@@ -167,12 +170,12 @@ begin
   FEncoding := AEncoding;
 end;
 
-function TBrookHTTPServerRequestUpload.GetReqHandle: Pointer;
+function TBrookHTTPServerRequestUpload.GetReqHandle: Pb4r_httpsrv_req;
 begin
   Result := Freq;
 end;
 
-function TBrookHTTPServerRequestUpload.GetHandle: Pointer;
+function TBrookHTTPServerRequestUpload.GetHandle: Pb4r_httpsrv_req_upld;
 begin
   Result := Fupld;
 end;
@@ -220,7 +223,7 @@ end;
 
 { TBrookHTTPServerRequestUploads }
 
-constructor TBrookHTTPServerRequestUploads.Create(AHandle: Pointer);
+constructor TBrookHTTPServerRequestUploads.Create(AHandle: Pb4r_httpsrv_req);
 begin
   inherited Create;
   Freq := AHandle;
@@ -247,10 +250,10 @@ begin
     C2S(b4r_httpsrv_req_upld_encoding(Aupld)));
 end;
 
-function TBrookHTTPServerRequestUploads.CreateUpload(AReqHandle, AHandle,
-  AStream: Pointer; ASize: UInt64; const ADirectory, AName, AOriginalName,
-  ADestinationName, AFieldName, AMimeType,
-  AEncoding: string): TBrookHTTPServerRequestUpload;
+function TBrookHTTPServerRequestUploads.CreateUpload(
+  AReqHandle: Pb4r_httpsrv_req; AHandle: Pb4r_httpsrv_req_upld; AStream: Pcvoid;
+  ASize: UInt64; const ADirectory, AName, AOriginalName, ADestinationName,
+  AFieldName, AMimeType, AEncoding: string): TBrookHTTPServerRequestUpload;
 begin
   Result := TBrookHTTPServerRequestUpload.Create(AReqHandle, AHandle, AStream,
     ASize, ADirectory, AName, AOriginalName, ADestinationName, AFieldName,
