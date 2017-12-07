@@ -183,13 +183,6 @@ struct b4r_hs **b4r_httpsrv_res_headers(struct b4r_httpsrv_res *res) {
     return res ? &res->headers : NULL;
 }
 
-bool b4r_httpsrv_res_header(struct b4r_httpsrv_res *res, const char *name, const char *val) {
-    if (b4r_is_empty(name) || b4r_is_empty(val))
-        return false;
-    b4r_hs_add_or_set(&res->headers, name, val);
-    return true;
-}
-
 bool b4r_httpsrv_res_status(struct b4r_httpsrv_res *res, uint16_t code) {
     if (!res || code < 100 || code > 599)
         return false;

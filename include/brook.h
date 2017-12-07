@@ -132,7 +132,7 @@ B4R_EXTERN bool b4r_hs_name_val(struct b4r_hs *hs, const char **name, const char
 
 B4R_EXTERN bool b4r_hs_add(struct b4r_hs **hsl, const char *name, const char *val) __nonnull((1, 2));
 
-B4R_EXTERN bool b4r_hs_add_or_set(struct b4r_hs **hsl, const char *name, const char *val) __nonnull((1, 2));
+B4R_EXTERN bool b4r_hs_set(struct b4r_hs **hsl, const char *name, const char *val) __nonnull((1, 2));
 
 B4R_EXTERN bool b4r_hs_rm(struct b4r_hs **hsl, const char *name) __nonnull((1, 2));
 

@@ -101,7 +101,7 @@ bool b4r_hs_add(struct b4r_hs **hsl, const char *name, const char *val) {
     return true;
 }
 
-bool b4r_hs_add_or_set(struct b4r_hs **hsl, const char *name, const char *val) {
+bool b4r_hs_set(struct b4r_hs **hsl, const char *name, const char *val) {
     struct b4r_hs *hs;
     char *key;
     if (!hsl)

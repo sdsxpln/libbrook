@@ -143,7 +143,7 @@ static int _b4r_httpsrv_req_uplds_iter(void *cls, enum MHD_ValueKind kind, const
                     return MHD_NO;
                 }
             }
-        } else if (!b4r_hs_add_or_set(&req->fields, key, buf)) {
+        } else if (!b4r_hs_set(&req->fields, key, buf)) {
             _b4r_httpsrv_req_errf(req, S_B4R_FIELD_FAILED, key);
             return MHD_NO;
         }

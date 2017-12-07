@@ -98,7 +98,7 @@ void _b4r_httpsrv_req_errf(struct b4r_httpsrv_req *req, const char *fmt, ...) {
 
 static int _b4r_httpsrv_req_iter_kv(void *cls, enum MHD_ValueKind kind, const char *key, const char *val) {
     struct _b4r_hs_kv_holder *hldr = cls;
-    hldr->ok = b4r_hs_add_or_set(hldr->hsl, key, val);
+    hldr->ok = b4r_hs_set(hldr->hsl, key, val);
     return hldr->ok;
 }
 
