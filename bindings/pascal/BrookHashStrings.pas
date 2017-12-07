@@ -99,7 +99,7 @@ type
     destructor Destroy; override;
     function GetEnumerator: TBrookHashStringsEnumerator;
     function Add(const AName, AValue: string): Boolean; virtual;
-    function AddOrSet(const AName, AValue: string): Boolean; virtual;
+    function &Set(const AName, AValue: string): Boolean; virtual;
     function Remove(const AName: string): Boolean; virtual;
     function Get(const AName: string): string; virtual;
     function TryValue(const AName: string;
@@ -198,7 +198,7 @@ end;
 
 procedure TBrookHashStrings.SetValue(const AName: string; const AValue: string);
 begin
-  AddOrSet(AName, AValue);
+  &Set(AName, AValue);
 end;
 
 function TBrookHashStrings.Add(const AName, AValue: string): Boolean;
@@ -207,10 +207,10 @@ begin
   Result := b4r_hs_add(Fhsl, S2C(AName), S2C(AValue));
 end;
 
-function TBrookHashStrings.AddOrSet(const AName, AValue: string): Boolean;
+function TBrookHashStrings.&Set(const AName, AValue: string): Boolean;
 begin
   B4RCheckLibrary;
-  Result := b4r_hs_add_or_set(Fhsl, S2C(AName), S2C(AValue));
+  Result := b4r_hs_set(Fhsl, S2C(AName), S2C(AValue));
 end;
 
 function TBrookHashStrings.Remove(const AName: string): Boolean;

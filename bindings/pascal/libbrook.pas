@@ -151,7 +151,7 @@ var
   b4r_hs_add: function(hsl: PPb4r_hs; const name: Pcchar;
     const val: Pcchar): cbool; cdecl;
 
-  b4r_hs_add_or_set: function(hsl: PPb4r_hs; const name: Pcchar;
+  b4r_hs_set: function(hsl: PPb4r_hs; const name: Pcchar;
     const val: Pcchar): cbool; cdecl;
 
   b4r_hs_rm: function(hsl: PPb4r_hs; const name: Pcchar): cbool; cdecl;
@@ -504,7 +504,7 @@ begin
     b4r_hs_val := GetProcAddress(GLibHandle, 'b4r_hs_val');
     b4r_hs_name_val := GetProcAddress(GLibHandle, 'b4r_hs_name_val');
     b4r_hs_add := GetProcAddress(GLibHandle, 'b4r_hs_add');
-    b4r_hs_add_or_set := GetProcAddress(GLibHandle, 'b4r_hs_add_or_set');
+    b4r_hs_set := GetProcAddress(GLibHandle, 'b4r_hs_set');
     b4r_hs_rm := GetProcAddress(GLibHandle, 'b4r_hs_rm');
     b4r_hs_find := GetProcAddress(GLibHandle, 'b4r_hs_find');
     b4r_hs_get := GetProcAddress(GLibHandle, 'b4r_hs_get');
@@ -592,7 +592,7 @@ begin
     b4r_hs_val := nil;
     b4r_hs_name_val := nil;
     b4r_hs_add := nil;
-    b4r_hs_add_or_set := nil;
+    b4r_hs_set := nil;
     b4r_hs_rm := nil;
     b4r_hs_find := nil;
     b4r_hs_get := nil;
