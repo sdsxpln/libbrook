@@ -132,6 +132,7 @@ B4R_EXTERN bool b4r_hs_name_val(struct b4r_hs *hs, const char **name, const char
 
 B4R_EXTERN bool b4r_hs_add(struct b4r_hs **hsl, const char *name, const char *val) __nonnull((1, 2));
 
+/* TODO: remember in doc that b4r_hs_set() is similar to b4r_hs_add(), however it replace an already existed value instead of adding a newer one. */
 B4R_EXTERN bool b4r_hs_set(struct b4r_hs **hsl, const char *name, const char *val) __nonnull((1, 2));
 
 B4R_EXTERN bool b4r_hs_rm(struct b4r_hs **hsl, const char *name) __nonnull((1, 2));
