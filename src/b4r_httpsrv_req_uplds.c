@@ -32,7 +32,7 @@
 #include "b4r_httpsrv_req.h"
 #include "b4r_httpsrv.h"
 
-#define _B4R_HTTPSRV_REQ_UPLDS_GET_PROP(el, mb, def) (el) ? el->mb : def
+#define _B4R_HTTPSRV_REQ_UPLDS_GET_PROP(el, mb, def) (el) ? (el)->mb : def
 
 bool _b4r_httpsrv_req_uplds_try_new(struct b4r_httpsrv_req_upld **uplds, struct b4r_httpsrv_req_upld **upld,
                                     b4r_uuid_func uuid_func, const char *uplds_dir, const char *name, const char *field,
