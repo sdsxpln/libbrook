@@ -1,6 +1,7 @@
 AM_CPPFLAGS = \
   -I$(top_srcdir)/include \
-  -I$(top_srcdir)/uthash/src
+  -I$(top_srcdir)/uthash/src \
+  -I$(top_srcdir)/libmicrohttpd/src/include
 lib_LTLIBRARIES = libbrook.la
 libbrook_la_SOURCES = \
   b4r_hs.c \

@@ -238,8 +238,7 @@ char *b4r_asprintf_va(const char *fmt, va_list va) {
     char *res;
     if (vasprintf(&res, fmt, va) != -1)
         return res;
-    else
-        return NULL;
+    return NULL;
 }
 
 char *b4r_asprintf(const char *fmt, ...) {
@@ -267,15 +266,13 @@ bool b4r_is_post(const char *method) {
 char *b4r_add_path_suffix(const char *path) {
     if (b4r_is_empty(path) || b4r_has_suffix(path, DIR_SEP))
         return strdup(path);
-    else
-        return b4r_cat(path, DIR_SEP);
+    return b4r_cat(path, DIR_SEP);
 }
 
 char *b4r_add_path_prefix(const char *path) {
     if (b4r_is_empty(path) || b4r_has_prefix(path, DIR_SEP))
         return strdup(path);
-    else
-        return b4r_cat(DIR_SEP, path);
+    return b4r_cat(DIR_SEP, path);
 }
 
 const char *b4r_tmp_dir() {
@@ -324,27 +321,30 @@ char *b4r_fmt_size(uint64_t size) {
     if (size < _B4R_KB_FACTOR) {
         if (size > 1)
             return b4r_asprintf(_("%" PRIuS " bytes"), size);
-        else
-            return b4r_asprintf(_("%" PRIuS " byte"), size);
-    } else if (size < _B4R_MB_FACTOR) {
+        return b4r_asprintf(_("%" PRIuS " byte"), size);
+    }
+    if (size < _B4R_MB_FACTOR) {
         displayed_size = size / _B4R_KB_FACTOR;
         return b4r_asprintf(_("%.1f KB"), displayed_size);
-    } else if (size < _B4R_GB_FACTOR) {
+    }
+    if (size < _B4R_GB_FACTOR) {
         displayed_size = size / _B4R_MB_FACTOR;
         return b4r_asprintf(_("%.1f MB"), displayed_size);
-    } else if (size < _B4R_TB_FACTOR) {
+    }
+    if (size < _B4R_TB_FACTOR) {
         displayed_size = size / _B4R_GB_FACTOR;
         return b4r_asprintf(_("%.1f GB"), displayed_size);
-    } else if (size < _B4R_PB_FACTOR) {
+    }
+    if (size < _B4R_PB_FACTOR) {
         displayed_size = size / _B4R_TB_FACTOR;
         return b4r_asprintf(_("%.1f TB"), displayed_size);
-    } else if (size < _B4R_EB_FACTOR) {
+    }
+    if (size < _B4R_EB_FACTOR) {
         displayed_size = size / _B4R_PB_FACTOR;
         return b4r_asprintf(_("%.1f PB"), displayed_size);
-    } else {
-        displayed_size = size / _B4R_EB_FACTOR;
-        return b4r_asprintf(_("%.1f EB"), displayed_size);
     }
+    displayed_size = size / _B4R_EB_FACTOR;
+    return b4r_asprintf(_("%.1f EB"), displayed_size);
 #undef _B4R_KB_FACTOR
 #undef _B4R_MB_FACTOR
 #undef _B4R_GB_FACTOR
@@ -365,10 +365,10 @@ bool b4r_uuid(char *uuid) {
     int i;
     if (!(UuidCreateNil(&buf) == RPC_S_OK && UuidCreate(&buf) == RPC_S_OK && UuidToStringA(&buf, &hash) == RPC_S_OK))
         return false;
-    for (i = 0; i < B4R_UUID_STR_LEN; i++)
+    for (i = 0; i < B4R_UUID_SIZE; i++)
         uuid[i] = (char) tolower(hash[i]);
     RpcStringFree(&hash);
-    uuid[B4R_UUID_STR_LEN] = '\0';
+    uuid[B4R_UUID_SIZE] = '\0';
     return true;
 #else
     uuid_t buf = {};
