@@ -1,5 +1,7 @@
+- autotools: fix build on mingw;
 - use MarshaledAString on low-level Pascal binding (https://github.com/graemeg/freepascal/commit/1858c3cba68670f31d9db4eae3b54bc4d456e1e6);
 - add autogen/autotools scripts;
+- add VS building;
 - doxygen docs;
 - automatic testing;
 - byte-serving;
