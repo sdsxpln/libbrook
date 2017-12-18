@@ -28,6 +28,7 @@
 AC_PREREQ([2.69])
 AC_INIT([libbrook], [0.1.0], [https://github.com/silvioprog/brook4rest/issues])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
+AC_CONFIG_SRCDIR([src/b4r_httpsrv.c])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 
@@ -80,8 +81,6 @@ AM_CONDITIONAL([WINDOWS], [test "x$build_windows" = "xyes"])
 AM_CONDITIONAL([OSX], [test "x$build_mac" = "xyes"])
 
 AM_COND_IF([WINDOWS], [CFLAGS="-static -Wno-nonnull-compare"], [CFLAGS=""])
-
-CFLAGS="-Wall -Werror $CFLAGS"
 
 AX_SUBDIRS_CONFIGURE([libmicrohttpd], [[--enable-static=yes],
                                        [--enable-shared=no],
