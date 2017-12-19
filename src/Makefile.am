@@ -28,7 +28,7 @@ libbrook_la_SOURCES = \
   b4r_utils.h \
   md5.c \
   md5.h
-libbrook_la_CFLAGS = $(CFLAGS)
-libbrook_la_LDFLAGS = $(LDFLAGS)
+libbrook_la_CFLAGS = $(B4R_CFLAGS)
+libbrook_la_LDFLAGS = $(B4R_LDFLAGS)
 libbrook_la_LIBADD = \
   $(top_srcdir)/libmicrohttpd/src/microhttpd/libmicrohttpd.la

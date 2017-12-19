@@ -80,7 +80,18 @@ AM_CONDITIONAL([LINUX], [test "x$build_linux" = "xyes"])
 AM_CONDITIONAL([WINDOWS], [test "x$build_windows" = "xyes"])
 AM_CONDITIONAL([OSX], [test "x$build_mac" = "xyes"])
 
-AM_COND_IF([WINDOWS], [CFLAGS="-static -Wno-nonnull-compare"], [CFLAGS=""])
+AM_COND_IF([WINDOWS], [
+	B4R_CFLAGS=""
+	B4R_LDFLAGS="-no-undefined $LDFLAGS"
+], [
+	B4R_CFLAGS=""
+	B4R_LDFLAGS=""
+	CFLAGS=""
+])
+
+AC_SUBST(B4R_CFLAGS)
+
+AC_SUBST(B4R_LDFLAGS)
 
 AX_SUBDIRS_CONFIGURE([libmicrohttpd], [[--enable-static=yes],
                                        [--enable-shared=no],
