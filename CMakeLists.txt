@@ -25,8 +25,6 @@
 # along with Brook4-REST.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# *** Notice: our cmake build system is used only for debbuging purposes. ***
-
 cmake_minimum_required(VERSION 3.5)
 
 project(brook C)
@@ -118,6 +116,9 @@ endif ()
 
 if (MINGW)
     add_definitions(-DMINGW)
+    if (NOT _GNU_SOURCE)
+        add_definitions(-D_GNU_SOURCE)
+    endif ()
 endif ()
 
 # funcs
