@@ -28,7 +28,6 @@
 #ifndef B4R_UTILS_H
 #define B4R_UTILS_H
 
-#include "config.h"
 #include <brook.h>
 
 #ifndef HAVE_STPCPY

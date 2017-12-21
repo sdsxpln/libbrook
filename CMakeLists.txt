@@ -27,9 +27,14 @@
 
 # *** Notice: our cmake build system is used only for debbuging purposes. ***
 
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.5)
 
 project(brook C)
+
+# cmake modules
+
+include(GNUInstallDirs)
+include(CheckSymbolExists)
 
 # standard sets
 
@@ -56,11 +61,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror")
 # options
 
 option(ENABLE_HTTPS_SUPPORT "Enable HTTPS support" OFF)
-
-# cmake modules
-
-include(GNUInstallDirs)
-include(CheckSymbolExists)
 
 # sets
 
@@ -110,14 +110,22 @@ include_directories(${SRC_DIR})
 
 # defs
 
-CHECK_SYMBOL_EXISTS(__GNU_LIBRARY__ "features.h" _GNU_SOURCE)
+check_symbol_exists(__GNU_LIBRARY__ "features.h" _GNU_SOURCE)
 
 if (_GNU_SOURCE)
     add_definitions(-D_GNU_SOURCE)
 endif ()
 
 if (MINGW)
-    add_definitions(-DMINGW=1)
+    add_definitions(-DMINGW)
+endif ()
+
+# funcs
+
+check_symbol_exists(stpcpy "string.h" HAVE_STPCPY)
+
+if (HAVE_STPCPY)
+    add_definitions(-DHAVE_STPCPY)
 endif ()
 
 # libraries
@@ -138,13 +146,13 @@ endif ()
 # shared
 
 add_library(brook SHARED ${LIB_FILES})
-target_compile_definitions(brook PUBLIC -DB4R_SHARED_LIBRARY=1)
+target_compile_definitions(brook PUBLIC -DB4R_SHARED_LIBRARY)
 target_link_libraries(brook ${LIBS})
 
 # static
 
 add_library(brook_static STATIC ${LIB_FILES})
-target_compile_definitions(brook_static PUBLIC -DB4R_STATIC_LIBRARY=1)
+target_compile_definitions(brook_static PUBLIC -DB4R_STATIC_LIBRARY)
 set_target_properties(brook_static PROPERTIES OUTPUT_NAME brook)
 
 set(LIBS ${LIBS} brook)
