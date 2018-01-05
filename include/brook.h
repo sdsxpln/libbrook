@@ -345,6 +345,8 @@ B4R_EXTERN struct b4r_hs **b4r_httpsrv_req_fields(struct b4r_httpsrv_req *req) _
 
 B4R_EXTERN const char *b4r_httpsrv_req_payld(struct b4r_httpsrv_req *req) __nonnull((1));
 
+B4R_EXTERN size_t b4r_httpsrv_req_payld_size(struct b4r_httpsrv_req *req) __nonnull((1));
+
 B4R_EXTERN bool b4r_httpsrv_req_write(struct b4r_httpsrv_req *req, const char *buf, size_t size) __nonnull((1, 2));
 
 B4R_EXTERN bool b4r_httpsrv_req_send(struct b4r_httpsrv_req *req, const char *buf) __nonnull((1, 2));

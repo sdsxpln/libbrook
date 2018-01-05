@@ -213,6 +213,10 @@ const char *b4r_httpsrv_req_payld(struct b4r_httpsrv_req *req) {
     return req ? utstring_body(req->payload) : NULL;
 }
 
+size_t b4r_httpsrv_req_payld_size(struct b4r_httpsrv_req *req) {
+    return req ? utstring_len(req->payload) : (size_t) -1;
+}
+
 bool b4r_httpsrv_req_write(struct b4r_httpsrv_req *req, const char *buf, size_t size) {
     if (!req || !buf)
         return false;
