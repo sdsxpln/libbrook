@@ -29,14 +29,14 @@ cmake_minimum_required(VERSION 3.5)
 
 project(brook C)
 
+# standard sets
+
+set(CMAKE_C_STANDARD 99)
+
 # cmake modules
 
 include(GNUInstallDirs)
 include(CheckSymbolExists)
-
-# standard sets
-
-set(CMAKE_C_STANDARD 99)
 
 # build type
 
