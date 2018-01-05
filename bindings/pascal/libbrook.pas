@@ -347,6 +347,8 @@ var
 
   b4r_httpsrv_req_payld: function(req: Pb4r_httpsrv_req): Pcchar; cdecl;
 
+  b4r_httpsrv_req_payld_size: function(req: Pb4r_httpsrv_req): csize; cdecl;
+
   b4r_httpsrv_req_iter_uplds: function(req: Pb4r_httpsrv_req;
      iter_cb: b4r_httpsrv_req_uplds_iter_cb; iter_cls: Pcvoid): cbool; cdecl;
 
@@ -440,7 +442,7 @@ var
 
   b4r_uuid: function(uuid: Pcchar): cbool; cdecl;
 
-function C2B(const S: Pcchar): TBytes; inline;
+function C2B(const S: Pcchar; const Z: csize): TBytes; inline;
 
 function C2S(const S: pcchar): string; inline;
 
@@ -459,15 +461,12 @@ var
   GLibHandle: TLibHandle = NilHandle;
   GLastLibName: TFileName = B4R_LIB_NAME;
 
-function C2B(const S: Pcchar): TBytes;
-var
-  L: Integer;
+function C2B(const S: Pcchar; const Z: csize): TBytes;
 begin
-  L := Length(S);
-  if L = 0 then
+  if Z = 0 then
     Exit(nil);
-  SetLength(Result, L);
-  Move(S^, Result[0], L);
+  SetLength(Result, Z);
+  Move(S^, Result[0], Z);
 end;
 
 function C2S(const S: pcchar): string;
@@ -538,6 +537,7 @@ begin
     b4r_httpsrv_req_params := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_params');
     b4r_httpsrv_req_fields := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_fields');
     b4r_httpsrv_req_payld := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_payld');
+    b4r_httpsrv_req_payld_size := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_payld_size');
     b4r_httpsrv_req_iter_uplds := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_iter_uplds');
     b4r_httpsrv_req_uplds_first := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_uplds_first');
     b4r_httpsrv_req_uplds_next := GetProcAddress(GLibHandle, 'b4r_httpsrv_req_uplds_next');
@@ -626,6 +626,7 @@ begin
     b4r_httpsrv_req_params := nil;
     b4r_httpsrv_req_fields := nil;
     b4r_httpsrv_req_payld := nil;
+    b4r_httpsrv_req_payld_size := nil;
     b4r_httpsrv_req_iter_uplds := nil;
     b4r_httpsrv_req_uplds_first := nil;
     b4r_httpsrv_req_uplds_next := nil;

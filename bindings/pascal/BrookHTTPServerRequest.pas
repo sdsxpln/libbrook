@@ -56,6 +56,7 @@ type
     FPaths: TArray<string>;
     FApp: TObject;
     FPayload: TBytes;
+    FPayloadSize: NativeUInt;
     FIsPost: Boolean;
     FUploads: TBrookHTTPServerRequestUploads;
     FURI: string;
@@ -83,6 +84,7 @@ type
     property ID: string read FID;
     property Path: string read FPath;
     property Payload: TBytes read FPayload;
+    property PayloadSize: NativeUInt read FPayloadSize;
     property Headers: TBrookHashStrings read FHeaders;
     property Fields: TBrookHashStrings read FFields;
     property Params: TBrookHashStrings read FParams;
@@ -113,7 +115,8 @@ begin
   FURI := C2S(b4r_httpsrv_req_uri(Freq));
   FID := C2S(b4r_httpsrv_req_id(Freq));
   FPath := C2S(b4r_httpsrv_req_path(Freq));
-  FPayload := C2B(b4r_httpsrv_req_payld(AHandle));
+  FPayloadSize := b4r_httpsrv_req_payld_size(AHandle);
+  FPayload := C2B(b4r_httpsrv_req_payld(AHandle), FPayloadSize);
   FIsPost := b4r_httpsrv_req_is_post(Freq);
   FPaths := C2S(b4r_httpsrv_req_path(AHandle)).Split(['/'],
     TStringSplitOptions.ExcludeEmpty);
