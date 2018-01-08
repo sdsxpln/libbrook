@@ -68,12 +68,7 @@ type
 {$ENDIF}
 
 const
-{$IFDEF FPC}
- {$IFDEF VER3_0}
-  NilHandle = DynLibs.NilHandle;
- {$ENDIF}
-{$ELSE}
-  NilHandle = HMODULE(0);
+{$IF DEFINED(VER3_0) OR (NOT DEFINED(FPC))}
   SharedSuffix =
  {$IF DEFINED(MSWINDOWS)}
     'dll'
@@ -82,6 +77,13 @@ const
  {$ELSE}
     'so'
  {$ENDIF};
+{$ENDIF}
+{$IFDEF FPC}
+ {$IFDEF VER3_0}
+  NilHandle = DynLibs.NilHandle;
+ {$ENDIF}
+{$ELSE}
+  NilHandle = HMODULE(0);
 {$ENDIF}
   B4R_LIB_NAME = Concat(
 {$IFDEF MSWINDOWS}
