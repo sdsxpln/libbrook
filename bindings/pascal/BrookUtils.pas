@@ -85,9 +85,9 @@ var
   Vuuid: array[0..B4R_UUID_STR_LEN] of cchar;
 begin
   B4RCheckLibrary;
-  Result := b4r_uuid(Vuuid);
+  Result := b4r_uuid(@Vuuid);
   if Result then
-    AUuid := C2S(Vuuid);
+    AUuid := C2S(@Vuuid);
 end;
 
 end.
