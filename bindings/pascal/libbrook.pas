@@ -29,6 +29,10 @@ unit libbrook;
 
 {$IFDEF FPC}
  {$MODE DELPHI}
+ {$IFDEF VER3_0}
+  {$MACRO ON}
+  {$DEFINE MarshaledAString := PAnsiChar}
+ {$ENDIF}
 {$ENDIF}
 
 interface
@@ -99,9 +103,9 @@ type
   EB4RLibraryNotLoaded = class(Exception);
 
 type
-  cchar = AnsiChar;
-  Pcchar = PAnsiChar;
-  PPcchar = PPAnsiChar;
+  cchar = Byte;
+  Pcchar = PByte;
+  PPcchar = ^PByte;
   cbool = Boolean;
   Pcbool = PBoolean;
   cuint16 = UInt16;
@@ -472,15 +476,13 @@ begin
 end;
 
 function C2S(const S: pcchar): string;
-//var
-//  R: RawByteString;
+var
+  B: MarshaledAString;
 begin
-//  if not Assigned(S) then
-//    Exit('');
-//  SetString(R, S, Length(S) * SizeOf(AnsiChar));
-//  SetCodePage(R, CP_UTF8, False);
-//  Result := string(R);
-  Result := string({$IFNDEF FPC}AnsiString({$ENDIF}S{$IFNDEF FPC}){$ENDIF});
+  if not Assigned(S) then
+    Exit('');
+  B := MarshaledAString(@S[0]);
+  SetString(Result, B, Length(B));
 end;
 
 function S2C(const S: string): pcchar;

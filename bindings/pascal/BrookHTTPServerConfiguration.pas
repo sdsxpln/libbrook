@@ -152,14 +152,14 @@ begin
   FPrepared := Assigned(Fcfg);
   if FPrepared then
   begin
-    b4r_httpsrv_cfg_set(Fcfg, B4R_HTTPSRV_CFG_PORT, FPort);
-    b4r_httpsrv_cfg_set(Fcfg, B4R_HTTPSRV_CFG_MAX_BODY_SIZE, FMaxBodySize);
-    b4r_httpsrv_cfg_set(Fcfg, B4R_HTTPSRV_CFG_POST_BUF_SIZE, FPostBufferSize);
-    b4r_httpsrv_cfg_set(Fcfg, B4R_HTTPSRV_CFG_MAX_PAYLD_SIZE, FMaxPayloadSize);
-    b4r_httpsrv_cfg_set(Fcfg, B4R_HTTPSRV_CFG_MAX_UPLD_SIZE, FMaxUploadSize);
-    b4r_httpsrv_cfg_set(Fcfg, B4R_HTTPSRV_CFG_CONTENT_TYPE, S2C(FContentType));
-    b4r_httpsrv_cfg_set(Fcfg, B4R_HTTPSRV_CFG_UPLDS_DIR, S2C(FUploadsDir));
-    b4r_httpsrv_cfg_set(Fcfg, B4R_HTTPSRV_CFG_UUID_FUNC, @FUUIDFunc);
+    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_PORT), FPort);
+    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_MAX_BODY_SIZE), FMaxBodySize);
+    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_POST_BUF_SIZE), FPostBufferSize);
+    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_MAX_PAYLD_SIZE), FMaxPayloadSize);
+    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_MAX_UPLD_SIZE), FMaxUploadSize);
+    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_CONTENT_TYPE), S2C(FContentType));
+    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_UPLDS_DIR), S2C(FUploadsDir));
+    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_UUID_FUNC), @FUUIDFunc);
   end;
 end;
 

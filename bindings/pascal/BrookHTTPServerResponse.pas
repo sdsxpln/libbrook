@@ -194,13 +194,13 @@ procedure TBrookHTTPServerResponse.Send(const AFmt: string;
   const AArgs: array of const);
 begin
   B4RCheckLibrary;
-  b4r_httpsrv_res_send(Fres, '%s', S2C(Format(AFmt, AArgs)));
+  b4r_httpsrv_res_send(Fres, S2C('%s'), S2C(Format(AFmt, AArgs)));
 end;
 
 procedure TBrookHTTPServerResponse.Send(const AString: string);
 begin
   B4RCheckLibrary;
-  b4r_httpsrv_res_send(Fres, '%s', S2C(AString));
+  b4r_httpsrv_res_send(Fres, S2C('%s'), S2C(AString));
 end;
 
 procedure TBrookHTTPServerResponse.SendFile(const AFileName: TFileName);

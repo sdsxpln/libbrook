@@ -206,7 +206,7 @@ end;
 procedure TBrookHTTPServerRequestUpload.Fail(const S: string);
 begin
   B4RCheckLibrary;
-  b4r_httpsrv_req_upld_failf(Fupld, '%s', S2C(S));
+  b4r_httpsrv_req_upld_failf(Fupld, S2C('%s'), S2C(S));
 end;
 
 procedure TBrookHTTPServerRequestUpload.Fail(const AFmt: string;
