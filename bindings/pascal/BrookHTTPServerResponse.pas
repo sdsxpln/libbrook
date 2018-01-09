@@ -59,8 +59,8 @@ type
     constructor Create(AApp: TObject; AHandle: Pb4r_httpsrv_res); virtual;
     destructor Destroy; override;
     procedure Assign(ASource: TPersistent); override;
-    procedure WriteBuffer(const ABuffer; ASize: LongInt);
-    procedure WriteBytes(const ABytes: TBytes; ASize: LongInt);
+    procedure WriteBuffer(const ABuffer; ASize: Integer);
+    procedure WriteBytes(const ABytes: TBytes; ASize: Integer);
     procedure Write(const AString: string; AEncoding: TEncoding); overload;
     procedure Write(const AString: string); overload;
     procedure Write(const AFmt: string; const AArgs: array of const;
@@ -143,14 +143,14 @@ begin
   b4r_httpsrv_res_content_type(Fres, S2C(FContentType));
 end;
 
-procedure TBrookHTTPServerResponse.WriteBuffer(const ABuffer; ASize: LongInt);
+procedure TBrookHTTPServerResponse.WriteBuffer(const ABuffer; ASize: Integer);
 begin
   B4RCheckLibrary;
   b4r_httpsrv_res_write_raw(Fres, @ABuffer, csize(ASize));
 end;
 
 procedure TBrookHTTPServerResponse.WriteBytes(const ABytes: TBytes;
-  ASize: LongInt);
+  ASize: Integer);
 begin
   B4RCheckLibrary;
   b4r_httpsrv_res_write_raw(Fres, @ABytes[0], csize(ASize));
