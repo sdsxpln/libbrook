@@ -471,11 +471,14 @@ end;
 function C2S(const S: pcchar): string;
 var
   B: pcchar;
+  R: RawByteString;
 begin
   if not Assigned(S) then
     Exit('');
   B := pcchar(@S[0]);
-  SetString(Result, B, Length(B));
+  SetString(R, B, Length(B));
+  SetCodePage(R, CP_UTF8, False);
+  Result := string(R);
 end;
 
 function S2C(const S: string): pcchar;
@@ -484,7 +487,7 @@ var
   M: TMarshaller;
 {$ENDIF}
 begin
-  Result := pcchar({$IFDEF FPC}S{$ELSE}M.AsAnsi(S){$ENDIF});
+  Result := pcchar({$IFDEF FPC}S{$ELSE}M.AsUtf8(S){$ENDIF});
 end;
 
 function B4RLoadLibrary(const AFileName: TFileName): TLibHandle;

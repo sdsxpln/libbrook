@@ -34,6 +34,11 @@ interface
 uses
   SysUtils,
   Classes,
+{$IFNDEF FPC}
+ {$IFDEF MSWINDOWS}
+  Windows,
+ {$ENDIF}
+{$ENDIF}
   libbrook,
   BrookHandledClasses,
   BrookHTTPServerRequest,

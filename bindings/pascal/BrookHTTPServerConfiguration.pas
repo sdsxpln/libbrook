@@ -37,6 +37,9 @@ uses
   Classes,
 {$IFNDEF FPC}
   IOUtils,
+ {$IFDEF MSWINDOWS}
+  Windows,
+ {$ENDIF}
 {$ENDIF}
   libbrook,
   BrookHandledClasses;
