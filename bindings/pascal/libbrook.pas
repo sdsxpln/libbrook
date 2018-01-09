@@ -62,12 +62,6 @@ type
  {$ENDIF}
 {$ELSE}
 type
- {$IF DEFINED(NEXTGEN) AND DEFINED(POSIX)}
-  AnsiChar = UTF8Char;
-  AnsiString = UTF8String; { TODO: check if AnsiString is represented as UTF8String in the new BDS generations. }
-  PAnsiChar = PUTF8Char;
-  PPAnsiChar = ^PUTF8Char;
- {$ENDIF}
   TLibHandle = HMODULE;
 {$ENDIF}
 
