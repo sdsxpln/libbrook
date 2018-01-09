@@ -171,7 +171,7 @@ end;
 
 procedure TBrookHTTPServerResponse.Write(const AString: string);
 var
-  S: MarshaledAString;
+  S: Pcchar;
 begin
   B4RCheckLibrary;
   S := S2C(AString);

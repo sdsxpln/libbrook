@@ -476,17 +476,21 @@ end;
 
 function C2S(const S: pcchar): string;
 var
-  B: MarshaledAString;
+  B: pcchar;
 begin
   if not Assigned(S) then
     Exit('');
-  B := MarshaledAString(@S[0]);
+  B := pcchar(@S[0]);
   SetString(Result, B, Length(B));
 end;
 
 function S2C(const S: string): pcchar;
+{$IFNDEF FPC}
+var
+  M: TMarshaller;
+{$ENDIF}
 begin
-  Result := pcchar({$IFNDEF FPC}AnsiString({$ENDIF}S{$IFNDEF FPC}){$ENDIF});
+  Result := pcchar({$IFDEF FPC}S{$ELSE}M.AsAnsi(S){$ENDIF});
 end;
 
 function B4RLoadLibrary(const AFileName: TFileName): TLibHandle;
