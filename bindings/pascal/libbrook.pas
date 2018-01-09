@@ -469,7 +469,7 @@ var
 
 function C2B(const S: Pcchar; const Z: csize): TBytes;
 begin
-  if Z = 0 then
+  if (not Assigned(S)) or (Z = 0) then
     Exit(nil);
   SetLength(Result, Z);
   Move(S^, Result[0], Z);
