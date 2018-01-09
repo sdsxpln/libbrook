@@ -171,11 +171,11 @@ end;
 
 procedure TBrookHTTPServerResponse.Write(const AString: string);
 var
-  S: AnsiString;
+  S: MarshaledAString;
 begin
   B4RCheckLibrary;
-  S := AnsiString(AString);
-  b4r_httpsrv_res_write_raw(Fres, @S[1], csize(Length(S)));
+  S := S2C(AString);
+  b4r_httpsrv_res_write_raw(Fres, S, Length(S));
 end;
 
 procedure TBrookHTTPServerResponse.Write(const AFmt: string;

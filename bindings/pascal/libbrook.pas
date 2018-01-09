@@ -103,9 +103,8 @@ type
   EB4RLibraryNotLoaded = class(Exception);
 
 type
-  cchar = Byte;
-  Pcchar = PByte;
-  PPcchar = ^PByte;
+  Pcchar = MarshaledAString;
+  PPcchar = ^MarshaledAString;
   cbool = Boolean;
   Pcbool = PBoolean;
   cuint16 = UInt16;

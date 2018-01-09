@@ -29,6 +29,7 @@
  {$MODE DELPHI}
  {$IFDEF VER3_0}
   {$MACRO ON}
+  {$DEFINE MarshaledAString := PAnsiChar}
   {$DEFINE PMethod := ^TMethod}
   {$DEFINE EInvalidOpException := EInvalidOperation}
  {$ENDIF}

@@ -82,7 +82,7 @@ end;
 
 function BrookUuid(out AUuid: string): Boolean;
 var
-  Vuuid: array[0..B4R_UUID_STR_LEN] of cchar;
+  Vuuid: array[0..B4R_UUID_STR_LEN] of Byte;
 begin
   B4RCheckLibrary;
   Result := b4r_uuid(@Vuuid);
