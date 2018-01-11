@@ -175,12 +175,9 @@ begin
 end;
 
 procedure TBrookHTTPServerResponse.Write(const AString: string);
-var
-  S: Pcchar;
 begin
   B4RCheckLibrary;
-  S := S2C(AString);
-  b4r_httpsrv_res_write_raw(Fres, S, Length(S));
+  b4r_httpsrv_res_write(Fres, S2C(AString));
 end;
 
 procedure TBrookHTTPServerResponse.Write(const AFmt: string;
