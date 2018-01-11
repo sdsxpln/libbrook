@@ -472,16 +472,14 @@ function C2S(const S: pcchar): string;
 {$IFDEF FPC}
 var
   B: pcchar;
-  R: RawByteString;
 {$ENDIF}
 begin
   if not Assigned(S) then
     Exit('');
 {$IFDEF FPC}
   B := pcchar(@S[0]);
-  SetString(R, B, Length(B));
-  SetCodePage(R, CP_UTF8, False);
-  Result := string(R);
+  SetString(Result, B, Length(B));
+  SetCodePage(RawByteString(Result), CP_UTF8, False);
 {$ELSE}
   Result := TMarshal.ReadStringAsUtf8(TPtrWrapper.Create(S));
 {$ENDIF}
