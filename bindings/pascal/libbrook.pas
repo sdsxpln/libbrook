@@ -441,11 +441,19 @@ var
 
   b4r_uuid: function(uuid: Pcchar): cbool; cdecl;
 
+type
+{$IFDEF FPC}
+  TMarshaller = record
+{$ELSE}
+  TMarshallerHelper = record helper for TMarshaller
+{$ENDIF}
+  public
+    function ToC(const S: string): Pcchar; inline;
+  end;
+
 function C2B(const S: Pcchar; const Z: csize): TBytes; inline;
 
 function C2S(const S: pcchar): string; inline;
-
-function S2C(const S: string): pcchar; inline;
 
 function B4RLoadLibrary(const AFileName: TFileName): TLibHandle;
 
@@ -483,15 +491,6 @@ begin
 {$ELSE}
   Result := TMarshal.ReadStringAsUtf8(TPtrWrapper.Create(S));
 {$ENDIF}
-end;
-
-function S2C(const S: string): pcchar;
-{$IFNDEF FPC}
-var
-  M: TMarshaller;
-{$ENDIF}
-begin
-  Result := {$IFDEF FPC}pcchar(S){$ELSE}M.AsAnsi(S, CP_UTF8).ToPointer{$ENDIF};
 end;
 
 function B4RLoadLibrary(const AFileName: TFileName): TLibHandle;
@@ -680,6 +679,19 @@ procedure B4RCheckLibrary;
 begin
   if GLibHandle = NilHandle then
     raise EB4RLibraryNotLoaded.CreateResFmt(@SB4RLibraryNotLoaded, [GLastLibName]);
+end;
+
+{ TMarshallerHelper }
+
+function {$IFDEF FPC}TMarshaller{$ELSE}TMarshallerHelper{$ENDIF}.ToC(
+  const S: string): Pcchar;
+begin
+  Result :=
+{$IFDEF FPC}
+    Pcchar(S)
+{$ELSE}
+    AsAnsi(S, CP_UTF8).ToPointer
+{$ENDIF};
 end;
 
 initialization

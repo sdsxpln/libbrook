@@ -207,44 +207,55 @@ begin
 end;
 
 function TBrookHashStrings.Add(const AName, AValue: string): Boolean;
+var
+  M: TMarshaller;
 begin
   B4RCheckLibrary;
-  Result := b4r_hs_add(Fhsl, S2C(AName), S2C(AValue));
+  Result := b4r_hs_add(Fhsl, M.ToC(AName), M.ToC(AValue));
 end;
 
 function TBrookHashStrings.&Set(const AName, AValue: string): Boolean;
+var
+  M: TMarshaller;
 begin
   B4RCheckLibrary;
-  Result := b4r_hs_set(Fhsl, S2C(AName), S2C(AValue));
+  Result := b4r_hs_set(Fhsl, M.ToC(AName), M.ToC(AValue));
 end;
 
 function TBrookHashStrings.Remove(const AName: string): Boolean;
+var
+  M: TMarshaller;
 begin
   B4RCheckLibrary;
-  Result := b4r_hs_rm(Fhsl, S2C(AName));
+  Result := b4r_hs_rm(Fhsl, M.ToC(AName));
 end;
 
 function TBrookHashStrings.Get(const AName: string): string;
+var
+  M: TMarshaller;
 begin
   B4RCheckLibrary;
-  Result := C2S(b4r_hs_get(Fhsl^, S2C(AName)));
+  Result := C2S(b4r_hs_get(Fhsl^, M.ToC(AName)));
 end;
 
 function TBrookHashStrings.TryValue(const AName: string;
   out AValue: string): Boolean;
 var
-  VVal: Pcchar;
+  V: Pcchar;
+  M: TMarshaller;
 begin
   B4RCheckLibrary;
-  Result := b4r_hs_try(Fhsl^, S2C(AName), @VVal);
+  Result := b4r_hs_try(Fhsl^, M.ToC(AName), @V);
   if Result then
-    AValue := C2S(VVal);
+    AValue := C2S(V);
 end;
 
 function TBrookHashStrings.Has(const AName: string): Boolean;
+var
+  M: TMarshaller;
 begin
   B4RCheckLibrary;
-  Result := b4r_hs_has(Fhsl^, S2C(AName));
+  Result := b4r_hs_has(Fhsl^, M.ToC(AName));
 end;
 
 class function TBrookHashStrings.DoIterCb(Acls: Pcvoid; Ahs: Pb4r_hs): cbool;

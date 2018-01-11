@@ -145,24 +145,26 @@ begin
 end;
 
 procedure TBrookHTTPServerConfiguration.Prepare;
+var
+  M: TMarshaller;
 begin
   if FPrepared then
     Exit;
   B4RCheckLibrary;
   if (FFileName <> '') and (not FileExists(FFileName)) then
     raise EFileNotFoundException.CreateResFmt(@SFOpenError, [FFileName]);
-  Fcfg := b4r_httpsrv_cfg_new(S2C(FFileName));
+  Fcfg := b4r_httpsrv_cfg_new(M.ToC(FFileName));
   FPrepared := Assigned(Fcfg);
   if FPrepared then
   begin
-    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_PORT), FPort);
-    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_MAX_BODY_SIZE), FMaxBodySize);
-    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_POST_BUF_SIZE), FPostBufferSize);
-    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_MAX_PAYLD_SIZE), FMaxPayloadSize);
-    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_MAX_UPLD_SIZE), FMaxUploadSize);
-    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_CONTENT_TYPE), S2C(FContentType));
-    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_UPLDS_DIR), S2C(FUploadsDir));
-    b4r_httpsrv_cfg_set(Fcfg, S2C(B4R_HTTPSRV_CFG_UUID_FUNC), @FUUIDFunc);
+    b4r_httpsrv_cfg_set(Fcfg, M.ToC(B4R_HTTPSRV_CFG_PORT), FPort);
+    b4r_httpsrv_cfg_set(Fcfg, M.ToC(B4R_HTTPSRV_CFG_MAX_BODY_SIZE), FMaxBodySize);
+    b4r_httpsrv_cfg_set(Fcfg, M.ToC(B4R_HTTPSRV_CFG_POST_BUF_SIZE), FPostBufferSize);
+    b4r_httpsrv_cfg_set(Fcfg, M.ToC(B4R_HTTPSRV_CFG_MAX_PAYLD_SIZE), FMaxPayloadSize);
+    b4r_httpsrv_cfg_set(Fcfg, M.ToC(B4R_HTTPSRV_CFG_MAX_UPLD_SIZE), FMaxUploadSize);
+    b4r_httpsrv_cfg_set(Fcfg, M.ToC(B4R_HTTPSRV_CFG_CONTENT_TYPE), M.ToC(FContentType));
+    b4r_httpsrv_cfg_set(Fcfg, M.ToC(B4R_HTTPSRV_CFG_UPLDS_DIR), M.ToC(FUploadsDir));
+    b4r_httpsrv_cfg_set(Fcfg, M.ToC(B4R_HTTPSRV_CFG_UUID_FUNC), @FUUIDFunc);
   end;
 end;
 

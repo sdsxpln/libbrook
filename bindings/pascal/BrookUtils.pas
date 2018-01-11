@@ -59,19 +59,22 @@ begin
 end;
 
 function BrookIsEmpty(const AStr: string): Boolean;
+var
+  M: TMarshaller;
 begin
   B4RCheckLibrary;
-  Result := b4r_is_empty(S2C(AStr));
+  Result := b4r_is_empty(M.ToC(AStr));
 end;
 
 function BrookASprintfVA(const AFmt: string; AVA: Pointer): string;
 var
-  VRes: Pcchar;
+  R: Pcchar;
+  M: TMarshaller;
 begin
   B4RCheckLibrary;
-  VRes := b4r_asprintf_va(S2C(AFmt), AVA);
-  Result := C2S(VRes);
-  b4r_free(VRes);
+  R := b4r_asprintf_va(M.ToC(AFmt), AVA);
+  Result := C2S(R);
+  b4r_free(R);
 end;
 
 function BrookTmpDir: string;

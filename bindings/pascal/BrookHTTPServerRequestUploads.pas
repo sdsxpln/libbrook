@@ -198,9 +198,11 @@ end;
 
 function TBrookHTTPServerRequestUpload.SaveAs(const AName: TFileName;
   AOverwritten: Boolean): Boolean;
+var
+  M: TMarshaller;
 begin
   B4RCheckLibrary;
-  Result := b4r_httpsrv_req_upld_save_as(Freq, Fupld, S2C(AName), AOverwritten);
+  Result := b4r_httpsrv_req_upld_save_as(Freq, Fupld, M.ToC(AName), AOverwritten);
 end;
 
 function TBrookHTTPServerRequestUpload.SaveAs(const AName: TFileName): Boolean;
@@ -209,9 +211,11 @@ begin
 end;
 
 procedure TBrookHTTPServerRequestUpload.Fail(const S: string);
+var
+  M: TMarshaller;
 begin
   B4RCheckLibrary;
-  b4r_httpsrv_req_upld_failf(Fupld, S2C('%s'), S2C(S));
+  b4r_httpsrv_req_upld_failf(Fupld, M.ToC('%s'), M.ToC(S));
 end;
 
 procedure TBrookHTTPServerRequestUpload.Fail(const AFmt: string;
@@ -300,4 +304,3 @@ begin
 end;
 
 end.
-
