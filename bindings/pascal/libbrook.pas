@@ -681,7 +681,7 @@ begin
     raise EB4RLibraryNotLoaded.CreateResFmt(@SB4RLibraryNotLoaded, [GLastLibName]);
 end;
 
-{ TMarshallerHelper }
+{ TMarshaller* }
 
 function {$IFDEF FPC}TMarshaller{$ELSE}TMarshallerHelper{$ENDIF}.ToC(
   const S: string): Pcchar;
