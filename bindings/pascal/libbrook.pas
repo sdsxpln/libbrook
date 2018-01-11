@@ -491,7 +491,7 @@ var
   M: TMarshaller;
 {$ENDIF}
 begin
-  Result := pcchar({$IFDEF FPC}S{$ELSE}M.AsUtf8(S){$ENDIF});
+  Result := {$IFDEF FPC}pcchar(S){$ELSE}M.AsAnsi(S, CP_UTF8).ToPointer{$ENDIF};
 end;
 
 function B4RLoadLibrary(const AFileName: TFileName): TLibHandle;
