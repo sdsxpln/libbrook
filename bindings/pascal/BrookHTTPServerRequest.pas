@@ -121,7 +121,7 @@ begin
   FID := C2S(b4r_httpsrv_req_id(Freq));
   FPath := C2S(b4r_httpsrv_req_path(Freq));
   FPayloadSize := b4r_httpsrv_req_payld_size(AHandle);
-  FPayload := C2B(b4r_httpsrv_req_payld(AHandle), FPayloadSize);
+  FPayload := TMarshal.ToBytes(b4r_httpsrv_req_payld(AHandle), FPayloadSize);
   FIsPost := b4r_httpsrv_req_is_post(Freq);
   FPaths := C2S(b4r_httpsrv_req_path(AHandle)).Split(['/'],
     TStringSplitOptions.ExcludeEmpty);

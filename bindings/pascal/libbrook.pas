@@ -443,6 +443,16 @@ var
 
 type
 {$IFDEF FPC}
+  TMarshal = record
+{$ELSE}
+  TMarshalHelper = class helper for TMarshal
+{$ENDIF}
+  public
+    class function ToBytes(const S: Pcchar;
+      const Z: csize): TBytes; static; inline;
+  end;
+
+{$IFDEF FPC}
   TMarshaller = record
 {$ELSE}
   TMarshallerHelper = record helper for TMarshaller
@@ -450,8 +460,6 @@ type
   public
     function ToC(const S: string): Pcchar; inline;
   end;
-
-function C2B(const S: Pcchar; const Z: csize): TBytes; inline;
 
 function C2S(const S: pcchar): string; inline;
 
@@ -467,14 +475,6 @@ var
   GLock: TCriticalSection = nil;
   GLibHandle: TLibHandle = NilHandle;
   GLastLibName: TFileName = B4R_LIB_NAME;
-
-function C2B(const S: Pcchar; const Z: csize): TBytes;
-begin
-  if (not Assigned(S)) or (Z = 0) then
-    Exit(nil);
-  SetLength(Result, Z);
-  Move(S^, Result[0], Z);
-end;
 
 function C2S(const S: pcchar): string;
 {$IFDEF FPC}
@@ -679,6 +679,17 @@ procedure B4RCheckLibrary;
 begin
   if GLibHandle = NilHandle then
     raise EB4RLibraryNotLoaded.CreateResFmt(@SB4RLibraryNotLoaded, [GLastLibName]);
+end;
+
+{ TMarshal* }
+
+class function {$IFDEF FPC}TMarshal{$ELSE}TMarshalHelper{$ENDIF}.ToBytes(
+  const S: Pcchar; const Z: csize): TBytes;
+begin
+  if (not Assigned(S)) or (Z = 0) then
+    Exit(nil);
+  SetLength(Result, Z);
+  System.Move(S^, Result[0], Z);
 end;
 
 { TMarshaller* }
