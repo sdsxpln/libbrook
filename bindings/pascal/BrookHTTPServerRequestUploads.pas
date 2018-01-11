@@ -202,7 +202,8 @@ var
   M: TMarshaller;
 begin
   B4RCheckLibrary;
-  Result := b4r_httpsrv_req_upld_save_as(Freq, Fupld, M.ToC(AName), AOverwritten);
+  Result := b4r_httpsrv_req_upld_save_as(Freq, Fupld, M.ToCString(AName),
+    AOverwritten);
 end;
 
 function TBrookHTTPServerRequestUpload.SaveAs(const AName: TFileName): Boolean;
@@ -215,7 +216,7 @@ var
   M: TMarshaller;
 begin
   B4RCheckLibrary;
-  b4r_httpsrv_req_upld_failf(Fupld, M.ToC('%s'), M.ToC(S));
+  b4r_httpsrv_req_upld_failf(Fupld, M.ToCString('%s'), M.ToCString(S));
 end;
 
 procedure TBrookHTTPServerRequestUpload.Fail(const AFmt: string;
@@ -227,7 +228,7 @@ end;
 function TBrookHTTPServerRequestUpload.GetError: string;
 begin
   B4RCheckLibrary;
-  Result := C2S(b4r_httpsrv_req_upld_err(Fupld));
+  Result := TMarshal.ToString(b4r_httpsrv_req_upld_err(Fupld));
 end;
 
 { TBrookHTTPServerRequestUploads }
@@ -250,13 +251,13 @@ begin
   Result := AUplds.CreateUpload(Areq, Aupld,
     b4r_httpsrv_req_upld_stream(Aupld),
     b4r_httpsrv_req_upld_size(Aupld),
-    C2S(b4r_httpsrv_req_upld_dir(Aupld)),
-    C2S(b4r_httpsrv_req_upld_name(Aupld)),
-    C2S(b4r_httpsrv_req_upld_orig_name(Aupld)),
-    C2S(b4r_httpsrv_req_upld_dest_name(Aupld)),
-    C2S(b4r_httpsrv_req_upld_field(Aupld)),
-    C2S(b4r_httpsrv_req_upld_mime(Aupld)),
-    C2S(b4r_httpsrv_req_upld_encoding(Aupld)));
+    TMarshal.ToString(b4r_httpsrv_req_upld_dir(Aupld)),
+    TMarshal.ToString(b4r_httpsrv_req_upld_name(Aupld)),
+    TMarshal.ToString(b4r_httpsrv_req_upld_orig_name(Aupld)),
+    TMarshal.ToString(b4r_httpsrv_req_upld_dest_name(Aupld)),
+    TMarshal.ToString(b4r_httpsrv_req_upld_field(Aupld)),
+    TMarshal.ToString(b4r_httpsrv_req_upld_mime(Aupld)),
+    TMarshal.ToString(b4r_httpsrv_req_upld_encoding(Aupld)));
 end;
 
 function TBrookHTTPServerRequestUploads.CreateUpload(

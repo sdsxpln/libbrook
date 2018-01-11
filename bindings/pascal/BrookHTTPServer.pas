@@ -293,7 +293,8 @@ class procedure TBrookHTTPServer.DoConCb(Acls: Pcvoid; const Aid: Pcchar;
 var
   VSrv: TBrookHTTPServer absolute Acls;
 begin
-  (VSrv as TBrookHTTPServer).DoConnection(VSrv, C2S(Aid), Aclosed);
+  (VSrv as TBrookHTTPServer).DoConnection(VSrv, TMarshal.ToString(Aid),
+    Aclosed);
 end;
 
 class procedure TBrookHTTPServer.DoReqInitCb(Acls: Pcvoid; const Aid: Pcchar;
@@ -301,8 +302,8 @@ class procedure TBrookHTTPServer.DoReqInitCb(Acls: Pcvoid; const Aid: Pcchar;
 var
   VSrv: TBrookHTTPServer absolute Acls;
 begin
-  (VSrv as TBrookHTTPServer).DoBeforeRequest(VSrv, C2S(Aid),
-    C2S(Auri), Aaborted^);
+  (VSrv as TBrookHTTPServer).DoBeforeRequest(VSrv, TMarshal.ToString(Aid),
+    TMarshal.ToString(Auri), Aaborted^);
 end;
 
 class procedure TBrookHTTPServer.DoReqFiniCb(Acls: Pcvoid; Afinished: cbool);
@@ -346,7 +347,7 @@ begin
   VRes := VSrv.CreateResponse(VSrv, Ares);
   try
     B4RCheckLibrary;
-    VSrv.DoRequestError(VSrv, VReq, VRes, C2S(Aerr), Adone^);
+    VSrv.DoRequestError(VSrv, VReq, VRes, TMarshal.ToString(Aerr), Adone^);
   finally
     VSrv.FreeResponse(VRes);
     VSrv.FreeRequest(VReq);
@@ -394,7 +395,7 @@ var
   VSrv: TBrookHTTPServer absolute Acls;
 begin
   B4RCheckLibrary;
-  VSrv.DoError(VSrv, C2S(Aerr));
+  VSrv.DoError(VSrv, TMarshal.ToString(Aerr));
 end;
 
 procedure TBrookHTTPServer.DoError(ASender: TObject; const AErrorMsg: string);

@@ -450,6 +450,7 @@ type
   public
     class function ToBytes(const S: Pcchar;
       const Z: csize): TBytes; static; inline;
+    class function ToString(const S: Pcchar): string; static; inline;
   end;
 
 {$IFDEF FPC}
@@ -458,10 +459,8 @@ type
   TMarshallerHelper = record helper for TMarshaller
 {$ENDIF}
   public
-    function ToC(const S: string): Pcchar; inline;
+    function ToCString(const S: string): Pcchar; inline;
   end;
-
-function C2S(const S: pcchar): string; inline;
 
 function B4RLoadLibrary(const AFileName: TFileName): TLibHandle;
 
@@ -475,23 +474,6 @@ var
   GLock: TCriticalSection = nil;
   GLibHandle: TLibHandle = NilHandle;
   GLastLibName: TFileName = B4R_LIB_NAME;
-
-function C2S(const S: pcchar): string;
-{$IFDEF FPC}
-var
-  B: pcchar;
-{$ENDIF}
-begin
-  if not Assigned(S) then
-    Exit('');
-{$IFDEF FPC}
-  B := pcchar(@S[0]);
-  SetString(Result, B, Length(B));
-  SetCodePage(RawByteString(Result), CP_UTF8, False);
-{$ELSE}
-  Result := TMarshal.ReadStringAsUtf8(TPtrWrapper.Create(S));
-{$ENDIF}
-end;
 
 function B4RLoadLibrary(const AFileName: TFileName): TLibHandle;
 begin
@@ -692,9 +674,27 @@ begin
   System.Move(S^, Result[0], Z);
 end;
 
+class function {$IFDEF FPC}TMarshal{$ELSE}TMarshalHelper{$ENDIF}.ToString(
+  const S: Pcchar): string;
+{$IFDEF FPC}
+var
+  B: pcchar;
+{$ENDIF}
+begin
+  if not Assigned(S) then
+    Exit('');
+{$IFDEF FPC}
+  B := pcchar(@S[0]);
+  SetString(Result, B, Length(B));
+  SetCodePage(RawByteString(Result), CP_UTF8, False);
+{$ELSE}
+  Result := TMarshal.ReadStringAsUtf8(TPtrWrapper.Create(S));
+{$ENDIF}
+end;
+
 { TMarshaller* }
 
-function {$IFDEF FPC}TMarshaller{$ELSE}TMarshallerHelper{$ENDIF}.ToC(
+function {$IFDEF FPC}TMarshaller{$ELSE}TMarshallerHelper{$ENDIF}.ToCString(
   const S: string): Pcchar;
 begin
   Result :=

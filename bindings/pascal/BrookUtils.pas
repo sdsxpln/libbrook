@@ -63,7 +63,7 @@ var
   M: TMarshaller;
 begin
   B4RCheckLibrary;
-  Result := b4r_is_empty(M.ToC(AStr));
+  Result := b4r_is_empty(M.ToCString(AStr));
 end;
 
 function BrookASprintfVA(const AFmt: string; AVA: Pointer): string;
@@ -72,15 +72,15 @@ var
   M: TMarshaller;
 begin
   B4RCheckLibrary;
-  R := b4r_asprintf_va(M.ToC(AFmt), AVA);
-  Result := C2S(R);
+  R := b4r_asprintf_va(M.ToCString(AFmt), AVA);
+  Result := TMarshal.ToString(R);
   b4r_free(R);
 end;
 
 function BrookTmpDir: string;
 begin
   B4RCheckLibrary;
-  Result := C2S(b4r_tmp_dir);
+  Result := TMarshal.ToString(b4r_tmp_dir);
 end;
 
 function BrookUuid(out AUuid: string): Boolean;
@@ -90,7 +90,7 @@ begin
   B4RCheckLibrary;
   Result := b4r_uuid(@Vuuid);
   if Result then
-    AUuid := C2S(@Vuuid);
+    AUuid := TMarshal.ToString(@Vuuid);
 end;
 
 end.

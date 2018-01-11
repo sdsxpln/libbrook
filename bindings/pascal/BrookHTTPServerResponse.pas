@@ -147,7 +147,7 @@ begin
     Exit;
   B4RCheckLibrary;
   FContentType := AValue;
-  b4r_httpsrv_res_content_type(Fres, M.ToC(FContentType));
+  b4r_httpsrv_res_content_type(Fres, M.ToCString(FContentType));
 end;
 
 procedure TBrookHTTPServerResponse.WriteBuffer(const ABuffer; ASize: Integer);
@@ -181,7 +181,7 @@ var
   M: TMarshaller;
 begin
   B4RCheckLibrary;
-  b4r_httpsrv_res_write(Fres, M.ToC(AString));
+  b4r_httpsrv_res_write(Fres, M.ToCString(AString));
 end;
 
 procedure TBrookHTTPServerResponse.Write(const AFmt: string;
@@ -202,7 +202,8 @@ var
   M: TMarshaller;
 begin
   B4RCheckLibrary;
-  b4r_httpsrv_res_send(Fres, M.ToC('%s'), M.ToC(Format(AFmt, AArgs)));
+  b4r_httpsrv_res_send(Fres, M.ToCString('%s'),
+    M.ToCString(Format(AFmt, AArgs)));
 end;
 
 procedure TBrookHTTPServerResponse.Send(const AString: string);
@@ -210,7 +211,7 @@ var
   M: TMarshaller;
 begin
   B4RCheckLibrary;
-  b4r_httpsrv_res_send(Fres, M.ToC('%s'), M.ToC(AString));
+  b4r_httpsrv_res_send(Fres, M.ToCString('%s'), M.ToCString(AString));
 end;
 
 procedure TBrookHTTPServerResponse.SendFile(const AFileName: TFileName);
@@ -218,7 +219,7 @@ var
   M: TMarshaller;
 begin
   B4RCheckLibrary;
-  b4r_httpsrv_res_send_file(Fres, M.ToC(AFileName));
+  b4r_httpsrv_res_send_file(Fres, M.ToCString(AFileName));
 end;
 
 procedure TBrookHTTPServerResponse.Json(const AJson: string);
@@ -226,7 +227,7 @@ var
   M: TMarshaller;
 begin
   B4RCheckLibrary;
-  b4r_httpsrv_res_json(Fres, M.ToC(AJson));
+  b4r_httpsrv_res_json(Fres, M.ToCString(AJson));
 end;
 
 end.

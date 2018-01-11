@@ -114,16 +114,16 @@ begin
   FUploads := CreateUploads(AHandle);
   Freq := AHandle;
   FApp := AApp;
-  FVersion := C2S(b4r_httpsrv_req_version(Freq));
-  FMethod := C2S(b4r_httpsrv_req_method(Freq));
-  FContentType := C2S(b4r_httpsrv_req_content_type(Freq));
-  FURI := C2S(b4r_httpsrv_req_uri(Freq));
-  FID := C2S(b4r_httpsrv_req_id(Freq));
-  FPath := C2S(b4r_httpsrv_req_path(Freq));
+  FVersion := TMarshal.ToString(b4r_httpsrv_req_version(Freq));
+  FMethod := TMarshal.ToString(b4r_httpsrv_req_method(Freq));
+  FContentType := TMarshal.ToString(b4r_httpsrv_req_content_type(Freq));
+  FURI := TMarshal.ToString(b4r_httpsrv_req_uri(Freq));
+  FID := TMarshal.ToString(b4r_httpsrv_req_id(Freq));
+  FPath := TMarshal.ToString(b4r_httpsrv_req_path(Freq));
   FPayloadSize := b4r_httpsrv_req_payld_size(AHandle);
   FPayload := TMarshal.ToBytes(b4r_httpsrv_req_payld(AHandle), FPayloadSize);
   FIsPost := b4r_httpsrv_req_is_post(Freq);
-  FPaths := C2S(b4r_httpsrv_req_path(AHandle)).Split(['/'],
+  FPaths := TMarshal.ToString(b4r_httpsrv_req_path(AHandle)).Split(['/'],
     TStringSplitOptions.ExcludeEmpty);
 end;
 
