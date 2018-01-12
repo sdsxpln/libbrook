@@ -73,11 +73,8 @@
 # endif
 #endif
 
-/* TODO: on Linux, use syslog. */
-/* TODO: on Android, use its log system. */
-/* TODO: on Windows, use its Event Logs. */
 #define _B4R_LOG(enabled, ...) do { \
-    if (enabled) \
+    if ((enabled)) \
         fprintf(stderr, __VA_ARGS__); \
 } while (0)
 
