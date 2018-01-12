@@ -30,10 +30,10 @@
 #include "b4r_macros.h"
 #include <brook.h>
 
-#define _B4R_HS_NEW_KEY(name) !b4r_is_empty(name) ? b4r_lower(b4r_dup(name)) : NULL
+#define _B4R_HS_NEW_KEY(name) b4r_is_empty((name)) ? NULL : b4r_lower(b4r_dup((name)))
 
 #define _B4R_HS_FIND(hsl, name, key, hs) do { \
-    *(key) = _B4R_HS_NEW_KEY(name); \
+    *(key) = _B4R_HS_NEW_KEY((name)); \
     if ((hsl) && *(key)) \
         HASH_FIND_STR(hsl, *(key), *(hs)); \
     else \
@@ -41,8 +41,8 @@
 } while (0)
 
 #define _B4R_HS_DEL(hsl, hs) do { \
-    HASH_DEL(*(hsl), hs); \
-    _b4r_hs_free(hs); \
+    HASH_DEL(*(hsl), (hs)); \
+    _b4r_hs_free((hs)); \
 } while (0)
 
 static struct b4r_hs *_b4r_hs_new(char *key, const char *name, const char *val) {
@@ -64,12 +64,12 @@ static struct b4r_hs *_b4r_hs_new(char *key, const char *name, const char *val) 
 }
 
 static void _b4r_hs_free(struct b4r_hs *hs) {
-    if (hs) {
-        _B4R_FREE(hs->key);
-        _B4R_FREE(hs->name);
-        _B4R_FREE(hs->val);
-        _B4R_FREE(hs);
-    }
+    if (!hs)
+        return;
+    _B4R_FREE(hs->key);
+    _B4R_FREE(hs->name);
+    _B4R_FREE(hs->val);
+    _B4R_FREE(hs);
 }
 
 const char *b4r_hs_name(struct b4r_hs *hs) {
