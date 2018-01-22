@@ -3,7 +3,7 @@
 - add VS building;
 - doxygen docs;
 - tests;
-- ARM Cortex M0 support;
+- ARM Cortex M*;
 - byte-serving;
 - media-types;
 - aptget/pacman availability;
