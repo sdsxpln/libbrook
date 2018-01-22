@@ -1,0 +1,1 @@
+This branch is temporary and contains the new library API that will be moved to the trunk.
