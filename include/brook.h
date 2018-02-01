@@ -25,8 +25,8 @@
  * along with Brook4-REST.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef B4R_H
-#define B4R_H
+#ifndef BROOK_H
+#define BROOK_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,14 +43,23 @@ extern "C" {
 # define B4R_EXTERN
 #endif
 
+#define B4R_VERSION_MAJOR 0
+#define B4R_VERSION_MINOR 0
+#define B4R_VERSION_PATCH 1
+#define B4R_VERSION_HEX ((B4R_VERSION_MAJOR << 16) | (B4R_VERSION_MINOR <<  8) | (B4R_VERSION_PATCH))
+
+/* utilities */
+
 /**
  * Returns the stringified representation of the library version.
  * @return Static string with the library version.
  */
-B4R_EXTERN const char *b4r_version(void);
+B4R_EXTERN unsigned int b4r_version(void);
+
+B4R_EXTERN const char *b4r_version_string(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __B4R_H__ */
+#endif /* BROOK_H */

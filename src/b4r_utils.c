@@ -25,14 +25,16 @@
  * along with Brook4-REST.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef B4R_VERSION
 #include "b4r_macros.h"
-#endif
+#include "brook.h"
 
-const char *b4r_version(void) {
-#ifdef B4R_VERSION
-    return B4R_VERSION;
-#else
-    return _("unknown");
-#endif
+#define B4R_VERSION_STRING xstr(B4R_VERSION_MAJOR) "." xstr(B4R_VERSION_MINOR) "." xstr(B4R_VERSION_PATCH)
+
+unsigned int b4r_version(void) {
+    return B4R_VERSION_HEX;
+}
+
+
+const char *b4r_version_string(void) {
+    return B4R_VERSION_STRING;
 }

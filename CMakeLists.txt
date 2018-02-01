@@ -15,18 +15,10 @@ if (ENABLE_PICKY_COMPILER)
     endif ()
 endif ()
 
-set(B4R_VERSION_MAJOR 0)
-set(B4R_VERSION_MINOR 0)
-set(B4R_VERSION_PATCH 1)
-set(B4R_VERSION "${B4R_VERSION_MAJOR}.${B4R_VERSION_MINOR}.${B4R_VERSION_PATCH}")
-set(B4R_VERSION_NUMBER 0x000001)
-add_definitions(-DB4R_VERSION=\"${B4R_VERSION}\")
-add_definitions(-DB4R_VERSION_NUMBER=\"${B4R_VERSION_NUMBER}\")
-
-#set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 set(B4R_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(B4R_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+include_directories(${B4R_INCLUDE_DIR})
 
 add_library(brook SHARED
         ${B4R_INCLUDE_DIR}/brook.h # allows many IDEs to find it

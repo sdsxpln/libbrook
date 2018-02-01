@@ -28,8 +28,9 @@
 #ifndef B4R_MACROS_H
 #define B4R_MACROS_H
 
-#ifndef _
-# define _(String) (String) /* macro to make it easy to mark text for translation */
-#endif
+#define _(String) (String) /* macro to make it easy to mark text for translation */
+
+#define xstr(a) str(a) /* stringify the result of expansion of a macro argument */
+#define str(a) #a
 
 #endif /* B4R_MACROS_H */
