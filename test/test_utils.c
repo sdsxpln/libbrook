@@ -25,38 +25,10 @@
  * along with Brook4-REST.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef B4R_ASSERT_H
-#define B4R_ASSERT_H
+#include "b4r_assert.h"
+#include "brook.h"
 
-#ifndef _WIN32
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#include <errno.h>
-#endif
-#include <stdlib.h>
-#include <stdio.h>
-
-#if defined(_WIN32) && !defined(__CYGWIN__)
-#define __progname __argv[0]
-#elif(_WIN32)
-extern char __declspec(dllimport) *__progname;
-#else
-#define __progname program_invocation_short_name
-#endif
-
-#ifdef NDEBUG
-#define ASSERT(expr) ((void) 0)
-#else
-#define ASSERT(expr)                                                        \
-do {                                                                        \
-    if (!(expr)) {                                                          \
-        fprintf(stderr, "%s: %s:%d: %s: Assertion `%s' failed.\n",          \
-            __progname, __FILE__, __LINE__, __FUNCTION__, #expr);           \
-        fflush(stderr);                                                     \
-        exit(1);                                                            \
-    }                                                                       \
-} while (0)
-#endif
-
-#endif /* B4R_ASSERT_H */
+int main() {
+    ASSERT(b4r_version() > 0);
+    return EXIT_SUCCESS;
+}
