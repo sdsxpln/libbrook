@@ -28,14 +28,13 @@
 #ifndef B4R_ASSERT_H
 #define B4R_ASSERT_H
 
-#ifndef __CYGWIN__
 #ifndef _WIN32
 #define _GNU_SOURCE
 #include <errno.h>
 #endif
 #include <stdlib.h>
 #include <stdio.h>
-#endif
+
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #define __progname __argv[0]
 #elif(_WIN32)
