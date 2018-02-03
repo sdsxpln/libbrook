@@ -34,7 +34,6 @@ unsigned int b4r_version(void) {
     return B4R_VERSION_HEX;
 }
 
-
 const char *b4r_version_string(void) {
     return B4R_VERSION_STRING;
 }

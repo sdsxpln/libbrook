@@ -51,11 +51,15 @@ extern "C" {
 /* utilities */
 
 /**
- * Returns the stringified representation of the library version.
- * @return Static string with the library version.
+ * Returns the library version number.
+ * @return the library version packed into a single integer.
  */
 B4R_EXTERN unsigned int b4r_version(void);
 
+/**
+ * Returns the library version number as string.
+ * @return the library version packed into a static string.
+ */
 B4R_EXTERN const char *b4r_version_string(void);
 
 #ifdef __cplusplus
