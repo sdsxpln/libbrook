@@ -1,3 +1,7 @@
+if (MINGW)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+endif ()
+
 set(B4R_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 
 add_library(brook SHARED
