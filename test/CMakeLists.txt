@@ -1,10 +1,10 @@
-option(BUILD_UTILS_TESTING "Build b4r_utils testing" ON)
-
 if (MINGW)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 endif ()
 
 set(B4R_TESTS_DIR ${CMAKE_SOURCE_DIR}/test)
+
+option(BUILD_UTILS_TESTING "Build b4r_utils testing" ON)
 
 if (BUILD_UTILS_TESTING)
     add_executable(test_utils
