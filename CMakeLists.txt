@@ -15,6 +15,21 @@ if (ENABLE_PICKY_COMPILER)
     endif ()
 endif ()
 
+include(CheckSymbolExists)
+
+if (NOT _GNU_SOURCE)
+    check_symbol_exists(__GNU_LIBRARY__ "features.h" _GNU_SOURCE)
+
+    if (NOT _GNU_SOURCE)
+        unset(_GNU_SOURCE CACHE)
+        check_symbol_exists(_GNU_SOURCE "features.h" _GNU_SOURCE)
+    endif ()
+endif ()
+
+if (_GNU_SOURCE)
+    add_definitions(-D_GNU_SOURCE)
+endif ()
+
 set(B4R_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(B4R_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
