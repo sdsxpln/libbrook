@@ -30,6 +30,10 @@ if (_GNU_SOURCE)
     add_definitions(-D_GNU_SOURCE)
 endif ()
 
+if (MSVC)
+    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+endif ()
+
 set(B4R_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
 include_directories(${B4R_INCLUDE_DIR})
