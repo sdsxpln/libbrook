@@ -30,7 +30,7 @@
 #include <string.h>
 #include "brook.h"
 
-int main() {
+int main(void) {
     const char *ver_original;
     char ver_local[9];
     size_t ver_len;
