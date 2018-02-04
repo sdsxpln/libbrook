@@ -35,6 +35,7 @@ set(B4R_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 include_directories(${B4R_INCLUDE_DIR})
 
 add_subdirectory(src)
+
 if (BUILD_TESTING)
     enable_testing()
     add_subdirectory(test)
