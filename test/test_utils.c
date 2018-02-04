@@ -26,9 +26,26 @@
  */
 
 #include "b4r_assert.h"
+
+#include <string.h>
 #include "brook.h"
 
 int main() {
+    const char *ver_original;
+    char ver_local[9];
+    size_t ver_len;
+
+    /* check version number */
     ASSERT(b4r_version() > 0);
+
+    /* check version number string */
+    sprintf(ver_local, "%d.%d.%d", B4R_VERSION_MAJOR, B4R_VERSION_MINOR, B4R_VERSION_PATCH);
+    ver_original = b4r_version_string();
+    ASSERT(strcmp(ver_original, ver_local) == 0);
+
+    /* check version number string termination */
+    ver_len = strlen(ver_original);
+    ASSERT(ver_original[ver_len] == '\0');
+
     return EXIT_SUCCESS;
 }
