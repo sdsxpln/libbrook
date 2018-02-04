@@ -30,21 +30,12 @@ if (_GNU_SOURCE)
     add_definitions(-D_GNU_SOURCE)
 endif ()
 
-set(B4R_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-set(B4R_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(B4R_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
 include_directories(${B4R_INCLUDE_DIR})
 
-add_library(brook SHARED
-        ${B4R_INCLUDE_DIR}/brook.h # allows many IDEs to find it
-        ${B4R_SOURCE_DIR}/b4r_macros.h
-        ${B4R_SOURCE_DIR}/b4r_utils.c)
-
+add_subdirectory(src)
 if (BUILD_TESTING)
     enable_testing()
-    if (MINGW)
-        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    endif ()
-    set(B4R_TESTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
-    add_subdirectory(test EXCLUDE_FROM_ALL)
+    add_subdirectory(test)
 endif ()
