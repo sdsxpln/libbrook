@@ -25,6 +25,16 @@
  * along with Brook4-REST.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @mainpage
+ * @li @ref brook4rest_api
+ */
+
+/**
+ * @defgroup brook4rest_api Brook4REST API Reference
+ * @{
+ */
+
 #ifndef BROOK_H
 #define BROOK_H
 
@@ -65,5 +75,9 @@ B4R_EXTERN const char *b4r_version_string(void);
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ */
 
 #endif /* BROOK_H */
