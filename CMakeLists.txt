@@ -31,6 +31,14 @@ project(brook C)
 
 set(CMAKE_C_STANDARD 99)
 
+if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
+    set(RELEASE ON)
+    unset(DEBUG)
+else ()
+    set(DEBUG ON)
+    unset(RELEASE)
+endif ()
+
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(WarnAll)
@@ -46,11 +54,11 @@ include_directories(${B4R_INCLUDE_DIR})
 
 add_subdirectory(src)
 
-if (BUILD_TESTING)
+if (BUILD_TESTING AND DEBUG)
     enable_testing()
     add_subdirectory(test)
 endif ()
 
-if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
+if (RELEASE)
     include(DoxygenAPIRef)
 endif ()
