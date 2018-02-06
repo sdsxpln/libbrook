@@ -34,6 +34,7 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(WarnAll)
+include(GNUSource)
 
 if (MSVC)
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
