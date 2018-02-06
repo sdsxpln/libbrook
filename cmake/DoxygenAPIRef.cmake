@@ -30,11 +30,13 @@ option(BUILD_DOC "Build documentation" ON)
 if (BUILD_DOC)
     find_package(Doxygen QUIET)
     if (DOXYGEN_FOUND)
-        set(DOXYGEN_INPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
-        set(DOXYGEN_OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+        set(DOXYGEN_INPUT_FILE ${CMAKE_SOURCE_DIR}/Doxyfile.in)
+        set(DOXYGEN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/doc)
+        set(DOXYGEN_OUTPUT_FILE ${CMAKE_BINARY_DIR}/Doxyfile)
         configure_file(${DOXYGEN_INPUT_FILE} ${DOXYGEN_OUTPUT_FILE} @ONLY)
         message(STATUS "Generating Doxygen file - done")
         add_custom_target(doc ALL
+                COMMAND ${CMAKE_COMMAND} -E make_directory ${DOXYGEN_OUTPUT_DIR}
                 COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUTPUT_FILE}
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 COMMENT "Generating API reference with Doxygen"
