@@ -117,6 +117,7 @@ __recovery/
 .idea/**/libraries
 
 # CMake
+build/
 cmake-build-*
 
 # Mongo Explorer plugin:
