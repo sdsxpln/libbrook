@@ -866,7 +866,11 @@ EXCLUDE_PATTERNS       =
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories use the pattern */test/*
 
-EXCLUDE_SYMBOLS        = B4R_EXTERN
+EXCLUDE_SYMBOLS        = B4R_EXTERN \
+                         B4R_VERSION_MAJOR \
+                         B4R_VERSION_MINOR \
+                         B4R_VERSION_PATCH \
+                         B4R_VERSION_HEX
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include
