@@ -38,6 +38,7 @@ if (BUILD_DOC)
         add_custom_target(doc ALL
                 COMMAND ${CMAKE_COMMAND} -E make_directory ${DOXYGEN_OUTPUT_DIR}
                 COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUTPUT_FILE}
+                #TODO: rename all refman occurrences with libbrook-v0.0.1
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 COMMENT "Generating API reference with Doxygen [HTML]"
                 VERBATIM)
