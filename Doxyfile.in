@@ -5,7 +5,7 @@
 #   | |_) | | | \ \  | |_| | | |_| | | |\ \
 #   |_____/ |_|  \_\ \_____/ \_____/ |_| \_\ 4-REST.
 #
-#   –– a small tool which helps you write quickly REST APIs.
+#   –– a small library which helps you write quickly REST APIs.
 #
 # Copyright (c) 2012-2018 Silvio Clecio, et al.
 #
@@ -59,7 +59,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = Brook4REST
+PROJECT_NAME           = @PROJECT_NAME@
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -71,7 +71,7 @@ PROJECT_NUMBER         =
 # for a project that appears at the top of each page and should give viewer a
 # quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          = "–– a small tool which helps you write quickly REST APIs."
+PROJECT_BRIEF          = "–– a small library which helps you write quickly REST APIs."
 
 # With the PROJECT_LOGO tag one can specify a logo or an icon that is included
 # in the documentation. The maximum height of the logo should not exceed 55
@@ -185,7 +185,7 @@ INLINE_INHERITED_MEMB  = NO
 # shortest path that makes the file name unique will be used
 # The default value is: YES.
 
-FULL_PATH_NAMES        = YES
+FULL_PATH_NAMES        = NO
 
 # The STRIP_FROM_PATH tag can be used to strip a user-defined part of the path.
 # Stripping is only done if one of the specified strings matches the left-hand
@@ -1686,7 +1686,7 @@ MAKEINDEX_CMD_NAME     = makeindex
 # The default value is: NO.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-COMPACT_LATEX          = NO
+COMPACT_LATEX          = YES
 
 # The PAPER_TYPE tag can be used to set the paper type that is used by the
 # printer.

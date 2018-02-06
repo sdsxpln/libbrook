@@ -5,7 +5,7 @@
 #   | |_) | | | \ \  | |_| | | |_| | | |\ \
 #   |_____/ |_|  \_\ \_____/ \_____/ |_| \_\ 4-REST.
 #
-#   –– a small tool which helps you write quickly REST APIs.
+#   –– a small library which helps you write quickly REST APIs.
 #
 # Copyright (c) 2012-2018 Silvio Clecio, et al.
 #
@@ -39,7 +39,13 @@ if (BUILD_DOC)
                 COMMAND ${CMAKE_COMMAND} -E make_directory ${DOXYGEN_OUTPUT_DIR}
                 COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUTPUT_FILE}
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                COMMENT "Generating API reference with Doxygen"
+                COMMENT "Generating API reference with Doxygen [HTML]"
+                VERBATIM)
+        add_custom_target(pdf ALL
+                COMMAND ${CMAKE_MAKE_PROGRAM} -C ${DOXYGEN_OUTPUT_DIR}/latex
+                WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIR}/latex
+                COMMENT "Generating API reference with Doxygen [PDF]"
+                DEPENDS doc
                 VERBATIM)
     else ()
         message(WARNING "Doxygen need to be installed to generate the doxygen documentation")
