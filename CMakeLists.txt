@@ -29,6 +29,9 @@ cmake_minimum_required(VERSION 3.5)
 
 project(brook C)
 
+set(PROJECT_DESCRIPTION "–– a small library which helps you write quickly REST APIs.")
+set(VERSION 0.0.1) #TODO: get version from main header
+
 set(CMAKE_C_STANDARD 99)
 
 if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
