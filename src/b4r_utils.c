@@ -5,7 +5,7 @@
  *   | |_) | | | \ \  | |_| | | |_| | | |\ \
  *   |_____/ |_|  \_\ \_____/ \_____/ |_| \_\ 4-REST.
  *
- *   –– a small tool which helps you write quickly REST APIs.
+ *   –– a small library which helps you write quickly REST APIs.
  *
  * Copyright (c) 2012-2018 Silvio Clecio, et al.
  *
