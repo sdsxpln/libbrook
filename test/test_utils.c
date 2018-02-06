@@ -39,12 +39,16 @@ int main(void) {
     ASSERT(b4r_version() > 0);
 
     /* check version number string */
-    sprintf(ver_local, "%d.%d.%d", B4R_VERSION_MAJOR, B4R_VERSION_MINOR, B4R_VERSION_PATCH);
     ver_original = b4r_version_string();
+    ASSERT(ver_original);
+    ver_len = strlen(ver_original);
+    ASSERT(ver_len > 0);
+
+    /* check version number string matching */
+    sprintf(ver_local, "%d.%d.%d", B4R_VERSION_MAJOR, B4R_VERSION_MINOR, B4R_VERSION_PATCH);
     ASSERT(strcmp(ver_original, ver_local) == 0);
 
     /* check version number string termination */
-    ver_len = strlen(ver_original);
     ASSERT(ver_original[ver_len] == '\0');
 
     return EXIT_SUCCESS;
