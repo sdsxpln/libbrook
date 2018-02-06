@@ -638,3 +638,7 @@ $RECYCLE.BIN/
 *.gcno
 *.gcda
 *.gcov
+
+### Doxygen template
+
+doc/
