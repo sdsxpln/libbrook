@@ -25,31 +25,17 @@
 # along with Brook4-REST.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 3.5)
+include(CheckSymbolExists)
 
-project(brook C)
+if (NOT _GNU_SOURCE)
+    check_symbol_exists(__GNU_LIBRARY__ "features.h" _GNU_SOURCE)
 
-set(CMAKE_C_STANDARD 99)
-
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-include(WarnAll)
-
-if (MSVC)
-    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+    if (NOT _GNU_SOURCE)
+        unset(_GNU_SOURCE CACHE)
+        check_symbol_exists(_GNU_SOURCE "features.h" _GNU_SOURCE)
+    endif ()
 endif ()
 
-set(B4R_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
-
-include_directories(${B4R_INCLUDE_DIR})
-
-add_subdirectory(src)
-
-if (BUILD_TESTING)
-    enable_testing()
-    add_subdirectory(test)
-endif ()
-
-if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
-    include(DoxygenAPIRef)
+if (_GNU_SOURCE)
+    add_definitions(-D_GNU_SOURCE)
 endif ()
