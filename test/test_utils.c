@@ -35,20 +35,20 @@ int main(void) {
     char ver_local[9];
     size_t ver_len;
 
-    /* check version number */
+    /* Checks if the version number is greater than zero */
     ASSERT(b4r_version() > 0);
 
-    /* check version number string */
+    /* Checks if the stringified version is a valid string */
     ver_original = b4r_version_string();
     ASSERT(ver_original);
     ver_len = strlen(ver_original);
     ASSERT(ver_len > 0);
 
-    /* check version number string matching */
+    /* Checks if the stringified version matches the library version */
     sprintf(ver_local, "%d.%d.%d", B4R_VERSION_MAJOR, B4R_VERSION_MINOR, B4R_VERSION_PATCH);
     ASSERT(strcmp(ver_original, ver_local) == 0);
 
-    /* check version number string termination */
+    /* Checks if the stringified version has a null termination */
     ASSERT(ver_original[ver_len] == '\0');
 
     return EXIT_SUCCESS;
