@@ -7,7 +7,7 @@
  *
  *   –– a small library which helps you write quickly REST APIs.
  *
- * Copyright (c) 2012-2018 Silvio Clecio.
+ * Copyright (c) 2012-2018 Silvio Clecio <silvioprog@gmail.com>
  *
  * This file is part of Brook library.
  *
