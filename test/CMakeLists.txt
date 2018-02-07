@@ -26,8 +26,8 @@
 #
 
 if (BUILD_TESTING)
-    option(BUILD_UTILS_TESTING "Build b4r_utils testing" ON)
-    if (BUILD_UTILS_TESTING)
+    option(BROOK_BUILD_UTILS_TESTING "Build b4r_utils testing" ON)
+    if (BROOK_BUILD_UTILS_TESTING)
         if (WIN32)
             set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
         endif ()

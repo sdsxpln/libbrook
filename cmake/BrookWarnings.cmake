@@ -25,9 +25,9 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-option(ENABLE_PICKY_COMPILER "Enable picky compiler options" ON)
+option(BROOK_ENABLE_PICKY_COMPILER "Enable picky compiler options" ON)
 
-if (ENABLE_PICKY_COMPILER)
+if (BROOK_ENABLE_PICKY_COMPILER)
     if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra")
     elseif (MSVC)

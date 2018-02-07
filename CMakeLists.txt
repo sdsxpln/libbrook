@@ -36,12 +36,12 @@ set(CMAKE_C_STANDARD 99)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-include(Warnings)
-include(GNUSource)
+include(BrookWarnings)
+include(BrookGNUSource)
 
 if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
     set(BUILD_TESTING OFF)
-    include(Doxygen)
+    include(BrookDoxygen)
 elseif (BUILD_TESTING)
     enable_testing()
 endif ()
