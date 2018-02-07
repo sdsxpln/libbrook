@@ -46,10 +46,6 @@ elseif (BUILD_TESTING)
     enable_testing()
 endif ()
 
-if (MSVC)
-    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-endif ()
-
 set(B4R_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
 include_directories(${B4R_INCLUDE_DIR})

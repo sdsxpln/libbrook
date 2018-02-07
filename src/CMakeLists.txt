@@ -26,6 +26,9 @@
 #
 
 if (WIN32)
+    if (MSVC)
+        set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+    endif ()
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 endif ()
 
