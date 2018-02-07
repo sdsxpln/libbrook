@@ -25,30 +25,18 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 3.5)
-
-project(brook C)
-
-set(CMAKE_C_STANDARD 99)
-
-set(PROJECT_DESCRIPTION "–– a small library which helps you write quickly REST APIs.")
-
-set(B4R_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
-
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-include(BrookWarnings)
-include(BrookGNUSource)
-include(BrookVersion)
-
-if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
-    set(BUILD_TESTING OFF)
-    include(BrookDoxygen)
-elseif (BUILD_TESTING)
-    enable_testing()
+if (EXISTS ${B4R_INCLUDE_DIR}/brook.h)
+    set(brook_version_list MAJOR MINOR PATCH)
+    foreach (v ${brook_version_list})
+        set(regex_brook_version "^#define B4R_VERSION_${v} ([0-9])")
+        file(STRINGS "${B4R_INCLUDE_DIR}/brook.h" brook_version_${v} REGEX "${regex_brook_version}")
+        string(REGEX REPLACE "${regex_brook_version}" "\\1" brook_version_${v} "${brook_version_${v}}")
+        unset(regex_brook_version)
+    endforeach ()
+    set(BROOK_VERSION_STRING "${brook_version_MAJOR}.${brook_version_MINOR}.${brook_version_PATCH}")
+    set(VERSION ${BROOK_VERSION_STRING})
+    foreach (v brook_version_list)
+        unset(brook_version_${v})
+    endforeach ()
+    unset(brook_version_list)
 endif ()
-
-include_directories(${B4R_INCLUDE_DIR})
-
-add_subdirectory(src)
-add_subdirectory(test)
