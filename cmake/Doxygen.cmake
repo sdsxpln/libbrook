@@ -42,12 +42,18 @@ if (BUILD_DOC)
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 COMMENT "Generating API reference with Doxygen [HTML]"
                 VERBATIM)
-        add_custom_target(pdf ALL
-                COMMAND ${CMAKE_MAKE_PROGRAM} -C ${DOXYGEN_OUTPUT_DIR}/latex
-                WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIR}/latex
-                COMMENT "Generating API reference with Doxygen [PDF]"
-                DEPENDS doc
-                VERBATIM)
+        find_program(PDFLATEX pdflatex)
+        if (PDFLATEX)
+            find_program(MAKEINDEX makeindex)
+            if (MAKEINDEX)
+                add_custom_target(pdf ALL
+                        COMMAND ${CMAKE_MAKE_PROGRAM} -C ${DOXYGEN_OUTPUT_DIR}/latex
+                        WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIR}/latex
+                        COMMENT "Generating API reference with Doxygen [PDF]"
+                        DEPENDS doc
+                        VERBATIM)
+            endif ()
+        endif ()
     else ()
         message(WARNING "Doxygen need to be installed to generate the doxygen documentation")
     endif ()
