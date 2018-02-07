@@ -34,18 +34,17 @@ set(VERSION 0.0.1) #TODO: get version from main header
 
 set(CMAKE_C_STANDARD 99)
 
-if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
-    set(RELEASE ON)
-    unset(DEBUG)
-else ()
-    set(DEBUG ON)
-    unset(RELEASE)
-endif ()
-
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(Warnings)
 include(GNUSource)
+
+if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
+    set(BUILD_TESTING OFF)
+    include(Doxygen)
+elseif (BUILD_TESTING)
+    enable_testing()
+endif ()
 
 if (MSVC)
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -56,12 +55,4 @@ set(B4R_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 include_directories(${B4R_INCLUDE_DIR})
 
 add_subdirectory(src)
-
-if (BUILD_TESTING AND DEBUG)
-    enable_testing()
-    add_subdirectory(test)
-endif ()
-
-if (RELEASE)
-    include(Doxygen)
-endif ()
+add_subdirectory(test)
