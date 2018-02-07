@@ -30,29 +30,34 @@ option(BUILD_DOC "Build documentation" ON)
 if (BUILD_DOC)
     find_package(Doxygen QUIET)
     if (DOXYGEN_FOUND)
+        set(GENERATE_PDF NO)
+        find_program(PDFLATEX pdflatex)
+        if (PDFLATEX)
+            find_program(MAKEINDEX makeindex)
+            if (MAKEINDEX)
+                set(GENERATE_PDF YES)
+            endif ()
+        endif ()
         set(DOXYGEN_INPUT_FILE ${CMAKE_SOURCE_DIR}/Doxyfile.in)
-        set(DOXYGEN_DOC_DIR ${CMAKE_BINARY_DIR}/doc)
         set(DOXYGEN_OUTPUT_FILE ${CMAKE_BINARY_DIR}/Doxyfile)
+        set(DOXYGEN_DOC_DIR ${CMAKE_BINARY_DIR}/doc)
         configure_file(${DOXYGEN_INPUT_FILE} ${DOXYGEN_OUTPUT_FILE} @ONLY)
         message(STATUS "Generating Doxygen file - done")
         add_custom_target(doc ALL
                 COMMAND ${CMAKE_COMMAND} -E make_directory ${DOXYGEN_DOC_DIR}
                 COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUTPUT_FILE}
-                #TODO: rename all refman occurrences with libbrook-v0.0.1
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 COMMENT "Generating API reference with Doxygen [HTML]"
                 VERBATIM)
-        find_program(PDFLATEX pdflatex)
-        if (PDFLATEX)
-            find_program(MAKEINDEX makeindex)
-            if (MAKEINDEX)
-                add_custom_target(pdf ALL
-                        COMMAND ${CMAKE_MAKE_PROGRAM} -C ${DOXYGEN_DOC_DIR}/latex
-                        WORKING_DIRECTORY ${DOXYGEN_DOC_DIR}/latex
-                        COMMENT "Generating API reference with Doxygen [PDF]"
-                        DEPENDS doc
-                        VERBATIM)
-            endif ()
+        if (GENERATE_PDF)
+            set(DOXYGEN_LATEX_DIR ${DOXYGEN_DOC_DIR}/latex)
+            add_custom_target(pdf ALL
+                    COMMAND ${CMAKE_MAKE_PROGRAM} -C ${DOXYGEN_LATEX_DIR}
+                    COMMAND ${CMAKE_COMMAND} -E rename ${DOXYGEN_LATEX_DIR}/refman.pdf ${DOXYGEN_LATEX_DIR}/libbrook-v${VERSION}.pdf
+                    WORKING_DIRECTORY ${DOXYGEN_LATEX_DIR}
+                    COMMENT "Generating API reference with Doxygen [PDF]"
+                    DEPENDS doc
+                    VERBATIM)
         endif ()
     else ()
         message(WARNING "Doxygen need to be installed to generate the doxygen documentation")
