@@ -44,19 +44,19 @@ extern "C" {
 
 #if defined(_WIN32) && defined(_MSC_VER)
 # ifdef brook_EXPORTS
-#  define  B4R_EXTERN __declspec(dllexport)
+#  define  BK_EXTERN __declspec(dllexport)
 # else
-#  define B4R_EXTERN __declspec(dllimport)
+#  define BK_EXTERN __declspec(dllimport)
 # endif
 #endif
-#ifndef B4R_EXTERN
-# define B4R_EXTERN
+#ifndef BK_EXTERN
+# define BK_EXTERN
 #endif
 
-#define B4R_VERSION_MAJOR 0
-#define B4R_VERSION_MINOR 0
-#define B4R_VERSION_PATCH 1
-#define B4R_VERSION_HEX ((B4R_VERSION_MAJOR << 16) | (B4R_VERSION_MINOR <<  8) | (B4R_VERSION_PATCH))
+#define BK_VERSION_MAJOR 0
+#define BK_VERSION_MINOR 0
+#define BK_VERSION_PATCH 1
+#define BK_VERSION_HEX ((BK_VERSION_MAJOR << 16) | (BK_VERSION_MINOR <<  8) | (BK_VERSION_PATCH))
 
 /* utilities */
 
@@ -64,13 +64,13 @@ extern "C" {
  * Returns the library version number.
  * @return the library version packed into a single integer.
  */
-B4R_EXTERN unsigned int b4r_version(void);
+BK_EXTERN unsigned int bk_version(void);
 
 /**
  * Returns the library version number as string.
  * @return the library version packed into a static string.
  */
-B4R_EXTERN const char *b4r_version_string(void);
+BK_EXTERN const char *bk_version_str(void);
 
 #ifdef __cplusplus
 }

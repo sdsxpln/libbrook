@@ -25,15 +25,38 @@
  * along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "b4r_macros.h"
-#include "brook.h"
+#ifndef BK_ASSERT_H
+#define BK_ASSERT_H
 
-#define B4R_VERSION_STRING xstr(B4R_VERSION_MAJOR) "." xstr(B4R_VERSION_MINOR) "." xstr(B4R_VERSION_PATCH)
+#ifndef _WIN32
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+#include <errno.h>
+#endif
+#include <stdlib.h>
+#include <stdio.h>
 
-unsigned int b4r_version(void) {
-    return B4R_VERSION_HEX;
-}
+#if defined(_WIN32) && !defined(__CYGWIN__)
+#define __progname __argv[0]
+#elif(_WIN32)
+extern char __declspec(dllimport) *__progname;
+#else
+#define __progname program_invocation_short_name
+#endif
 
-const char *b4r_version_string(void) {
-    return B4R_VERSION_STRING;
-}
+#ifdef NDEBUG
+#define ASSERT(expr) ((void) 0)
+#else
+#define ASSERT(expr)                                                        \
+do {                                                                        \
+    if (!(expr)) {                                                          \
+        fprintf(stderr, "%s: %s:%d: %s: Assertion `%s' failed.\n",          \
+            __progname, __FILE__, __LINE__, __FUNCTION__, #expr);           \
+        fflush(stderr);                                                     \
+        exit(1);                                                            \
+    }                                                                       \
+} while (0)
+#endif
+
+#endif /* BK_ASSERT_H */

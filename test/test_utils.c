@@ -25,7 +25,7 @@
  * along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "b4r_assert.h"
+#include "bk_assert.h"
 
 #include <string.h>
 #include "brook.h"
@@ -36,16 +36,16 @@ int main(void) {
     size_t ver_len;
 
     /* Checks if the version number is greater than zero */
-    ASSERT(b4r_version() > 0);
+    ASSERT(bk_version() > 0);
 
     /* Checks if the stringified version is a valid string */
-    ver_original = b4r_version_string();
+    ver_original = bk_version_str();
     ASSERT(ver_original);
     ver_len = strlen(ver_original);
     ASSERT(ver_len > 0);
 
     /* Checks if the stringified version matches the library version */
-    sprintf(ver_local, "%d.%d.%d", B4R_VERSION_MAJOR, B4R_VERSION_MINOR, B4R_VERSION_PATCH);
+    sprintf(ver_local, "%d.%d.%d", BK_VERSION_MAJOR, BK_VERSION_MINOR, BK_VERSION_PATCH);
     ASSERT(strcmp(ver_original, ver_local) == 0);
 
     /* Checks if the stringified version has a null termination */

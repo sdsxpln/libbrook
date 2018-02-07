@@ -25,12 +25,12 @@
  * along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef B4R_MACROS_H
-#define B4R_MACROS_H
+#ifndef BK_MACROS_H
+#define BK_MACROS_H
 
 #define _(String) (String) /* macro to make it easy to mark text for translation */
 
 #define xstr(a) str(a) /* stringify the result of expansion of a macro argument */
 #define str(a) #a
 
-#endif /* B4R_MACROS_H */
+#endif /* BK_MACROS_H */

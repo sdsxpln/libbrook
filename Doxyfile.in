@@ -893,11 +893,11 @@ EXCLUDE_PATTERNS       =
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories use the pattern */test/*
 
-EXCLUDE_SYMBOLS        = B4R_EXTERN \
-                         B4R_VERSION_MAJOR \
-                         B4R_VERSION_MINOR \
-                         B4R_VERSION_PATCH \
-                         B4R_VERSION_HEX
+EXCLUDE_SYMBOLS        = BK_EXTERN \
+                         BK_VERSION_MAJOR \
+                         BK_VERSION_MINOR \
+                         BK_VERSION_PATCH \
+                         BK_VERSION_HEX
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include
@@ -2094,7 +2094,7 @@ PREDEFINED             =
 # definition found in the source code.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-EXPAND_AS_DEFINED      = B4R_EXTERN
+EXPAND_AS_DEFINED      = BK_EXTERN
 
 # If the SKIP_FUNCTION_MACROS tag is set to YES then doxygen's preprocessor will
 # remove all references to function-like macros that are alone on a line, have

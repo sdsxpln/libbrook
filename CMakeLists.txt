@@ -33,7 +33,7 @@ set(CMAKE_C_STANDARD 99)
 
 set(PROJECT_DESCRIPTION "–– a small library which helps you write quickly REST APIs.")
 
-set(B4R_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+set(BK_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -48,7 +48,7 @@ elseif (BUILD_TESTING)
     enable_testing()
 endif ()
 
-include_directories(${B4R_INCLUDE_DIR})
+include_directories(${BK_INCLUDE_DIR})
 
 add_subdirectory(src)
 add_subdirectory(test)

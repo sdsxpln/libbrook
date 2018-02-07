@@ -25,17 +25,17 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-option(BROOK_BUILD_DOC "Build documentation" ON)
-option(BROOK_BUILD_API_REF_PDF "Generate API reference PDF" ${BROOK_BUILD_DOC})
+option(BK_BUILD_DOC "Build documentation" ON)
+option(BK_BUILD_API_REF_PDF "Generate API reference PDF" ${BK_BUILD_DOC})
 
-if (BROOK_BUILD_DOC)
+if (BK_BUILD_DOC)
     find_package(Doxygen QUIET)
     if (DOXYGEN_FOUND)
         set(DOXYGEN_INPUT_FILE ${CMAKE_SOURCE_DIR}/Doxyfile.in)
         set(DOXYGEN_OUTPUT_FILE ${CMAKE_BINARY_DIR}/Doxyfile)
         set(DOXYGEN_DOC_DIR ${CMAKE_BINARY_DIR}/doc)
         set(GENERATE_PDF NO)
-        if (BROOK_BUILD_API_REF_PDF)
+        if (BK_BUILD_API_REF_PDF)
             find_program(DOXYGEN_PDFLATEX_EXECUTABLE pdflatex)
             if (DOXYGEN_PDFLATEX_EXECUTABLE)
                 find_program(DOXYGEN_MAKEINDEX_EXECUTABLE makeindex)
