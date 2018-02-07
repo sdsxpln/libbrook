@@ -25,13 +25,11 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-find_package(Doxygen QUIET)
+option(BROOK_BUILD_DOC "Build documentation" ON)
 
-if (DOXYGEN_FOUND)
-
-    option(BROOK_BUILD_DOC "Build documentation" ON)
-
-    if (BROOK_BUILD_DOC)
+if (BROOK_BUILD_DOC)
+    find_package(Doxygen QUIET)
+    if (DOXYGEN_FOUND)
         set(GENERATE_PDF NO)
         find_program(DOXYGEN_PDFLATEX_EXECUTABLE pdflatex)
         if (DOXYGEN_PDFLATEX_EXECUTABLE)
