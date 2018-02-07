@@ -37,13 +37,13 @@ set(B4R_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-include(BrookWarnings)
-include(BrookGNUSource)
-include(BrookVersion)
+include(BkWarnings)
+include(BkGNUSource)
+include(BkVersion)
 
 if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
     set(BUILD_TESTING OFF)
-    include(BrookDoxygen)
+    include(BkDoxygen)
 elseif (BUILD_TESTING)
     enable_testing()
 endif ()
