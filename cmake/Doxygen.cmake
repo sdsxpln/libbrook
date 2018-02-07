@@ -31,12 +31,12 @@ if (BUILD_DOC)
     find_package(Doxygen QUIET)
     if (DOXYGEN_FOUND)
         set(DOXYGEN_INPUT_FILE ${CMAKE_SOURCE_DIR}/Doxyfile.in)
-        set(DOXYGEN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/doc)
+        set(DOXYGEN_DOC_DIR ${CMAKE_BINARY_DIR}/doc)
         set(DOXYGEN_OUTPUT_FILE ${CMAKE_BINARY_DIR}/Doxyfile)
         configure_file(${DOXYGEN_INPUT_FILE} ${DOXYGEN_OUTPUT_FILE} @ONLY)
         message(STATUS "Generating Doxygen file - done")
         add_custom_target(doc ALL
-                COMMAND ${CMAKE_COMMAND} -E make_directory ${DOXYGEN_OUTPUT_DIR}
+                COMMAND ${CMAKE_COMMAND} -E make_directory ${DOXYGEN_DOC_DIR}
                 COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUTPUT_FILE}
                 #TODO: rename all refman occurrences with libbrook-v0.0.1
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
@@ -47,8 +47,8 @@ if (BUILD_DOC)
             find_program(MAKEINDEX makeindex)
             if (MAKEINDEX)
                 add_custom_target(pdf ALL
-                        COMMAND ${CMAKE_MAKE_PROGRAM} -C ${DOXYGEN_OUTPUT_DIR}/latex
-                        WORKING_DIRECTORY ${DOXYGEN_OUTPUT_DIR}/latex
+                        COMMAND ${CMAKE_MAKE_PROGRAM} -C ${DOXYGEN_DOC_DIR}/latex
+                        WORKING_DIRECTORY ${DOXYGEN_DOC_DIR}/latex
                         COMMENT "Generating API reference with Doxygen [PDF]"
                         DEPENDS doc
                         VERBATIM)
