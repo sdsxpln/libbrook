@@ -38,3 +38,13 @@ add_library(brook
         ${BK_INCLUDE_DIR}/brook.h # allows many IDEs to find it
         ${BK_SOURCE_DIR}/bk_macros.h
         ${BK_SOURCE_DIR}/bk_utils.c)
+if (BUILD_SHARED_LIBS)
+    set_target_properties(brook PROPERTIES
+            PUBLIC_HEADER ${BK_INCLUDE_DIR}/brook.h
+            VERSION ${VERSION}
+            SOVERSION ${SOVERSION})
+    if (WIN32)
+        set_target_properties(brook PROPERTIES
+                SUFFIX ${DLL_SUFFIX})
+    endif ()
+endif ()
