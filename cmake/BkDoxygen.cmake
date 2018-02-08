@@ -25,7 +25,7 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-option(BK_BUILD_DOC "Build documentation" ON)
+option(BK_BUILD_DOC "Build documentation" OFF)
 option(BK_BUILD_API_REF_PDF "Generate API reference PDF" ${BK_BUILD_DOC})
 
 if (BK_BUILD_DOC)
