@@ -42,7 +42,7 @@
 extern "C" {
 #endif
 
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_SHARED) && defined(_WIN32) && defined(_MSC_VER)
 # ifdef brook_EXPORTS
 #  define  BK_EXTERN __declspec(dllexport)
 # else

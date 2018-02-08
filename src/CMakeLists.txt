@@ -43,7 +43,8 @@ if (BUILD_SHARED_LIBS)
             PUBLIC_HEADER ${BK_INCLUDE_DIR}/brook.h
             VERSION ${VERSION}
             SOVERSION ${SOVERSION})
-    if (WIN32)
+    target_compile_definitions(brook PUBLIC -D_SHARED)
+    if (WIN32 AND NOT MSVC)
         set_target_properties(brook PROPERTIES
                 SUFFIX ${DLL_SUFFIX})
     endif ()
