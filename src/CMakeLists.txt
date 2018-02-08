@@ -46,6 +46,6 @@ if (BUILD_SHARED_LIBS)
     target_compile_definitions(brook PUBLIC -D_SHARED)
     if (WIN32 AND NOT MSVC)
         set_target_properties(brook PROPERTIES
-                SUFFIX ${DLL_SUFFIX})
+                SUFFIX ${VERSION_SUFFIX}.dll)
     endif ()
 endif ()
