@@ -406,6 +406,8 @@ var
   b4r_httpsrv_res_content_type: function(res: Pb4r_httpsrv_res;
     const content_type: Pcchar): cbool; cdecl;
 
+  b4r_httpsrv_res_clear: function(res: Pb4r_httpsrv_res): cbool; cdecl;
+
   b4r_httpsrv_res_write_raw: function(res: Pb4r_httpsrv_res; const data: Pcvoid;
     size: csize): cbool; cdecl varargs;
 
@@ -426,6 +428,10 @@ var
 
   b4r_httpsrv_res_json: function(res: Pb4r_httpsrv_res;
     const json: Pcchar): cbool; cdecl;
+
+  b4r_httpsrv_res_body: function(res: Pb4r_httpsrv_res): Pcchar; cdecl;
+
+  b4r_httpsrv_res_body_len: function(res: Pb4r_httpsrv_res): csize; cdecl;
 
   b4r_alloc: function(size: csize): Pcvoid; cdecl;
 
@@ -548,6 +554,7 @@ begin
     b4r_httpsrv_res_headers := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_headers');
     b4r_httpsrv_res_status := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_status');
     b4r_httpsrv_res_content_type := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_content_type');
+    b4r_httpsrv_res_clear := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_clear');
     b4r_httpsrv_res_write_raw := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_write_raw');
     b4r_httpsrv_res_write_va := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_write_va');
     b4r_httpsrv_res_write := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_write');
@@ -555,6 +562,8 @@ begin
     b4r_httpsrv_res_send := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_send');
     b4r_httpsrv_res_send_file := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_send_file');
     b4r_httpsrv_res_json := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_json');
+    b4r_httpsrv_res_body := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_body');
+    b4r_httpsrv_res_body_len := GetProcAddress(GLibHandle, 'b4r_httpsrv_res_body_len');
     b4r_alloc := GetProcAddress(GLibHandle, 'b4r_alloc');
     b4r_free := GetProcAddress(GLibHandle, 'b4r_free');
     b4r_is_empty := GetProcAddress(GLibHandle, 'b4r_is_empty');
@@ -638,12 +647,15 @@ begin
     b4r_httpsrv_res_headers := nil;
     b4r_httpsrv_res_status := nil;
     b4r_httpsrv_res_content_type := nil;
+    b4r_httpsrv_res_clear := nil;
     b4r_httpsrv_res_write_raw := nil;
     b4r_httpsrv_res_write := nil;
     b4r_httpsrv_res_send_va := nil;
     b4r_httpsrv_res_send := nil;
     b4r_httpsrv_res_send_file := nil;
     b4r_httpsrv_res_json := nil;
+    b4r_httpsrv_res_body := nil;
+    b4r_httpsrv_res_body_len := nil;
     b4r_alloc := nil;
     b4r_free := nil;
     b4r_is_empty := nil;

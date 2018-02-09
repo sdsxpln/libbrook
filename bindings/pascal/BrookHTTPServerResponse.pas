@@ -56,6 +56,9 @@ type
     FStatus: UInt16;
     procedure SetContentType(const AValue: string);
     procedure SetStatus(AValue: UInt16);
+    function GetBody: string;
+    procedure SetBody(const AValue: string);
+    function GetBodyLength: NativeUInt;
   protected
     function CreateHeaders(AHandle: PPb4r_hs): TBrookHashStrings; virtual;
     procedure FreeHeaders(AHeaders: TBrookHashStrings); virtual;
@@ -64,6 +67,7 @@ type
     constructor Create(AApp: TObject; AHandle: Pb4r_httpsrv_res); virtual;
     destructor Destroy; override;
     procedure Assign(ASource: TPersistent); override;
+    procedure Clear;
     procedure WriteBuffer(const ABuffer; ASize: Integer);
     procedure WriteBytes(const ABytes: TBytes; ASize: Integer);
     procedure Write(const AString: string; AEncoding: TEncoding); overload;
@@ -75,6 +79,8 @@ type
     procedure Send(const AString: string); overload;
     procedure SendFile(const AFileName: TFileName);
     procedure Json(const AJson: string);
+    property Body: string read GetBody write SetBody;
+    property BodyLength: NativeUInt read GetBodyLength;
     property Headers: TBrookHashStrings read FHeaders;
     property Status: Word read FStatus write SetStatus;
     property ContentType: string read FContentType write SetContentType;
@@ -148,6 +154,12 @@ begin
   B4RCheckLibrary;
   FContentType := AValue;
   b4r_httpsrv_res_content_type(Fres, M.ToCString(FContentType));
+end;
+
+procedure TBrookHTTPServerResponse.Clear;
+begin
+  B4RCheckLibrary;
+  b4r_httpsrv_res_clear(Fres);
 end;
 
 procedure TBrookHTTPServerResponse.WriteBuffer(const ABuffer; ASize: Integer);
@@ -228,6 +240,23 @@ var
 begin
   B4RCheckLibrary;
   b4r_httpsrv_res_json(Fres, M.ToCString(AJson));
+end;
+
+function TBrookHTTPServerResponse.GetBody: string;
+begin
+  B4RCheckLibrary;
+  Result := TMarshal.ToString(b4r_httpsrv_res_body(Fres));
+end;
+
+procedure TBrookHTTPServerResponse.SetBody(const AValue: string);
+begin
+  Send(AValue);
+end;
+
+function TBrookHTTPServerResponse.GetBodyLength: NativeUInt;
+begin
+  B4RCheckLibrary;
+  Result := b4r_httpsrv_res_body_len(Fres);
 end;
 
 end.
