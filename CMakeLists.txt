@@ -52,3 +52,5 @@ include_directories(${BK_INCLUDE_DIR})
 
 add_subdirectory(src)
 add_subdirectory(test)
+
+#TODO: add the building sumary
