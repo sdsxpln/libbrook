@@ -399,7 +399,7 @@ B4R_EXTERN struct b4r_hs **b4r_httpsrv_res_headers(struct b4r_httpsrv_res *res) 
 
 B4R_EXTERN bool b4r_httpsrv_res_status(struct b4r_httpsrv_res *res, uint16_t code) __nonnull((1));
 
-B4R_EXTERN bool b4r_httpsrv_res_content_type(struct b4r_httpsrv_res *res, const char *content_type) __nonnull((1));
+B4R_EXTERN const char *b4r_httpsrv_res_content_type(struct b4r_httpsrv_res *res, const char *content_type) __nonnull((1));
 
 B4R_EXTERN bool b4r_httpsrv_res_clear(struct b4r_httpsrv_res *res) __nonnull((1));
 

@@ -190,11 +190,12 @@ bool b4r_httpsrv_res_status(struct b4r_httpsrv_res *res, uint16_t code) {
     return false;
 }
 
-bool b4r_httpsrv_res_content_type(struct b4r_httpsrv_res *res, const char *content_type) {
-    if (b4r_is_empty(content_type))
-        return false;
-    res->content_type = content_type;
-    return true;
+const char *b4r_httpsrv_res_content_type(struct b4r_httpsrv_res *res, const char *content_type) {
+    if (!res)
+        return NULL;
+    if (content_type)
+        res->content_type = content_type;
+    return res->content_type;
 }
 
 bool b4r_httpsrv_res_clear(struct b4r_httpsrv_res *res) {
