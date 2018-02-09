@@ -269,6 +269,10 @@ const char *b4r_httpsrv_res_body(struct b4r_httpsrv_res *res) {
     return res ? utstring_body(res->body) : NULL;
 }
 
+size_t b4r_httpsrv_res_body_len(struct b4r_httpsrv_res *res) {
+    return res ? utstring_len(res->body) : (size_t) -1;
+}
+
 #undef _B4R_HTTPSRV_RES_RESET
 
 #undef _B4R_HTTPSRV_RES_PRINTF_VA

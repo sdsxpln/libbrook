@@ -420,6 +420,8 @@ B4R_EXTERN bool b4r_httpsrv_res_json(struct b4r_httpsrv_res *res, const char *js
 
 B4R_EXTERN const char *b4r_httpsrv_res_body(struct b4r_httpsrv_res *res) __nonnull((1));
 
+B4R_EXTERN size_t b4r_httpsrv_res_body_len(struct b4r_httpsrv_res *res) __nonnull((1));
+
 /* router */
 
 typedef void (*b4r_router_cb)(void *cls, void *req, void *res);
