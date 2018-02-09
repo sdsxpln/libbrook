@@ -25,32 +25,41 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 3.5)
-
-project(brook C)
-
-set(CMAKE_C_STANDARD 99)
-
-set(PROJECT_DESCRIPTION "–– a small library which helps you write quickly REST APIs.")
-
-set(BK_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
-
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-include(BkWarnings)
-include(BkGNUSource)
-include(BkVersion)
-
-if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
-    set(BUILD_TESTING OFF)
-    include(BkDoxygen)
-elseif (BUILD_TESTING)
-    enable_testing()
+if (${CMAKE_BUILD_TYPE})
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" _build_type)
+else ()
+    set(_build_type DEBUG)
 endif ()
 
-include_directories(${BK_INCLUDE_DIR})
+if ((${BK_BUILD_HTML}) AND (${BK_GENERATE_HTML}))
+    set(_build_html yes)
+else ()
+    set(_build_html no)
+    if (NOT ${_build_type} STREQUAL RELEASE)
+        set(_build_html "${_build_html} (disabled by ${_build_type})")
+    endif ()
+endif ()
 
-add_subdirectory(src)
-add_subdirectory(test)
+if ((${BK_BUILD_PDF}) AND (${BK_BUILD_PDF}))
+    set(_build_pdf yes)
+else ()
+    set(_build_pdf no)
+    if (NOT ${_build_type} STREQUAL RELEASE)
+        set(_build_pdf "${_build_pdf} (disabled by ${_build_type})")
+    endif ()
+endif ()
 
-include(BkSummary)
+message("")
+message("Broook library ${VERSION} build options summary:
+
+    Install prefix: ${CMAKE_INSTALL_PREFIX}
+    System name: ${CMAKE_SYSTEM_NAME}
+    System processor: ${CMAKE_SYSTEM_PROCESSOR}
+    Compiler options:
+      C compiler: ${CMAKE_C_COMPILER}
+      Build type: ${_build_type}
+      CFLAGS: ${CMAKE_C_FLAGS_${_build_type}}${CMAKE_C_FLAGS}
+    Build docs:
+      HTML: ${_build_html}
+      PDF: ${_build_pdf}
+")
