@@ -25,22 +25,23 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-option(BK_BUILD_DOC "Build documentation" OFF)
-option(BK_BUILD_API_REF_PDF "Generate API reference PDF" ${BK_BUILD_DOC})
+option(BK_BUILD_HTML "Generate API reference [HTML]" ON)
+option(BK_BUILD_PDF "Generate API reference [PDF]" ${BK_BUILD_HTML})
 
-if (BK_BUILD_DOC)
+if (BK_BUILD_HTML)
     find_package(Doxygen QUIET)
     if (DOXYGEN_FOUND)
+        set(BK_GENERATE_HTML ON)
         set(DOXYGEN_INPUT_FILE ${CMAKE_SOURCE_DIR}/Doxyfile.in)
         set(DOXYGEN_OUTPUT_FILE ${CMAKE_BINARY_DIR}/Doxyfile)
         set(DOXYGEN_DOC_DIR ${CMAKE_BINARY_DIR}/doc)
-        set(GENERATE_PDF NO)
-        if (BK_BUILD_API_REF_PDF)
+        set(BK_GENERATE_PDF NO)
+        if (BK_BUILD_PDF)
             find_program(DOXYGEN_PDFLATEX_EXECUTABLE pdflatex)
             if (DOXYGEN_PDFLATEX_EXECUTABLE)
                 find_program(DOXYGEN_MAKEINDEX_EXECUTABLE makeindex)
                 if (DOXYGEN_MAKEINDEX_EXECUTABLE)
-                    set(GENERATE_PDF YES)
+                    set(BK_GENERATE_PDF YES)
                 else ()
                     message(WARNING "makeindex required to generate the API reference PDF")
                 endif ()
@@ -56,7 +57,7 @@ if (BK_BUILD_DOC)
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 COMMENT "Generating API reference with Doxygen [HTML]"
                 VERBATIM)
-        if (GENERATE_PDF)
+        if (BK_GENERATE_PDF)
             set(DOXYGEN_LATEX_DIR ${DOXYGEN_DOC_DIR}/latex)
             add_custom_target(pdf ALL
                     COMMAND ${CMAKE_MAKE_PROGRAM} -C ${DOXYGEN_LATEX_DIR}
@@ -67,6 +68,6 @@ if (BK_BUILD_DOC)
                     VERBATIM)
         endif ()
     else ()
-        message(WARNING "Doxygen required to generate the doxygen documentation")
+        message(WARNING "Doxygen required to generate the API reference [HTML/PDF]")
     endif ()
 endif ()
