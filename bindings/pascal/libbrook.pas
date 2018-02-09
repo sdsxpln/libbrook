@@ -404,7 +404,7 @@ var
     code: cuint16): cbool; cdecl;
 
   b4r_httpsrv_res_content_type: function(res: Pb4r_httpsrv_res;
-    const content_type: Pcchar): cbool; cdecl;
+    const content_type: Pcchar): Pcchar; cdecl;
 
   b4r_httpsrv_res_clear: function(res: Pb4r_httpsrv_res): cbool; cdecl;
 

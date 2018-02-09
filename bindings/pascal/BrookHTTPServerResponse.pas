@@ -49,11 +49,11 @@ type
 
   TBrookHTTPServerResponse = class(TBrookHandledPersistent)
   private
-    FContentType: string;
     FHeaders: TBrookHashStrings;
     Fres: Pb4r_httpsrv_res;
     FApp: TObject;
     FStatus: UInt16;
+    function GetContentType: string;
     procedure SetContentType(const AValue: string);
     procedure SetStatus(AValue: UInt16);
     function GetBody: string;
@@ -83,7 +83,7 @@ type
     property BodyLength: NativeUInt read GetBodyLength;
     property Headers: TBrookHashStrings read FHeaders;
     property Status: Word read FStatus write SetStatus;
-    property ContentType: string read FContentType write SetContentType;
+    property ContentType: string read GetContentType write SetContentType;
   end;
 
 implementation
@@ -114,7 +114,6 @@ begin
   begin
     VRes := ASource as TBrookHTTPServerResponse;
     FStatus := VRes.FStatus;
-    FContentType := VRes.FContentType;
   end
   else
     inherited Assign(ASource);
@@ -145,15 +144,18 @@ begin
   b4r_httpsrv_res_status(Fres, FStatus);
 end;
 
+function TBrookHTTPServerResponse.GetContentType: string;
+begin
+  B4RCheckLibrary;
+  Result := TMarshal.ToString(b4r_httpsrv_res_content_type(Fres, nil));
+end;
+
 procedure TBrookHTTPServerResponse.SetContentType(const AValue: string);
 var
   M: TMarshaller;
 begin
-  if FContentType = AValue then
-    Exit;
   B4RCheckLibrary;
-  FContentType := AValue;
-  b4r_httpsrv_res_content_type(Fres, M.ToCString(FContentType));
+  b4r_httpsrv_res_content_type(Fres, M.ToCString(AValue));
 end;
 
 procedure TBrookHTTPServerResponse.Clear;
