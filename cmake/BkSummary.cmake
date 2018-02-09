@@ -49,17 +49,17 @@ else ()
     endif ()
 endif ()
 
-message("")
-message("Broook library ${VERSION} build options summary:
+message("
+Brook library ${VERSION} - Build options summary:
 
-    Install prefix: ${CMAKE_INSTALL_PREFIX}
-    System name: ${CMAKE_SYSTEM_NAME}
-    System processor: ${CMAKE_SYSTEM_PROCESSOR}
-    Compiler options:
-      C compiler: ${CMAKE_C_COMPILER}
-      CFLAGS: ${CMAKE_C_FLAGS_${_build_type}}${CMAKE_C_FLAGS}
-      Build type: ${_build_type}
-    Build docs:
-      HTML: ${_build_html}
-      PDF: ${_build_pdf}
+  Install prefix: ${CMAKE_INSTALL_PREFIX}
+  System name: ${CMAKE_SYSTEM_NAME}
+  System processor: ${CMAKE_SYSTEM_PROCESSOR}
+  Compiler options:
+    C compiler: ${CMAKE_C_COMPILER}
+    CFLAGS: ${CMAKE_C_FLAGS_${_build_type}}${CMAKE_C_FLAGS}
+    Build type: ${_build_type}
+  Build docs:
+    HTML: ${_build_html}
+    PDF: ${_build_pdf}
 ")
