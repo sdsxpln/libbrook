@@ -73,3 +73,9 @@ Brook library ${VERSION} - Build options summary:
     HTML: ${_build_html}
     PDF: ${_build_pdf}
 ")
+
+unset(_build_type)
+unset(_BUILD_TYPE)
+unset(_build_html)
+unset(_build_pdf)
+unset(_cflags)
