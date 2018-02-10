@@ -50,8 +50,6 @@ if (BUILD_SHARED_LIBS)
     endif ()
 endif ()
 
-include(GNUInstallDirs)
-
 install(TARGETS brook
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
