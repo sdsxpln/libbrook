@@ -58,6 +58,24 @@ endif ()
 
 string(TOUPPER "${CMAKE_BUILD_TYPE}" _BUILD_TYPE)
 string(CONCAT _cflags "${CMAKE_C_FLAGS_${_BUILD_TYPE}}" "${CMAKE_C_FLAGS}")
+unset(_BUILD_TYPE)
+
+if (BUILD_TESTING)
+    set(_build_testing "Yes")
+    if (BK_BUILD_UTILS_TESTING)
+        list(APPEND _tests_list "utils")
+    endif ()
+    if (_tests_list)
+        string(CONCAT _build_testing ${_build_testing} " (${_tests_list})")
+        unset(_tests_list)
+        string(REPLACE ";" ", " _build_testing "${_build_testing}")
+    endif ()
+else ()
+    set(_build_testing "No")
+    if (NOT ${_build_type} MATCHES "[Dd]ebug|DEBUG")
+        set(_build_testing "${_build_testing} (disabled by build type: ${_build_type})")
+    endif ()
+endif ()
 
 message("
 Brook library ${VERSION} - Build options summary:
@@ -72,10 +90,11 @@ Brook library ${VERSION} - Build options summary:
   Build docs:
     HTML: ${_build_html}
     PDF: ${_build_pdf}
+  Run tests: ${_build_testing}
 ")
 
 unset(_build_type)
-unset(_BUILD_TYPE)
 unset(_build_html)
 unset(_build_pdf)
 unset(_cflags)
+unset(_build_testing)
