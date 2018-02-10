@@ -25,27 +25,27 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-if (${CMAKE_BUILD_TYPE})
+if (${CMAKE_BUILD_TYPE} MATCHES "")
     string(TOUPPER "${CMAKE_BUILD_TYPE}" _build_type)
 else ()
-    set(_build_type DEBUG)
+    set(_build_type "NONE")
 endif ()
 
 if ((${BK_BUILD_HTML}) AND (${BK_GENERATE_HTML}))
     set(_build_html yes)
 else ()
     set(_build_html no)
-    if (NOT ${_build_type} STREQUAL RELEASE)
-        set(_build_html "${_build_html} (disabled by build type ${_build_type})")
+    if (NOT ${_build_type} MATCHES "RELEASE")
+        set(_build_html "${_build_html} (disabled by build type \"${_build_type}\")")
     endif ()
 endif ()
 
-if ((${BK_BUILD_PDF}) AND (${BK_BUILD_PDF}))
+if ((${BK_BUILD_PDF}) AND (${BK_GENERATE_PDF}))
     set(_build_pdf yes)
 else ()
     set(_build_pdf no)
-    if (NOT ${_build_type} STREQUAL RELEASE)
-        set(_build_pdf "${_build_pdf} (disabled by build type ${_build_type})")
+    if (NOT ${_build_type} MATCHES "RELEASE")
+        set(_build_pdf "${_build_pdf} (disabled by build type \"${_build_type}\")")
     endif ()
 endif ()
 
