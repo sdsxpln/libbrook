@@ -25,6 +25,29 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+set(_system_name "${CMAKE_SYSTEM} ${CMAKE_SYSTEM_PROCESSOR}")
+if (NOT ${_system_name} MATCHES ${CMAKE_C_PLATFORM_ID})
+    string(CONCAT _system_name ${_system_name} " (${CMAKE_C_PLATFORM_ID})")
+endif ()
+
+string(TOUPPER "${CMAKE_BUILD_TYPE}" _BUILD_TYPE)
+string(CONCAT _cflags "${CMAKE_C_FLAGS_${_BUILD_TYPE}}" "${CMAKE_C_FLAGS}")
+unset(_BUILD_TYPE)
+
+if (CMAKE_SIZEOF_VOID_P MATCHES "8")
+    if (MSVC)
+        set(_build_arch "x64")
+    else ()
+        set(_build_arch "x86_64")
+    endif ()
+else ()
+    if (MSVC)
+        set(_build_arch "x86")
+    else ()
+        set(_build_arch "i686")
+    endif ()
+endif ()
+
 if (CMAKE_BUILD_TYPE)
     set(_build_type ${CMAKE_BUILD_TYPE})
 else ()
@@ -58,10 +81,6 @@ else ()
     endif ()
 endif ()
 
-string(TOUPPER "${CMAKE_BUILD_TYPE}" _BUILD_TYPE)
-string(CONCAT _cflags "${CMAKE_C_FLAGS_${_BUILD_TYPE}}" "${CMAKE_C_FLAGS}")
-unset(_BUILD_TYPE)
-
 if (BUILD_TESTING)
     set(_build_testing "Yes")
     if (BK_BUILD_UTILS_TESTING)
@@ -79,24 +98,24 @@ else ()
     endif ()
 endif ()
 
-#TODO: shared/static
-
 message("
 Brook library ${VERSION} - Build options summary:
 
-  Install prefix: ${CMAKE_INSTALL_PREFIX}
-  System name: ${CMAKE_SYSTEM_NAME}
-  System processor: ${CMAKE_SYSTEM_PROCESSOR}
-  Compiler options:
-    C compiler: ${CMAKE_C_COMPILER}
+  Install: ${CMAKE_INSTALL_PREFIX}
+  System: ${_system_name}
+  Compiler:
+    Executable: ${CMAKE_C_COMPILER}
+    Version: ${CMAKE_C_COMPILER_VERSION}
     CFLAGS: ${_cflags}
-    Build type: ${_build_type}
-  Build docs:
+  Build: ${_build_type}-${_build_arch}
+  Docs:
     HTML: ${_build_html}
     PDF: ${_build_pdf}
   Run tests: ${_build_testing}
 ")
 
+unset(_system_name)
+unset(_build_arch)
 unset(_build_type)
 unset(_build_html)
 unset(_build_pdf)
