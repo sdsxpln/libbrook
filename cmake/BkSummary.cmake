@@ -57,6 +57,7 @@ else ()
 endif ()
 
 string(TOUPPER "${CMAKE_BUILD_TYPE}" _BUILD_TYPE)
+string(CONCAT _cflags "${CMAKE_C_FLAGS_${_BUILD_TYPE}}" "${CMAKE_C_FLAGS}")
 
 message("
 Brook library ${VERSION} - Build options summary:
@@ -66,7 +67,7 @@ Brook library ${VERSION} - Build options summary:
   System processor: ${CMAKE_SYSTEM_PROCESSOR}
   Compiler options:
     C compiler: ${CMAKE_C_COMPILER}
-    CFLAGS: ${CMAKE_C_FLAGS_${_BUILD_TYPE}}${CMAKE_C_FLAGS}
+    CFLAGS: ${_cflags}
     Build type: ${_build_type}
   Build docs:
     HTML: ${_build_html}
