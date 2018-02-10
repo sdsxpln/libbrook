@@ -25,33 +25,11 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-if (WIN32)
-    if (MSVC)
-        set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-    endif ()
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+if (NOT TARGET uninstall)
+    configure_file(
+            ${CMAKE_MODULE_PATH}/CMakeUninstall.cmake.in
+            ${CMAKE_BINARY_DIR}/cmake_uninstall.cmake
+            IMMEDIATE @ONLY)
+    add_custom_target(uninstall
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cmake_uninstall.cmake)
 endif ()
-
-set(BK_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
-
-add_library(brook
-        ${BK_INCLUDE_DIR}/brook.h # allows many IDEs to find it
-        ${BK_SOURCE_DIR}/bk_macros.h
-        ${BK_SOURCE_DIR}/bk_utils.c)
-if (BUILD_SHARED_LIBS)
-    set_target_properties(brook PROPERTIES
-            PUBLIC_HEADER ${BK_INCLUDE_DIR}/brook.h
-            VERSION ${VERSION}
-            SOVERSION ${SOVERSION})
-    target_compile_definitions(brook PUBLIC -D_SHARED)
-    if (WIN32 AND NOT MSVC)
-        set_target_properties(brook PROPERTIES
-                SUFFIX ${VERSION_SUFFIX}.dll)
-    endif ()
-endif ()
-
-install(TARGETS brook
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT lib
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT lib
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT lib # Windows DLL
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} COMPONENT dev)

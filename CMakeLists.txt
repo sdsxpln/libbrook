@@ -55,3 +55,4 @@ add_subdirectory(src)
 add_subdirectory(test)
 
 include(BkSummary)
+include(BkUninstall)
