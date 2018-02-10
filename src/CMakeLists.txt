@@ -57,3 +57,12 @@ install(TARGETS brook
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+if (NOT TARGET uninstall)
+    configure_file(
+            ${CMAKE_MODULE_PATH}/CMakeUninstall.cmake.in
+            ${CMAKE_BINARY_DIR}/cmake_uninstall.cmake
+            IMMEDIATE @ONLY)
+    add_custom_target(uninstall
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cmake_uninstall.cmake)
+endif ()
