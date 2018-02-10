@@ -99,8 +99,9 @@ else ()
 endif ()
 
 message("
-Brook library ${VERSION} - Build options summary:
+Brook library ${VERSION} - building summary:
 
+  Generator: ${CMAKE_GENERATOR}
   Install: ${CMAKE_INSTALL_PREFIX}
   System: ${_system_name}
   Compiler:
