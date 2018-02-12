@@ -38,7 +38,8 @@ set(BK_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 add_library(brook
         ${BK_INCLUDE_DIR}/brook.h # allows many IDEs to find it
         ${BK_SOURCE_DIR}/bk_macros.h
-        ${BK_SOURCE_DIR}/bk_utils.c)
+        ${BK_SOURCE_DIR}/bk_utils.c
+        ${BK_SOURCE_DIR}/bk_strbuf.c)
 if (BUILD_SHARED_LIBS)
     set_target_properties(brook PROPERTIES
             PUBLIC_HEADER ${BK_INCLUDE_DIR}/brook.h
