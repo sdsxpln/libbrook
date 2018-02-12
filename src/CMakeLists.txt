@@ -53,6 +53,7 @@ list(APPEND BK_SOURCE
         ${BK_SOURCE_DIR}/bk_macros.h
         ${BK_SOURCE_DIR}/bk_utils.c
         ${BK_SOURCE_DIR}/bk_strbuf.c)
+set(BK_SOURCE ${BK_SOURCE} PARENT_SCOPE)
 
 add_library(brook ${BK_SOURCE})
 if (BUILD_SHARED_LIBS)
