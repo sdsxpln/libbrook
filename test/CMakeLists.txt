@@ -26,25 +26,31 @@
 #
 
 if (BUILD_TESTING)
-
-    option(BK_BUILD_UTILS_TESTING "Build bk_utils testing" ON)
-
-    if (BK_BUILD_UTILS_TESTING)
-        if (WIN32)
-            set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-        endif ()
-        set(BK_TESTS_DIR ${CMAKE_SOURCE_DIR}/test)
-        add_executable(test_utils
-                ${BK_TESTS_DIR}/bk_assert.h
-                ${BK_TESTS_DIR}/test_utils.c)
-        if (MSVC)
-            target_compile_definitions(test_utils PUBLIC
-                    _CRT_STDIO_INLINE=static
-                    _CRT_SECURE_NO_WARNINGS)
-        endif ()
-        target_link_libraries(test_utils brook)
-        add_test(NAME test_utils
-                WORKING_DIRECTORY ${BK_TESTS_DIR}
-                COMMAND test_utils)
+    if (WIN32)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
     endif ()
+    set(BK_TESTS_DIR ${CMAKE_SOURCE_DIR}/test)
+    list(APPEND BK_TESTS
+            utils
+            strbuf)
+    set(BK_TESTS ${BK_TESTS} PARENT_SCOPE)
+    foreach (_test ${BK_TESTS})
+        string(TOUPPER ${_test} _TEST)
+        option(BK_BUILD_${_TEST}_TESTING "Build bk_${_test} testing" ON)
+        if (BK_BUILD_${_TEST}_TESTING)
+            add_executable(test_${_test}
+                    ${BK_TESTS_DIR}/bk_assert.h
+                    ${BK_TESTS_DIR}/test_${_test}.c)
+            if (MSVC)
+                target_compile_definitions(test_${_test} PUBLIC
+                        _CRT_STDIO_INLINE=static
+                        _CRT_SECURE_NO_WARNINGS)
+            endif ()
+            target_link_libraries(test_${_test} brook)
+            add_test(NAME test_${_test}
+                    WORKING_DIRECTORY ${BK_TESTS_DIR}
+                    COMMAND test_${_test})
+        endif ()
+        unset(_TEST)
+    endforeach ()
 endif ()
