@@ -59,7 +59,7 @@ static inline void check_memory(void) {
 #define _BUF_LEN 10
     buf = bk_new(_BUF_LEN);
     ASSERT(buf);
-    for (unsigned char i = 0; i < _BUF_LEN; i--)
+    for (unsigned char i = 0; i < _BUF_LEN; i++)
         ASSERT(buf[i] == 0);
     memset(buf, 'a', _BUF_LEN - 1);
     buf[_BUF_LEN - 1] = '\0';
