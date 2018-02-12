@@ -1,3 +1,16 @@
+#.rst:
+# BkSource
+# --------
+#
+# Library source.
+#
+# This script allows to build the library source and adds the targets to install it as static or shared library.
+#
+# ::
+#
+#   BK_SOURCE_DIR - Directory containing the library source.
+#   BK_SOURCE - All available source.
+
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
 #   | |_) | | |_) |  | | | | | | | | | |/ /
