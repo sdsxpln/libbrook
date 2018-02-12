@@ -25,40 +25,4 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 3.5)
-
-project(brook C)
-
-set(CMAKE_C_STANDARD 99)
-
-set(PROJECT_DESCRIPTION "–– a small library which helps you write quickly REST APIs.")
-
-set(PROJECT_URL "https://github.com/risoflora/libbrook")
-
-set(PROJECT_ISSUES_URL "${PROJECT_URL}/issues")
-
-set(BK_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
-
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-include(GNUInstallDirs)
-include(BkWarnings)
-include(BkGNUSource)
-include(BkVersion)
-include(BkPC)
-include(BkUninstall)
-
-if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
-    set(BUILD_TESTING OFF)
-    include(BkDoxygen)
-elseif (BUILD_TESTING)
-    enable_testing()
-endif ()
-
-include_directories(${BK_INCLUDE_DIR})
-
-add_subdirectory(src)
-add_subdirectory(test)
-
-include(BkSummary)
-include(BkCPack)
+include(CPack)
