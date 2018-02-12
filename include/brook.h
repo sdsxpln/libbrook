@@ -90,7 +90,7 @@ struct bk_strbuf;
  * @return String-buffer zero-initialized instance.
  * @note If #bk_strbuf_new fails (e.g: no memory space), a `NULL` is returned.
  */
-extern struct bk_strbuf *bk_strbuf_new();
+extern struct bk_strbuf *bk_strbuf_new(void);
 
 /**
  * Frees a string-buffer instance previous allocated by #bk_strbuf_new().

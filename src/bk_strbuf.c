@@ -28,7 +28,7 @@
 #include <brook.h>
 #include "bk_strbuf.h"
 
-struct bk_strbuf *bk_strbuf_new() {
+struct bk_strbuf *bk_strbuf_new(void) {
     struct bk_strbuf *sb;
     sb = bk_new(sizeof(struct bk_strbuf));
     if (sb)

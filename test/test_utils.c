@@ -30,7 +30,7 @@
 #include <string.h>
 #include "brook.h"
 
-static inline void check_version() {
+static inline void check_version(void) {
     const char *ver_original;
     char ver_local[9];
     size_t ver_len;
@@ -52,7 +52,7 @@ static inline void check_version() {
     ASSERT(ver_original[ver_len] == '\0');
 }
 
-static inline void check_memory() {
+static inline void check_memory(void) {
     char *buf;
 
     /* Checks if it allocates 10 bytes in the memory. */
