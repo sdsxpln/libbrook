@@ -62,6 +62,12 @@ else ()
     set(_build_type "None")
 endif ()
 
+if (BUILD_SHARED_LIBS)
+    set(_lib_type "shared")
+else ()
+    set(_lib_type "static")
+endif ()
+
 if (BK_BUILD_HTML AND BK_GENERATE_HTML)
     set(_build_html "Yes")
 else ()
@@ -112,7 +118,7 @@ Brook library ${VERSION} - building summary:
     Executable: ${CMAKE_C_COMPILER}
     Version: ${CMAKE_C_COMPILER_VERSION}
     CFLAGS: ${_cflags}
-  Build: ${_build_type}-${_build_arch}
+  Build: ${_build_type}-${_build_arch} (${_lib_type})
   Docs:
     HTML: ${_build_html}
     PDF: ${_build_pdf}
