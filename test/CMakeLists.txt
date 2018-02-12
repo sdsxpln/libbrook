@@ -8,7 +8,7 @@
 #
 # ::
 #
-#   BK_TESTS_DIR - Directory containing the testings.
+#   BK_TESTS_DIR - Directory containing the library testings.
 #   BK_TESTS - All available testings.
 #   BK_BUILD_<TEST>_TESTING - Enable/disable a <TEST> listed by BK_TESTS, e.g: -DBK_BUILD_UTILS_TESTING=ON.
 
