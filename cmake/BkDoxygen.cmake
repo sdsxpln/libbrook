@@ -1,3 +1,28 @@
+#.rst:
+# BkDoxygen
+# ---------
+#
+# Doxygen variables for the Brook library documentation generation.
+#
+# Adds the targets `make html` and `make pdf` to generate respectively the HTML and PDF API reference of
+# the Brook library.
+#
+# ::
+#
+#   BK_BUILD_HTML - Enable/disable the API reference generation as HTML.
+#   BK_BUILD_PDF - Enable/disable the API reference generation as PDF. Note: it depends on BK_BUILD_HTML=ON.
+#   BK_GENERATE_HTML - True when there is the possibility to generating the API reference as HTML.
+#   BK_GENERATE_PDF - True when there is the possibility to generating the API reference as PDF.
+#
+#   DOXYGEN_FOUND - True when Doxygen executable is found.
+#   DOXYGEN_INPUT_FILE - Template file used to generate the DOXYGEN_OUTPUT_FILE.
+#   DOXYGEN_OUTPUT_FILE - Production file to be used as Doxygen input file. It is generated from the
+#                         template DOXYGEN_INPUT_FILE.
+#   DOXYGEN_DOC_DIR - Directory containing the generated HTML files.
+#   DOXYGEN_PDFLATEX_EXECUTABLE - The path of the `pdflatex` executable when it is found.
+#   DOXYGEN_MAKEINDEX_EXECUTABLE - The path of the `makeindex` executable when it is found.
+#   DOXYGEN_LATEX_DIR - Directory containing the generated PDF file.
+
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
 #   | |_) | | |_) |  | | | | | | | | | |/ /
