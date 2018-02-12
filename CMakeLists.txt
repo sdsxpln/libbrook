@@ -42,7 +42,7 @@ set(BK_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(GNUInstallDirs)
-include(BkWarnings)
+include(BkWarnings) #TODO: -fsanitize=address/leak
 include(BkGNUSource)
 include(BkVersion)
 include(BkPC)
