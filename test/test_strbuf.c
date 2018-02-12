@@ -35,7 +35,6 @@ int main(void) {
     /* Checks if a string-buffer object was successfully created. */
     sb = bk_strbuf_new();
     ASSERT(sb);
-    ASSERT(sizeof(sb) == sizeof(struct bk_strbuf *));
 
     /* There is no a portable way to test if a memory has been freed, so just free it. */
     bk_strbuf_free(sb);
