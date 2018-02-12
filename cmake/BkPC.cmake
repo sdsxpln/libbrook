@@ -1,3 +1,13 @@
+#.rst:
+# BkPC
+# ----
+#
+# `pkg-config` file generation.
+#
+# Generates and install the `libbrook.pc` file. When it is successfully installed, the `pkg-config` tool can be used to
+# get info regarding the library, e.g: `pkg-config libbrook --modversion` returns the library version. More:
+# [`pkg-config(1)`](https://linux.die.net/man/1/pkg-config).
+
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
 #   | |_) | | |_) |  | | | | | | | | | |/ /
