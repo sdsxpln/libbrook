@@ -72,8 +72,6 @@ __recovery/
 *.7z
 *.jar
 *.rar
-*.zip
-*.gz
 *.tgz
 *.bzip
 *.bz2
