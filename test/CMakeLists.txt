@@ -10,6 +10,7 @@
 #
 #   BK_TESTS_DIR - Directory containing the library testings.
 #   BK_TESTS - All available testings.
+#   BK_TESTS_SOURCE - All available source.
 #   BK_BUILD_<TEST>_TESTING - Enable/disable a <TEST> listed by BK_TESTS, e.g: -DBK_BUILD_UTILS_TESTING=ON.
 
 #    _____   _____    _____   _____   _   __
@@ -52,6 +53,7 @@ if (BUILD_TESTING)
         string(TOUPPER ${_test} _TEST)
         option(BK_BUILD_${_TEST}_TESTING "Build bk_${_test} testing" ON)
         if (BK_BUILD_${_TEST}_TESTING)
+            list(APPEND BK_TESTS_SOURCE ${BK_TESTS_DIR}/test_${_test}.c)
             add_executable(test_${_test}
                     ${BK_TESTS_DIR}/bk_assert.h
                     ${BK_TESTS_DIR}/test_${_test}.c)
@@ -67,4 +69,5 @@ if (BUILD_TESTING)
         endif ()
         unset(_TEST)
     endforeach ()
+    set(BK_TESTS_SOURCE ${BK_TESTS_SOURCE} PARENT_SCOPE)
 endif ()
