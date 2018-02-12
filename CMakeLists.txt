@@ -1,3 +1,15 @@
+#.rst:
+# BkLibrary
+# ---------
+#
+# Main library building.
+#
+# The main building of the Brook library. It includes all necessary sub-bulding scripts to manage the library building.
+#
+# ::
+#
+#   BK_INCLUDE_DIR - Directory containing the library header.
+
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
 #   | |_) | | |_) |  | | | | | | | | | |/ /
