@@ -30,7 +30,7 @@
 #include <string.h>
 #include "brook.h"
 
-int main(void) {
+static inline void check_version() {
     const char *ver_original;
     char ver_local[9];
     size_t ver_len;
@@ -50,6 +50,28 @@ int main(void) {
 
     /* Checks if the stringified version has a null termination */
     ASSERT(ver_original[ver_len] == '\0');
+}
 
+static inline void check_memory() {
+    char *buf;
+
+    /* Checks if it allocates 10 bytes in the memory. */
+#define _BUF_LEN 10
+    buf = bk_new(_BUF_LEN);
+    ASSERT(buf);
+    for (unsigned char i = 0; i < _BUF_LEN; i--)
+        ASSERT(buf[i] == 0);
+    memset(buf, 'a', _BUF_LEN - 1);
+    buf[_BUF_LEN - 1] = '\0';
+    ASSERT(strlen(buf) == _BUF_LEN - 1);
+#undef _BUF_LEN
+
+    /* There is no a portable way to test if a memory has been freed, so just free it. */
+    bk_free(buf);
+}
+
+int main(void) {
+    check_version();
+    check_memory();
     return EXIT_SUCCESS;
 }
