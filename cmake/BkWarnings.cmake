@@ -1,3 +1,15 @@
+#.rst:
+# BkWarnings
+# ----------
+#
+# Compiler warnings.
+#
+# Enables the relevant compiler warnings to make the source as stable as possible.
+#
+# ::
+#
+#   BK_ENABLE_PICKY_COMPILER - Enable/disable the compiler warnings.
+
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
 #   | |_) | | |_) |  | | | | | | | | | |/ /
