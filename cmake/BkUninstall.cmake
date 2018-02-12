@@ -1,3 +1,11 @@
+#.rst:
+# BkUninstall
+# -----------
+#
+# `make uninstall` target.
+#
+# Adds the target `make uninstall` allowing the library uninstallation.
+
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
 #   | |_) | | |_) |  | | | | | | | | | |/ /
