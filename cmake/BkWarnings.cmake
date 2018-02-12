@@ -8,7 +8,7 @@
 #
 # ::
 #
-#   BK_ENABLE_PICKY_COMPILER - Enable/disable the compiler warnings.
+#   BK_PICKY_COMPILER - Enable/disable the compiler warnings.
 
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
@@ -37,9 +37,9 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-option(BK_ENABLE_PICKY_COMPILER "Enable picky compiler options" ON)
+option(BK_PICKY_COMPILER "Enable picky compiler options" ON)
 
-if (BK_ENABLE_PICKY_COMPILER)
+if (BK_PICKY_COMPILER)
     if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra")
     elseif (MSVC)
