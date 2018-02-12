@@ -1,3 +1,15 @@
+#.rst:
+# BkGNUSource
+# -----------
+#
+# `_GNU_SOURCE` checking.
+#
+# Checks if `_GNU_SOURCE` is available.
+#
+# ::
+#
+#   _GNU_SOURCE - True if `_GNU_SOURCE` is available. If so, a `-D_GNU_SOURCE` is declared too.
+
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
 #   | |_) | | |_) |  | | | | | | | | | |/ /
