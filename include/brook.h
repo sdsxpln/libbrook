@@ -42,17 +42,6 @@
 extern "C" {
 #endif
 
-#if defined(_SHARED) && defined(_WIN32) && defined(_MSC_VER)
-# ifdef brook_EXPORTS
-#  define  BK_EXTERN __declspec(dllexport)
-# else
-#  define BK_EXTERN __declspec(dllimport)
-# endif
-#endif
-#ifndef BK_EXTERN
-# define BK_EXTERN
-#endif
-
 #define BK_VERSION_MAJOR 0
 #define BK_VERSION_MINOR 0
 #define BK_VERSION_PATCH 1
@@ -64,13 +53,13 @@ extern "C" {
  * Returns the library version number.
  * @return the library version packed into a single integer.
  */
-BK_EXTERN unsigned int bk_version(void);
+extern unsigned int bk_version(void);
 
 /**
  * Returns the library version number as string.
  * @return the library version packed into a static string.
  */
-BK_EXTERN const char *bk_version_str(void);
+extern const char *bk_version_str(void);
 
 #ifdef __cplusplus
 }
