@@ -1,3 +1,20 @@
+#.rst:
+# BkVersion
+# ---------
+#
+# Versioning variables.
+#
+# Variables containing the Brook library version.
+#
+# ::
+#
+#   BK_VERSION_MAJOR - Major version.
+#   BK_VERSION_MINOR - Minor version.
+#   BK_VERSION_PATCH - Patch version.
+#   SOVERSION - Composed by "BK_VERSION_MAJOR.BK_VERSION_MINOR".
+#   VERSION - Composed by "BK_VERSION_MAJOR.BK_VERSION_MINOR.BK_VERSION_PATCH".
+#   VERSION_SUFFIX - Composed by "-BK_VERSION_MAJOR" (Windows only).
+
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
 #   | |_) | | |_) |  | | | | | | | | | |/ /
