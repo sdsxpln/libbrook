@@ -25,3 +25,20 @@
  * along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <brook.h>
+#include "bk_strbuf.h"
+
+struct bk_strbuf *bk_strbuf_new() {
+    struct bk_strbuf *sb;
+    sb = bk_new(sizeof(struct bk_strbuf));
+    if (sb)
+        utstring_new(sb->str);
+    return sb;
+}
+
+void bk_strbuf_free(struct bk_strbuf *sb) {
+    if (!sb)
+        return;
+    utstring_free(sb->str);
+    bk_free(sb);
+}

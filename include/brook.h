@@ -31,7 +31,7 @@
  */
 
 /**
- * @defgroup brook_api Brook library API reference
+ * @defgroup brook_api API reference
  * @{
  */
 
@@ -49,7 +49,7 @@ extern "C" {
 #define BK_VERSION_PATCH 1
 #define BK_VERSION_HEX ((BK_VERSION_MAJOR << 16) | (BK_VERSION_MINOR <<  8) | (BK_VERSION_PATCH))
 
-/* utilities */
+/* Utilities */
 
 /**
  * Returns the library version number.
@@ -77,6 +77,26 @@ extern void *bk_new(size_t size);
  * @param[in] ptr Pointer of the memory to be freed.
  */
 extern void bk_free(void *ptr);
+
+/* String-buffer */
+
+/**
+ * Handle for the string-buffer. It is used to represent a HTML body, POST payload and more.
+ */
+struct bk_strbuf;
+
+/**
+ * Creates a new zero-initialized string-buffer instance.
+ * @return String-buffer zero-initialized instance.
+ * @note If #bk_strbuf_new fails (e.g: no memory space), a `NULL` is returned.
+ */
+extern struct bk_strbuf *bk_strbuf_new();
+
+/**
+ * Frees a string-buffer instance previous allocated by #bk_strbuf_new().
+ * @param sb Pointer of the string-buffer to be freed.
+ */
+extern void bk_strbuf_free(struct bk_strbuf *sb);
 
 #ifdef __cplusplus
 }
