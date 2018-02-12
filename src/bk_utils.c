@@ -32,6 +32,8 @@
 
 #define BK_VERSION_STR xstr(BK_VERSION_MAJOR) "." xstr(BK_VERSION_MINOR) "." xstr(BK_VERSION_PATCH)
 
+/* Version */
+
 unsigned int bk_version(void) {
     return BK_VERSION_HEX;
 }
@@ -39,6 +41,8 @@ unsigned int bk_version(void) {
 const char *bk_version_str(void) {
     return BK_VERSION_STR;
 }
+
+/* Memory */
 
 void *bk_new(size_t size) {
     void *p = malloc(size);
