@@ -25,6 +25,8 @@
  * along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
+#include <string.h>
 #include "bk_macros.h"
 #include "brook.h"
 
@@ -36,4 +38,15 @@ unsigned int bk_version(void) {
 
 const char *bk_version_str(void) {
     return BK_VERSION_STR;
+}
+
+void *bk_new(size_t size) {
+    void *p = malloc(size);
+    if (p)
+        memset(p, 0, size);
+    return p;
+}
+
+void bk_free(void *ptr) {
+    free(ptr);
 }

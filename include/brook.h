@@ -42,6 +42,8 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
+
 #define BK_VERSION_MAJOR 0
 #define BK_VERSION_MINOR 0
 #define BK_VERSION_PATCH 1
@@ -51,15 +53,30 @@ extern "C" {
 
 /**
  * Returns the library version number.
- * @return the library version packed into a single integer.
+ * @return Library version packed into a single integer.
  */
 extern unsigned int bk_version(void);
 
 /**
  * Returns the library version number as string.
- * @return the library version packed into a static string.
+ * @return Library version packed into a static string.
  */
 extern const char *bk_version_str(void);
+
+/**
+ * Allocates a new memory space and zero-initialize it.
+ * @param[in] size Memory size to be allocated.
+ * @return Pointer of the allocated and zero-initialized memory.
+ * @note If @p size is  `0`, then #bk_new() returns either `NULL`, or a unique pointer value that can later be
+ * successfully passed to #bk_free().
+ */
+extern void *bk_new(size_t size);
+
+/**
+ * Frees a memory space previous allocated by #bk_new().
+ * @param[in] ptr Pointer of the memory to be freed.
+ */
+extern void bk_free(void *ptr);
 
 #ifdef __cplusplus
 }
