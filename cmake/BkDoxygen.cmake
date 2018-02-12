@@ -51,7 +51,7 @@ if (BK_BUILD_HTML)
         endif ()
         configure_file(${DOXYGEN_INPUT_FILE} ${DOXYGEN_OUTPUT_FILE} @ONLY)
         message(STATUS "Generating Doxygen file - done")
-        add_custom_target(doc ALL
+        add_custom_target(doc
                 COMMAND ${CMAKE_COMMAND} -E make_directory ${DOXYGEN_DOC_DIR}
                 COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUTPUT_FILE}
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
@@ -59,7 +59,7 @@ if (BK_BUILD_HTML)
                 VERBATIM)
         if (BK_GENERATE_PDF)
             set(DOXYGEN_LATEX_DIR ${DOXYGEN_DOC_DIR}/latex)
-            add_custom_target(pdf ALL
+            add_custom_target(pdf
                     COMMAND ${CMAKE_MAKE_PROGRAM} -C ${DOXYGEN_LATEX_DIR}
                     COMMAND ${CMAKE_COMMAND} -E rename ${DOXYGEN_LATEX_DIR}/refman.pdf ${DOXYGEN_LATEX_DIR}/libbrook-v${VERSION}.pdf
                     WORKING_DIRECTORY ${DOXYGEN_LATEX_DIR}
