@@ -1,3 +1,12 @@
+#.rst:
+# BkCPack
+# -------
+#
+# CPack variables for the Brook library packaging distribution.
+#
+# Adds the CPack targets to generate the distribution package of the Brook library. An extra added target `make dist`
+# is just an intuitive alias to the `make package_source`.
+
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
 #   | |_) | | |_) |  | | | | | | | | | |/ /
