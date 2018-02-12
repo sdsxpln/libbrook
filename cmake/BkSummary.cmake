@@ -1,3 +1,11 @@
+#.rst:
+# BkSummary
+# ---------
+#
+# Building summary.
+#
+# Summarizes the building options and prints it on screen.
+
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
 #   | |_) | | |_) |  | | | | | | | | | |/ /
