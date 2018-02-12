@@ -94,7 +94,7 @@ extern struct bk_strbuf *bk_strbuf_new();
 
 /**
  * Frees a string-buffer instance previous allocated by #bk_strbuf_new().
- * @param sb Pointer of the string-buffer to be freed.
+ * @param[in] sb Pointer of the string-buffer to be freed.
  */
 extern void bk_strbuf_free(struct bk_strbuf *sb);
 
