@@ -1,14 +1,10 @@
 #.rst:
-# BkLibrary
-# ---------
+# BkPVSStudio
+# -----------
 #
-# Main library building.
+# PVS-Studio analysis.
 #
-# The main building of the Brook library. It includes all necessary sub-bulding scripts to manage the library building.
-#
-# ::
-#
-#   BK_INCLUDE_DIR - Directory containing the library header.
+# This script allows to check the library sources using the PVS-Studio, offering more security for Brook library users.
 
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
@@ -37,41 +33,16 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 3.5)
+option(BK_PVS_STUDIO "Enable PVS-Studio analysis" OFF)
 
-project(brook C)
-
-set(CMAKE_C_STANDARD 99)
-
-set(PROJECT_DESCRIPTION "–– a small library which helps you write quickly REST APIs.")
-
-set(PROJECT_URL "https://github.com/risoflora/libbrook")
-
-set(PROJECT_ISSUES_URL "${PROJECT_URL}/issues")
-
-set(BK_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
-
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-include(GNUInstallDirs)
-include(BkWarnings) #TODO: -fsanitize=address/leak
-include(BkGNUSource)
-include(BkVersion)
-include(BkPC)
-include(BkUninstall)
-
-if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
-    set(BUILD_TESTING OFF)
-    include(BkDoxygen)
-elseif (BUILD_TESTING)
-    enable_testing()
+if (BK_PVS_STUDIO)
+    include(PVS-Studio)
+    if (NOT CMAKE_EXPORT_COMPILE_COMMANDS)
+        set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    endif ()
+    pvs_studio_add_target(TARGET pvs_studio_analysis ALL
+            FORMAT fullhtml
+            ANALYZE ${PROJECT_NAME}
+            SOURCES ${BK_SOURCE} ${BK_TESTS_SOURCE}
+            LOG pvs_studio_fullhtml)
 endif ()
-
-include_directories(${BK_INCLUDE_DIR})
-
-add_subdirectory(src)
-add_subdirectory(test)
-
-include(BkSummary)
-include(BkCPack)
-include(BkPVSStudio)
