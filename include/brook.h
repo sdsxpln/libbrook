@@ -78,25 +78,25 @@ extern void *bk_new(size_t size);
  */
 extern void bk_free(void *ptr);
 
-/* String-buffer */
+/* String */
 
 /**
- * Handle for the string-buffer. It is used to represent a HTML body, POST payload and more.
+ * Handle for the string structure. It is used to represent a HTML body, POST payload and more.
  */
-struct bk_strbuf;
+struct bk_str;
 
 /**
- * Creates a new zero-initialized string-buffer instance.
- * @return String-buffer zero-initialized instance.
- * @note If #bk_strbuf_new fails (e.g: no memory space), a `NULL` is returned.
+ * Creates a new string instance zero-initialized.
+ * @return String instance zero-initialized.
+ * @note If #bk_str_new fails (e.g: no memory space), a `NULL` is returned.
  */
-extern struct bk_strbuf *bk_strbuf_new(void);
+extern struct bk_str *bk_str_new(void);
 
 /**
- * Frees a string-buffer instance previous allocated by #bk_strbuf_new().
- * @param[in] sb Pointer of the string-buffer to be freed.
+ * Frees a string instance previous allocated by #bk_str_new().
+ * @param[in] str Pointer of the string instance to be freed.
  */
-extern void bk_strbuf_free(struct bk_strbuf *sb);
+extern void bk_str_free(struct bk_str *str);
 
 #ifdef __cplusplus
 }

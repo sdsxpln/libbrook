@@ -52,7 +52,7 @@ list(APPEND BK_SOURCE
         ${BK_INCLUDE_DIR}/brook.h # allows many IDEs to find it
         ${BK_SOURCE_DIR}/bk_macros.h
         ${BK_SOURCE_DIR}/bk_utils.c
-        ${BK_SOURCE_DIR}/bk_strbuf.c)
+        ${BK_SOURCE_DIR}/bk_str.c)
 set(BK_SOURCE ${BK_SOURCE} PARENT_SCOPE)
 
 add_library(brook ${BK_SOURCE})

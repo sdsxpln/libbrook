@@ -47,7 +47,7 @@ if (BUILD_TESTING)
     set(BK_TESTS_DIR ${CMAKE_SOURCE_DIR}/test)
     list(APPEND BK_TESTS
             utils
-            strbuf)
+            str)
     set(BK_TESTS ${BK_TESTS} PARENT_SCOPE)
     foreach (_test ${BK_TESTS})
         string(TOUPPER ${_test} _TEST)

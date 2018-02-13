@@ -30,13 +30,13 @@
 #include "brook.h"
 
 int main(void) {
-    struct bk_strbuf *sb;
+    struct bk_str *str;
 
-    /* Checks if a string-buffer object was successfully created. */
-    sb = bk_strbuf_new();
-    ASSERT(sb);
+    /* Checks if a string-buffer object is successfully created. */
+    str = bk_str_new();
+    ASSERT(str);
 
     /* There is no a portable way to test if a memory has been freed, so just free it. */
-    bk_strbuf_free(sb);
+    bk_str_free(str);
     return EXIT_SUCCESS;
 }
