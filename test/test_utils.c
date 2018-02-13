@@ -57,7 +57,7 @@ static inline void check_memory(void) {
 
     /* Checks if it allocates 10 bytes in the memory. */
 #define _BUF_LEN 10
-    buf = bk_new(_BUF_LEN);
+    buf = bk_alloc(_BUF_LEN);
     ASSERT(buf);
     for (unsigned char i = 0; i < _BUF_LEN; i++)
         ASSERT(buf[i] == 0);

@@ -44,7 +44,7 @@ const char *bk_version_str(void) {
 
 /* Memory */
 
-void *bk_new(size_t size) {
+void *bk_alloc(size_t size) {
     void *p = malloc(size);
     if (p)
         memset(p, 0, size);

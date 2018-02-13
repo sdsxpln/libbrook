@@ -67,13 +67,13 @@ extern const char *bk_version_str(void);
  * Allocates a new memory space and zero-initialize it.
  * @param[in] size Memory size to be allocated.
  * @return Pointer of the allocated and zero-initialized memory.
- * @note If @p size is  `0`, then #bk_new() returns either `NULL`, or a unique pointer value that can later be
+ * @note If @p size is  `0`, then #bk_alloc() returns either `NULL`, or a unique pointer value that can later be
  * successfully passed to #bk_free().
  */
-extern void *bk_new(size_t size);
+extern void *bk_alloc(size_t size);
 
 /**
- * Frees a memory space previous allocated by #bk_new().
+ * Frees a memory space previous allocated by #bk_alloc().
  * @param[in] ptr Pointer of the memory to be freed.
  */
 extern void bk_free(void *ptr);
