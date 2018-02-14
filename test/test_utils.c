@@ -35,27 +35,21 @@ static inline void check_version(void) {
     char ver_local[9];
     size_t ver_len;
 
-    /* Checks if the version number is greater than zero */
     ASSERT(bk_version() > 0);
 
-    /* Checks if the stringified version is a valid string */
     ver_original = bk_version_str();
     ASSERT(ver_original);
     ver_len = strlen(ver_original);
     ASSERT(ver_len > 0);
 
-    /* Checks if the stringified version matches the library version */
     sprintf(ver_local, "%d.%d.%d", BK_VERSION_MAJOR, BK_VERSION_MINOR, BK_VERSION_PATCH);
     ASSERT(strcmp(ver_original, ver_local) == 0);
 
-    /* Checks if the stringified version has a null termination */
     ASSERT(ver_original[ver_len] == '\0');
 }
 
 static inline void check_memory(void) {
     char *buf;
-
-    /* Checks if it allocates 10 bytes in the memory. */
 #define _BUF_LEN 10
     buf = bk_alloc(_BUF_LEN);
     ASSERT(buf);
@@ -65,8 +59,6 @@ static inline void check_memory(void) {
     buf[_BUF_LEN - 1] = '\0';
     ASSERT(strlen(buf) == _BUF_LEN - 1);
 #undef _BUF_LEN
-
-    /* There is no a portable way to test if a memory is freed, so just free it. */
     bk_free(buf);
 }
 

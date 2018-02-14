@@ -30,30 +30,76 @@
 #include <string.h>
 #include "brook.h"
 
-int main(void) {
-    const char *data = "abc123";
-    const size_t data_len = strlen(data);
-    size_t len;
-    struct bk_str *str;
+static inline void check_str_write_raw(struct bk_str *str, const char *val, size_t len) {
+    size_t tmp_len;
 
-    /* Checks if a string object is successfully created. */
-    str = bk_str_new();
-    ASSERT(str);
+    ASSERT(bk_str_write_raw(NULL, val, len) == -EINVAL);
+    ASSERT(bk_str_write_raw(str, NULL, len) == -EINVAL);
+    ASSERT(bk_str_write_raw(str, val, 0) == -EINVAL);
 
-    /* Checks if the functions returns -EINVAL giving NULL parameters. */
-    ASSERT(bk_str_write_raw(NULL, data, data_len) == -EINVAL);
-    ASSERT(bk_str_write_raw(str, NULL, data_len) == -EINVAL);
-    ASSERT(bk_str_write_raw(str, data, 0) == -EINVAL);
+    bk_str_clear(str);
+    ASSERT(bk_str_write_raw(str, val, len) == 0);
+    tmp_len = 0;
+    bk_str_length(str, &tmp_len);
+    ASSERT(tmp_len == len);
+}
 
-    ASSERT(bk_str_write(NULL, data) == -EINVAL);
+static inline void check_str_write(struct bk_str *str, const char *val, size_t len) {
+    size_t tmp_len;
+
+    ASSERT(bk_str_write(NULL, val) == -EINVAL);
     ASSERT(bk_str_write(str, NULL) == -EINVAL);
 
-    ASSERT(bk_str_length(NULL, &len) == -EINVAL);
+    bk_str_clear(str);
+    ASSERT(bk_str_write(str, val) == 0);
+    tmp_len = 0;
+    bk_str_length(str, &tmp_len);
+    ASSERT(tmp_len == len);
+}
+
+static inline void check_str_length(struct bk_str *str, const char *val, size_t len) {
+    size_t tmp_len;
+
+    ASSERT(bk_str_length(NULL, &tmp_len) == -EINVAL);
     ASSERT(bk_str_length(str, NULL) == -EINVAL);
+
+    bk_str_clear(str);
+    tmp_len = 123;
+    ASSERT(bk_str_length(str, &tmp_len) == 0);
+    ASSERT(tmp_len == 0);
+
+    bk_str_write_raw(str, val, len);
+    ASSERT(bk_str_length(str, &tmp_len) == 0);
+    ASSERT(tmp_len == len);
+}
+
+static inline void check_str_clear(struct bk_str *str, const char *val, size_t len) {
+    size_t tmp_len;
 
     ASSERT(bk_str_clear(NULL) == -EINVAL);
 
-    /* There is no a portable way to test if a memory is freed, so just free it. */
+    bk_str_clear(str);
+    bk_str_write_raw(str, val, len);
+    ASSERT(bk_str_length(str, &tmp_len) == 0);
+    ASSERT(tmp_len > 0);
+    bk_str_clear(str);
+    ASSERT(bk_str_length(str, &tmp_len) == 0);
+    ASSERT(tmp_len == 0);
+}
+
+int main(void) {
+    struct bk_str *str;
+    const char *val = "abc123";
+    const size_t len = strlen(val);
+
+    str = bk_str_new();
+    ASSERT(str);
+
+    check_str_write_raw(str, val, len);
+    check_str_write(str, val, len);
+    check_str_length(str, val, len);
+    check_str_clear(str, val, len);
+
     bk_str_free(str);
     return EXIT_SUCCESS;
 }
