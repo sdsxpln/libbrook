@@ -1,10 +1,10 @@
 #.rst:
-# BkWarnings
-# ----------
+# BkFlags
+# -------
 #
-# Compiler warnings.
+# Compiler/linker warnings.
 #
-# Enables the relevant compiler warnings to make the source as stable as possible.
+# Configures the compiler/linker flags.
 #
 # ::
 #
@@ -36,6 +36,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
+
+#TODO: -fsanitize=address/leak
 
 option(BK_PICKY_COMPILER "Enable picky compiler options" ON)
 
