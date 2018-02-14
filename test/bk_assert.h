@@ -42,7 +42,11 @@
 #elif(_WIN32)
 extern char __declspec(dllimport) *__progname;
 #else
+#ifdef __USE_GNU
 #define __progname program_invocation_short_name
+#else
+extern const char *__progname;
+#endif
 #endif
 
 #ifdef NDEBUG
