@@ -109,23 +109,40 @@ extern struct bk_str *bk_str_new(void);
 extern void bk_str_free(struct bk_str *str);
 
 /**
- * Writes a value into string handle passed as @p str. All values previously written are kept.
- * @param[in] str String handler.
+ * Writes a value into string handle @p str. All values previously written are kept.
+ * @param[in] str String handle.
  * @param[in] val Value to be written.
  * @param[in] len Length of the value to be written.
  * @retval 0 - Success.
- * @retval -EINVAL - Invalid param(s).
+ * @retval -EINVAL - Invalid parameter.
  */
 extern int bk_str_write_raw(struct bk_str *str, const char *val, size_t len);
 
 /**
- * Writes a zero-terminated value to the string handle passed as @p str. All values previously written are kept.
- * @param[in] str String handler.
+ * Writes a zero-terminated value to the string handle @p str. All values previously written are kept.
+ * @param[in] str String handle.
  * @param[in] val Value to be written.
  * @retval 0 - Success.
- * @retval -EINVAL - Invalid param(s).
+ * @retval -EINVAL - Invalid parameter.
  */
 extern int bk_str_write(struct bk_str *str, const char *val);
+
+/**
+ * Gets the total string length written in the handle @p str.
+ * @param[in] str String handle.
+ * @param[out] len Pointer to store the string length.
+ * @retval 0 - Success.
+ * @retval -EINVAL - Invalid parameter.
+ */
+extern int bk_str_length(struct bk_str *str, size_t *len);
+
+/**
+ * Cleans all written string present in the handle @p str.
+ * @param[in] str String handle.
+ * @retval 0 - Success.
+ * @retval -EINVAL - Invalid parameter.
+ */
+extern int bk_str_clear(struct bk_str *str);
 
 /** @} */
 
