@@ -1,14 +1,14 @@
 #.rst:
-# BkLibrary
-# ---------
+# BkIsArm
+# -------
 #
-# Main library building.
+# Building for ARM.
 #
-# The main building of the Brook library. It includes all necessary sub-bulding scripts to manage the library building.
+# Try to detect if the building is for ARM.
 #
 # ::
 #
-#   BK_INCLUDE_DIR - Directory containing the library header.
+#   ARM - Is ARM compiler?
 
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
@@ -37,42 +37,19 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 3.5)
+# It was tested only using `arm-linux-androideabi-gcc`. Be aware!
 
-project(brook C)
+#TODO: MSVC support
 
-set(CMAKE_C_STANDARD 99)
-
-set(PROJECT_DESCRIPTION "–– a small library which helps you write quickly REST APIs.")
-
-set(PROJECT_URL "https://github.com/risoflora/libbrook")
-
-set(PROJECT_ISSUES_URL "${PROJECT_URL}/issues")
-
-set(BK_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
-
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-include(GNUInstallDirs)
-include(BkIsARM)
-include(BkFlags)
-include(BkGNUSource)
-include(BkVersion)
-include(BkPC)
-include(BkUninstall)
-
-if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
-    set(BUILD_TESTING OFF)
-    include(BkDoxygen)
-elseif (BUILD_TESTING)
-    enable_testing()
+if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
+    list(APPEND _list
+            ${CMAKE_C_COMPILER}
+            ${CMAKE_SYSTEM_PROCESSOR})
+    string(TOUPPER "${_list}" _list)
+    string(FIND "${_list}" "ARM" _is_arm)
+    unset(_list)
+    if (${_is_arm} GREATER -1)
+        set(ARM ON)
+        unset(_is_arm)
+    endif ()
 endif ()
-
-include_directories(${BK_INCLUDE_DIR})
-
-add_subdirectory(src)
-add_subdirectory(test)
-
-include(BkSummary)
-include(BkCPack)
-include(BkPVSStudio)
