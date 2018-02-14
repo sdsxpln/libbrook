@@ -25,6 +25,7 @@
  * along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include "brook.h"
 #include "bk_str.h"
 
@@ -41,4 +42,17 @@ void bk_str_free(struct bk_str *str) {
         return;
     utstring_free(str->buf);
     bk_free(str);
+}
+
+int bk_str_write_raw(struct bk_str *str, const char *val, size_t len) {
+    if (!str || !val || len == 0)
+        return -EINVAL;
+    utstring_bincpy(str->buf, val, len);
+    return 0;
+}
+
+int bk_str_write(struct bk_str *str, const char *val) {
+    if (!val)
+        return -EINVAL;
+    return bk_str_write_raw(str, val, strlen(val));
 }

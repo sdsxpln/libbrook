@@ -27,13 +27,12 @@
 
 /**
  * @mainpage
- * @li @ref brook_api
+ * @li @ref bk_api
  */
 
-/**
- * @defgroup brook_api API reference
- * @{
- */
+/** @defgroup bk_api API reference
+ * The API reference grouped by feature.
+ * */
 
 #ifndef BROOK_H
 #define BROOK_H
@@ -49,7 +48,12 @@ extern "C" {
 #define BK_VERSION_PATCH 1
 #define BK_VERSION_HEX ((BK_VERSION_MAJOR << 16) | (BK_VERSION_MINOR <<  8) | (BK_VERSION_PATCH))
 
-/* Utilities */
+/**
+ * @ingroup bk_api
+ * @defgroup bk_utils Utilities
+ * All utility functions of the library.
+ * @{
+ */
 
 /**
  * Returns the library version number.
@@ -66,9 +70,8 @@ extern const char *bk_version_str(void);
 /**
  * Allocates a new memory space and zero-initialize it.
  * @param[in] size Memory size to be allocated.
- * @return Pointer of the allocated and zero-initialized memory.
- * @note If @p size is  `0`, then #bk_alloc() returns either `NULL`, or a unique pointer value that can later be
- * successfully passed to #bk_free().
+ * @return Pointer of the allocated zero-initialized memory.
+ * @retval NULL When size is `0` or no memory space.
  */
 extern void *bk_alloc(size_t size);
 
@@ -78,17 +81,24 @@ extern void *bk_alloc(size_t size);
  */
 extern void bk_free(void *ptr);
 
-/* String */
+/** @} */
 
 /**
- * Handle for the string structure. It is used to represent a HTML body, POST payload and more.
+ * @ingroup bk_api
+ * @defgroup bk_str String
+ * String structure and its related functions.
+ * @{
+ */
+
+/**
+ * Handle for the string structure used to represent a HTML body, POST payload and more.
  */
 struct bk_str;
 
 /**
  * Creates a new string instance zero-initialized.
  * @return String instance zero-initialized.
- * @note If #bk_str_new fails (e.g: no memory space), a `NULL` is returned.
+ * @retval NULL When no memory space.
  */
 extern struct bk_str *bk_str_new(void);
 
@@ -98,12 +108,29 @@ extern struct bk_str *bk_str_new(void);
  */
 extern void bk_str_free(struct bk_str *str);
 
+/**
+ * Writes a value into string handle passed as @p str. All values previously written are kept.
+ * @param[in] str String handler.
+ * @param[in] val Value to be written.
+ * @param[in] len Length of the value to be written.
+ * @retval 0 - Success.
+ * @retval -EINVAL - Invalid param(s).
+ */
+extern int bk_str_write_raw(struct bk_str *str, const char *val, size_t len);
+
+/**
+ * Writes a zero-terminated value to the string handle passed as @p str. All values previously written are kept.
+ * @param[in] str String handler.
+ * @param[in] val Value to be written.
+ * @retval 0 - Success.
+ * @retval -EINVAL - Invalid param(s).
+ */
+extern int bk_str_write(struct bk_str *str, const char *val);
+
+/** @} */
+
 #ifdef __cplusplus
 }
 #endif
-
-/**
- * @}
- */
 
 #endif /* BROOK_H */
