@@ -32,21 +32,28 @@
 
 int main(void) {
     const char *data = "abc123";
+    const size_t data_len = strlen(data);
+    size_t len;
     struct bk_str *str;
 
     /* Checks if a string object is successfully created. */
     str = bk_str_new();
     ASSERT(str);
 
-    /* Checks if it returns EINVAL giving NULL parameters. */
-    ASSERT(bk_str_write_raw(NULL, data, strlen(data)) == -EINVAL);
-    ASSERT(bk_str_write_raw(str, NULL, strlen(data)) == -EINVAL);
+    /* Checks if the functions returns -EINVAL giving NULL parameters. */
+    ASSERT(bk_str_write_raw(NULL, data, data_len) == -EINVAL);
+    ASSERT(bk_str_write_raw(str, NULL, data_len) == -EINVAL);
     ASSERT(bk_str_write_raw(str, data, 0) == -EINVAL);
 
     ASSERT(bk_str_write(NULL, data) == -EINVAL);
     ASSERT(bk_str_write(str, NULL) == -EINVAL);
 
-    /* There is no a portable way to test if a memory has been freed, so just free it. */
+    ASSERT(bk_str_length(NULL, &len) == -EINVAL);
+    ASSERT(bk_str_length(str, NULL) == -EINVAL);
+
+    ASSERT(bk_str_clear(NULL) == -EINVAL);
+
+    /* There is no a portable way to test if a memory is freed, so just free it. */
     bk_str_free(str);
     return EXIT_SUCCESS;
 }

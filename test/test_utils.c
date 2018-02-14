@@ -66,7 +66,7 @@ static inline void check_memory(void) {
     ASSERT(strlen(buf) == _BUF_LEN - 1);
 #undef _BUF_LEN
 
-    /* There is no a portable way to test if a memory has been freed, so just free it. */
+    /* There is no a portable way to test if a memory is freed, so just free it. */
     bk_free(buf);
 }
 
