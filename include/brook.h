@@ -128,6 +128,14 @@ extern int bk_str_write_raw(struct bk_str *str, const char *val, size_t len);
 extern int bk_str_write(struct bk_str *str, const char *val);
 
 /**
+ * Gets the string content from handle @p str.
+ * @param[in] str String handle.
+ * @return Content as static string.
+ * @retval NULL When invalid parameter.
+ */
+extern const char *bk_str_content(struct bk_str *str);
+
+/**
  * Gets the total string length written in the handle @p str.
  * @param[in] str String handle.
  * @param[out] len Pointer to store the string length.

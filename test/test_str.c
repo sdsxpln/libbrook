@@ -87,6 +87,15 @@ static inline void check_str_clear(struct bk_str *str, const char *val, size_t l
     ASSERT(tmp_len == 0);
 }
 
+static inline void check_str_content(struct bk_str *str, const char *val, size_t len) {
+    ASSERT(!bk_str_content(NULL));
+
+    bk_str_clear(str);
+    ASSERT(strlen(bk_str_content(str)) == 0);
+    bk_str_write_raw(str, val, len);
+    ASSERT(strcmp(bk_str_content(str), val) == 0);
+}
+
 int main(void) {
     struct bk_str *str;
     const char *val = "abc123";
@@ -99,6 +108,7 @@ int main(void) {
     check_str_write(str, val, len);
     check_str_length(str, val, len);
     check_str_clear(str, val, len);
+    check_str_content(str, val, len);
 
     bk_str_free(str);
     return EXIT_SUCCESS;

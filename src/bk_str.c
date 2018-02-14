@@ -57,6 +57,12 @@ int bk_str_write(struct bk_str *str, const char *val) {
     return bk_str_write_raw(str, val, strlen(val));
 }
 
+const char *bk_str_content(struct bk_str *str) {
+    if (!str)
+        return NULL;
+    return utstring_body(str->buf);
+}
+
 int bk_str_length(struct bk_str *str, size_t *len) {
     if (!str || !len)
         return -EINVAL;
