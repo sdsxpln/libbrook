@@ -58,7 +58,7 @@ do {                                                                        \
         fprintf(stderr, "%s: %s:%d: %s: Assertion `%s' failed.\n",          \
             __progname, __FILE__, __LINE__, __FUNCTION__, #expr);           \
         fflush(stderr);                                                     \
-        exit(1);                                                            \
+        exit(EXIT_FAILURE);                                                 \
     }                                                                       \
 } while (0)
 #endif
