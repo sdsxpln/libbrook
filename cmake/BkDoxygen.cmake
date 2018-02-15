@@ -50,6 +50,8 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#TODO: Graphviz
+
 option(BK_BUILD_HTML "Generate API reference [HTML]" ON)
 option(BK_BUILD_PDF "Generate API reference [PDF]" ${BK_BUILD_HTML})
 
