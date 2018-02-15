@@ -49,18 +49,26 @@ extern const char *__progname;
 #endif
 #endif
 
+#ifdef _MSC_VER
+#define fprintf_local fprintf_s
+#else
+#define fprintf_local fprintf
+#endif
+
 #ifdef NDEBUG
 #define ASSERT(expr) ((void) 0)
 #else
 #define ASSERT(expr)                                                        \
 do {                                                                        \
     if (!(expr)) {                                                          \
-        fprintf(stderr, "%s: %s:%d: %s: Assertion `%s' failed.\n",          \
+        fprintf_local(stderr, "%s: %s:%d: %s: Assertion `%s' failed.\n",    \
             __progname, __FILE__, __LINE__, __FUNCTION__, #expr);           \
         fflush(stderr);                                                     \
         exit(EXIT_FAILURE);                                                 \
     }                                                                       \
 } while (0)
 #endif
+
+#undef fprintf_local
 
 #endif /* BK_ASSERT_H */
