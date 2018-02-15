@@ -28,9 +28,19 @@
 #ifndef BK_MACROS_H
 #define BK_MACROS_H
 
+#include <errno.h>
+
 #define _(String) (String) /* macro to make it easy to mark text for translation */
 
 #define xstr(a) str(a) /* stringify the result of expansion of a macro argument */
 #define str(a) #a
+
+/* oom() - macro used by libs `ut` for handling `Out of memory` errors. */
+#define oom()                               \
+do {                                        \
+    fprintf(stderr, _("Out of memory\n"));  \
+    fflush(stderr);                         \
+    exit(ENOMEM);                           \
+} while (0)
 
 #endif /* BK_MACROS_H */

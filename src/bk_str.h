@@ -28,6 +28,7 @@
 #ifndef BK_STR_H
 #define BK_STR_H
 
+#include "bk_macros.h"
 #include "utstring.h"
 
 struct bk_str {
