@@ -57,6 +57,26 @@ int bk_str_write(struct bk_str *str, const char *val) {
     return bk_str_write_raw(str, val, strlen(val));
 }
 
+int bk_str_read_raw(struct bk_str *str, char *val, size_t *len) {
+    if (!str || !val || !len || *len == 0)
+        return -EINVAL;
+    if (utstring_len(str->buf) >= *len) {
+        *len = utstring_len(str->buf) + sizeof(char);
+        return -ENOBUFS;
+    }
+    memcpy(val, utstring_body(str->buf), utstring_len(str->buf) + sizeof(char));
+    *len = utstring_len(str->buf);
+    return 0;
+}
+
+int bk_str_read(struct bk_str *str, char *val) {
+    size_t len;
+    if (!val)
+        return -EINVAL;
+    len = strlen(val);
+    return bk_str_read_raw(str, val, &len);
+}
+
 const char *bk_str_content(struct bk_str *str) {
     if (!str)
         return NULL;

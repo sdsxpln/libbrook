@@ -112,9 +112,9 @@ extern void bk_str_free(struct bk_str *str);
  * Writes a value into string handle @p str. All values previously written are kept.
  * @param[in] str String handle.
  * @param[in] val Value to be written.
- * @param[in] len Length of the value to be written.
+ * @param[in] len Length of the value to be written counting the zero-terminator.
  * @retval 0 - Success.
- * @retval -EINVAL - Invalid parameter.
+ * @retval -EINVAL - Invalid argument.
  */
 extern int bk_str_write_raw(struct bk_str *str, const char *val, size_t len);
 
@@ -123,15 +123,28 @@ extern int bk_str_write_raw(struct bk_str *str, const char *val, size_t len);
  * @param[in] str String handle.
  * @param[in] val Value to be written.
  * @retval 0 - Success.
- * @retval -EINVAL - Invalid parameter.
+ * @retval -EINVAL - Invalid argument.
  */
 extern int bk_str_write(struct bk_str *str, const char *val);
+
+/**
+ * Reads a zero-terminated value from the string handle @p str.
+ * @param[in] str String handle.
+ * @param[out] val Value to be read.
+ * @param[in,out] len Pointer to specify then store the value length counting the zero-terminator.
+ * @retval 0 - Success.
+ * @retval -EINVAL - Invalid argument.
+ * @retval -ENOBUFS - No buffer space available.
+ */
+extern int bk_str_read_raw(struct bk_str *str, char *val, size_t *len);
+
+extern int bk_str_read(struct bk_str *str, char *val);
 
 /**
  * Gets the string content from handle @p str.
  * @param[in] str String handle.
  * @return Content as static string.
- * @retval NULL When invalid parameter.
+ * @retval NULL When Invalid argument.
  */
 extern const char *bk_str_content(struct bk_str *str);
 
@@ -140,7 +153,7 @@ extern const char *bk_str_content(struct bk_str *str);
  * @param[in] str String handle.
  * @param[out] len Pointer to store the string length.
  * @retval 0 - Success.
- * @retval -EINVAL - Invalid parameter.
+ * @retval -EINVAL - Invalid argument.
  */
 extern int bk_str_length(struct bk_str *str, size_t *len);
 
@@ -148,7 +161,7 @@ extern int bk_str_length(struct bk_str *str, size_t *len);
  * Cleans all written string present in the handle @p str.
  * @param[in] str String handle.
  * @retval 0 - Success.
- * @retval -EINVAL - Invalid parameter.
+ * @retval -EINVAL - Invalid argument.
  */
 extern int bk_str_clear(struct bk_str *str);
 
