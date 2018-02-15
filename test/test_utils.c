@@ -30,7 +30,7 @@
 #include <string.h>
 #include "brook.h"
 
-static inline void check_version(void) {
+static inline void test_version(void) {
     const char *ver_original;
     char ver_local[9];
     size_t ver_len;
@@ -42,13 +42,18 @@ static inline void check_version(void) {
     ver_len = strlen(ver_original);
     ASSERT(ver_len > 0);
 
-    sprintf(ver_local, "%d.%d.%d", BK_VERSION_MAJOR, BK_VERSION_MINOR, BK_VERSION_PATCH);
+#ifdef _MSC_VER
+    sprintf_s(ver_local, sizeof(ver_local)
+#else
+    sprintf(ver_local
+#endif
+            , "%d.%d.%d", BK_VERSION_MAJOR, BK_VERSION_MINOR, BK_VERSION_PATCH);
     ASSERT(strcmp(ver_original, ver_local) == 0);
 
     ASSERT(ver_original[ver_len] == '\0');
 }
 
-static inline void check_memory(void) {
+static inline void test_memory(void) {
     char *buf;
 #define _BUF_LEN 10
     buf = bk_alloc(_BUF_LEN);
@@ -63,7 +68,7 @@ static inline void check_memory(void) {
 }
 
 int main(void) {
-    check_version();
-    check_memory();
+    test_version();
+    test_memory();
     return EXIT_SUCCESS;
 }
