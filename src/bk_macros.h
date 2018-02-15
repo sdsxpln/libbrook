@@ -35,6 +35,7 @@
 #define xstr(a) str(a) /* stringify the result of expansion of a macro argument */
 #define str(a) #a
 
+#ifndef _MSC_VER
 /* oom() - macro used by libs `ut` for handling `Out of memory` errors. */
 #define oom()                               \
 do {                                        \
@@ -42,5 +43,6 @@ do {                                        \
     fflush(stderr);                         \
     exit(ENOMEM);                           \
 } while (0)
+#endif
 
 #endif /* BK_MACROS_H */
