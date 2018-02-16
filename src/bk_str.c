@@ -71,9 +71,11 @@ int bk_str_read_raw(struct bk_str *str, char *val, size_t *len) {
 
 int bk_str_read(struct bk_str *str, char *val) {
     size_t len;
-    if (!val)
+    if (!str)
         return -EINVAL;
-    len = strlen(val);
+    len = UTSTRING_INITIAL_SIZE;
+    if (utstring_len(str->buf) >= len)
+        len = utstring_len(str->buf) + sizeof(char);
     return bk_str_read_raw(str, val, &len);
 }
 
