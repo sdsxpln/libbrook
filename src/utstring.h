@@ -81,8 +81,8 @@ do {                                                       \
 
 #define utstring_new(s)                                    \
 do {                                                       \
-   s = (UT_string*)malloc(sizeof(UT_string));              \
-   if (!s) oom();                                          \
+   (s) = (UT_string*)malloc(sizeof(UT_string));            \
+   if (!(s)) oom();                                        \
    utstring_init(s);                                       \
 } while(0)
 
@@ -154,8 +154,6 @@ UTSTRING_UNUSED static void utstring_printf(UT_string *s, const char *fmt, ...) 
    utstring_printf_va(s,fmt,ap);
    va_end(ap);
 }
-
-#ifndef UTSTRING_FIND_DISABLED /* see https://github.com/troydhanson/uthash/issues/147 */
 
 /*******************************************************************************
  * begin substring search functions                                            *
@@ -396,7 +394,5 @@ UTSTRING_UNUSED static long utstring_findR(
 /*******************************************************************************
  * end substring search functions                                              *
  ******************************************************************************/
-
-#endif /* UTSTRING_FIND_DISABLED */
 
 #endif /* UTSTRING_H */
