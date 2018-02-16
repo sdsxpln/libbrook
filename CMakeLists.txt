@@ -51,6 +51,10 @@ set(PROJECT_ISSUES_URL "${PROJECT_URL}/issues")
 
 set(BK_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
+if (("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang"))
+    set(CMAKE_COMPILER_IS_CLANG ON)
+endif ()
+
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(GNUInstallDirs)
