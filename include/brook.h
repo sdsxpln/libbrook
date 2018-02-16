@@ -42,6 +42,7 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+#include <stdarg.h>
 
 #define BK_VERSION_MAJOR 0
 #define BK_VERSION_MINOR 0
@@ -109,7 +110,7 @@ extern struct bk_str *bk_str_new(void);
 extern void bk_str_free(struct bk_str *str);
 
 /**
- * Writes a zero-terminated value into string handle @p str. All values previously written are kept.
+ * Writes a zero-terminated value to string handle @p str. All values previously written are kept.
  * @param[in] str String handle.
  * @param[in] val Value to be written.
  * @param[in] len Length of the value to be written including the terminating null byte (`'\0'`).
@@ -119,7 +120,7 @@ extern void bk_str_free(struct bk_str *str);
 extern int bk_str_write(struct bk_str *str, const char *val, size_t len);
 
 /**
- * Reads a zero-terminated value from the string handle @p str.
+ * Reads a zero-terminated value from string handle @p str.
  * @param[in] str String handle.
  * @param[out] val Value to be read.
  * @param[in,out] len Pointer to specify then store the value length including the terminating null byte (`'\0'`).
@@ -128,6 +129,30 @@ extern int bk_str_write(struct bk_str *str, const char *val, size_t len);
  * @retval -ENOBUFS - No buffer space available.
  */
 extern int bk_str_read(struct bk_str *str, char *val, size_t *len);
+
+/**
+ * Writes a formatted value from variable argument list to string handle @p str.
+ * @param[in] str String handle.
+ * @param[in] fmt Formatted string (following the same [`printf()`](https://linux.die.net/man/3/printf) format
+ *  specification).
+ * @param[in] ap Arguments list variable (handled by
+ *  [`va_start()`](https://linux.die.net/man/3/va_start)/[`va_end()`](https://linux.die.net/man/3/va_end)).
+ * @retval 0 - Success.
+ * @retval -EINVAL - Invalid argument.
+ */
+extern int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap);
+
+/**
+ * Writes a formatted value to string handle @p str.
+ * @param[in] str String handle.
+ * @param[in] fmt Formatted string (following the same [`printf()`](https://linux.die.net/man/3/printf) format
+ *  specification).
+ * @param ... Additional arguments (following the same [`printf()`](https://linux.die.net/man/3/printf) arguments
+ *  specification).
+ * @retval 0 - Success.
+ * @retval -EINVAL - Invalid argument.
+ */
+extern int bk_str_printf(struct bk_str *str, const char *fmt, ...);
 
 /**
  * Gets the zero-terminated string content from handle @p str.

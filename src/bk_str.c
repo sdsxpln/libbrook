@@ -63,6 +63,23 @@ int bk_str_read(struct bk_str *str, char *val, size_t *len) {
     return 0;
 }
 
+int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap) {
+    if (!str || !fmt || !ap)
+        return -EINVAL;
+    utstring_printf_va(str->buf, fmt, ap);
+    return 0;
+}
+
+int bk_str_printf(struct bk_str *str, const char *fmt, ...) {
+    if (!str || !fmt)
+        return -EINVAL;
+    va_list ap;
+    va_start(ap, fmt);
+    utstring_printf_va(str->buf, fmt, ap);
+    va_end(ap);
+    return 0;
+}
+
 const char *bk_str_content(struct bk_str *str) {
     if (!str)
         return NULL;
