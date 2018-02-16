@@ -109,17 +109,17 @@ extern struct bk_str *bk_str_new(void);
 extern void bk_str_free(struct bk_str *str);
 
 /**
- * Writes a value into string handle @p str. All values previously written are kept.
+ * Writes a zero-terminated value into string handle @p str. All values previously written are kept.
  * @param[in] str String handle.
  * @param[in] val Value to be written.
- * @param[in] len Length of the value to be written counting the zero-terminator.
+ * @param[in] len Length of the value to be written including the terminating null byte (`'\0'`).
  * @retval 0 - Success.
  * @retval -EINVAL - Invalid argument.
  */
 extern int bk_str_write_raw(struct bk_str *str, const char *val, size_t len);
 
 /**
- * Writes a zero-terminated value to the string handle @p str. All values previously written are kept.
+ * Writes a zero-terminated value into string handle @p str. All values previously written are kept.
  * @param[in] str String handle.
  * @param[in] val Value to be written.
  * @retval 0 - Success.
@@ -131,17 +131,24 @@ extern int bk_str_write(struct bk_str *str, const char *val);
  * Reads a zero-terminated value from the string handle @p str.
  * @param[in] str String handle.
  * @param[out] val Value to be read.
- * @param[in,out] len Pointer to specify then store the value length counting the zero-terminator.
+ * @param[in,out] len Pointer to specify then store the value length including the terminating null byte (`'\0'`).
  * @retval 0 - Success.
  * @retval -EINVAL - Invalid argument.
  * @retval -ENOBUFS - No buffer space available.
  */
 extern int bk_str_read_raw(struct bk_str *str, char *val, size_t *len);
 
+/**
+ * Reads a zero-terminated value from the string handle @p str.
+ * @param[in] str String handle.
+ * @param[out] val Value to be read.
+ * @retval 0 - Success.
+ * @retval -EINVAL - Invalid argument.
+ */
 extern int bk_str_read(struct bk_str *str, char *val);
 
 /**
- * Gets the string content from handle @p str.
+ * Gets the zero-terminated string content from handle @p str.
  * @param[in] str String handle.
  * @return Content as static string.
  * @retval NULL When Invalid argument.
