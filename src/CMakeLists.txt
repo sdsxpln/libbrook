@@ -38,6 +38,11 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+if (__BK_SRC_INCLUDED)
+    return()
+endif ()
+set(__BK_SRC_INCLUDED ON)
+
 if (WIN32)
     if (MSVC)
         set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)

@@ -33,6 +33,11 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+if (__BK_UNINSTALL_INCLUDED)
+    return()
+endif ()
+set(__BK_UNINSTALL_INCLUDED ON)
+
 if (NOT TARGET uninstall)
     configure_file(
             ${CMAKE_MODULE_PATH}/CMakeUninstall.cmake.in

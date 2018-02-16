@@ -33,6 +33,11 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+if (__BK_SUMMARY_INCLUDED)
+    return()
+endif ()
+set(__BK_SUMMARY_INCLUDED ON)
+
 set(_system_name "${CMAKE_SYSTEM} ${CMAKE_SYSTEM_PROCESSOR}")
 if (NOT ${_system_name} MATCHES ${CMAKE_C_PLATFORM_ID})
     string(CONCAT _system_name ${_system_name} " (${CMAKE_C_PLATFORM_ID})")

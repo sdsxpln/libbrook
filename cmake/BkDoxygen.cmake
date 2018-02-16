@@ -52,6 +52,11 @@
 
 #TODO: Graphviz
 
+if (__BK_DOXYGEN_INCLUDED)
+    return()
+endif ()
+set(__BK_DOXYGEN_INCLUDED ON)
+
 option(BK_BUILD_HTML "Generate API reference [HTML]" ON)
 option(BK_BUILD_PDF "Generate API reference [PDF]" ${BK_BUILD_HTML})
 

@@ -35,6 +35,11 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+if (__BK_PC_INCLUDED)
+    return()
+endif ()
+set(__BK_PC_INCLUDED ON)
+
 configure_file(${CMAKE_MODULE_PATH}/libbrook.pc.cmake.in
         ${CMAKE_BINARY_DIR}/libbrook.pc @ONLY)
 

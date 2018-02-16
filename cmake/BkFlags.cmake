@@ -39,6 +39,11 @@
 
 #TODO: -fsanitize=address/leak
 
+if (__BK_FLAGS_INCLUDED)
+    return()
+endif ()
+set(__BK_FLAGS_INCLUDED ON)
+
 option(BK_PICKY_COMPILER "Enable picky compiler options" ON)
 
 if (BK_PICKY_COMPILER)

@@ -37,6 +37,11 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+if (__BK_GNU_SOURCE_INCLUDED)
+    return()
+endif ()
+set(__BK_GNU_SOURCE_INCLUDED ON)
+
 include(CheckSymbolExists)
 
 if (NOT _GNU_SOURCE)

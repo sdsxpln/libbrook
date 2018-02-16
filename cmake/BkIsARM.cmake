@@ -41,6 +41,11 @@
 
 #TODO: MSVC support
 
+if (__BK_IS_ARM_INCLUDED)
+    return()
+endif ()
+set(__BK_IS_ARM_INCLUDED ON)
+
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
     list(APPEND _list
             ${CMAKE_C_COMPILER}

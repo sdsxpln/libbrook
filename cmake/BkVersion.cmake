@@ -42,6 +42,11 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+if (__BK_VERSION_INCLUDED)
+    return()
+endif ()
+set(__BK_VERSION_INCLUDED ON)
+
 if (EXISTS ${BK_INCLUDE_DIR}/brook.h)
     set(_version_list MAJOR MINOR PATCH)
     foreach (v ${_version_list})

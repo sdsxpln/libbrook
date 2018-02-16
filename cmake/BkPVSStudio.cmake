@@ -33,6 +33,11 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+if (__BK_PVS_STUDIO_INCLUDED)
+    return()
+endif ()
+set(__BK_PVS_STUDIO_INCLUDED ON)
+
 option(BK_PVS_STUDIO "Enable PVS-Studio analysis" OFF)
 
 if (BK_PVS_STUDIO)

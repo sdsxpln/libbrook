@@ -34,6 +34,11 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+if (__BK_CPACK_INCLUDED)
+    return()
+endif ()
+set(__BK_CPACK_INCLUDED ON)
+
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
 set(CPACK_PACKAGE_VENDOR "The Brook library team")
 set(CPACK_PACKAGE_VERSION_MAJOR ${BK_VERSION_MAJOR})

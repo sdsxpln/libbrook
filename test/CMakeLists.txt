@@ -40,6 +40,11 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+if (__BK_TEST_INCLUDED)
+    return()
+endif ()
+set(__BK_TEST_INCLUDED ON)
+
 if (BUILD_TESTING)
     if (WIN32)
         set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
