@@ -29,6 +29,11 @@
 #define BK_STR_H
 
 #include "bk_macros.h"
+
+#ifndef UTSTRING_FIND_DISABLED
+#define UTSTRING_FIND_DISABLED 1
+#endif
+
 #include "utstring.h"
 
 struct bk_str {

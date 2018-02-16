@@ -155,6 +155,8 @@ UTSTRING_UNUSED static void utstring_printf(UT_string *s, const char *fmt, ...) 
    va_end(ap);
 }
 
+#ifndef UTSTRING_FIND_DISABLED /* see https://github.com/troydhanson/uthash/issues/147 */
+
 /*******************************************************************************
  * begin substring search functions                                            *
  ******************************************************************************/
@@ -394,5 +396,7 @@ UTSTRING_UNUSED static long utstring_findR(
 /*******************************************************************************
  * end substring search functions                                              *
  ******************************************************************************/
+
+#endif /* UTSTRING_FIND_DISABLED */
 
 #endif /* UTSTRING_H */
