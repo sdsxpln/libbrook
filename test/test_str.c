@@ -84,6 +84,44 @@ static inline void test_str_read(struct bk_str *str, const char *val, size_t len
     ASSERT(res[res_len] == '\0');
 }
 
+static inline void test_str_printf_va(struct bk_str *str, const char *fmt, va_list ap) {
+    ASSERT(bk_str_printf_va(NULL, fmt, ap) == -EINVAL);
+    ASSERT(bk_str_printf_va(str, NULL, ap) == -EINVAL);
+    ASSERT(bk_str_printf_va(str, fmt, NULL) == -EINVAL);
+
+    bk_str_clear(str);
+    bk_str_printf_va(str, fmt, ap);
+    ASSERT(strcmp(bk_str_content(str), "abc123def456") == 0);
+
+    /* the `test_str_printf_va()` is called and tested by `test_str_printf()`. */
+}
+
+static inline void test_str_printf(struct bk_str *str, const char *fmt, ...) {
+    va_list ap;
+
+    ASSERT(bk_str_printf(NULL, fmt) == -EINVAL);
+    ASSERT(bk_str_printf(str, NULL) == -EINVAL);
+
+    bk_str_clear(str);
+    ASSERT(bk_str_printf(str, "") == 0);
+    ASSERT(strlen(bk_str_content(str)) == 0);
+    ASSERT(bk_str_printf(str, "%s%d", "abc", 123) == 0);
+    ASSERT(strcmp(bk_str_content(str), "abc123") == 0);
+
+    va_start(ap, fmt);
+    test_str_printf_va(str, fmt, ap);
+    va_end(ap);
+}
+
+static inline void test_str_content(struct bk_str *str, const char *val, size_t len) {
+    ASSERT(!bk_str_content(NULL));
+
+    bk_str_clear(str);
+    ASSERT(strlen(bk_str_content(str)) == 0);
+    bk_str_write(str, val, len);
+    ASSERT(strcmp(bk_str_content(str), val) == 0);
+}
+
 static inline void test_str_length(struct bk_str *str, const char *val, size_t len) {
     size_t res_len;
 
@@ -114,15 +152,6 @@ static inline void test_str_clear(struct bk_str *str, const char *val, size_t le
     ASSERT(tmp_len == 0);
 }
 
-static inline void test_str_content(struct bk_str *str, const char *val, size_t len) {
-    ASSERT(!bk_str_content(NULL));
-
-    bk_str_clear(str);
-    ASSERT(strlen(bk_str_content(str)) == 0);
-    bk_str_write(str, val, len);
-    ASSERT(strcmp(bk_str_content(str), val) == 0);
-}
-
 int main(void) {
     struct bk_str *str;
     const char *val = "abc123def456";
@@ -133,9 +162,10 @@ int main(void) {
 
     test_str_write(str, val, len);
     test_str_read(str, val, len);
-    test_str_length(str, val, len);
-    test_str_clear(str, val, len);
+    test_str_printf(str, "%s%d%s%d", "abc", 123, "def", 456); /* it already calls `test_str_printf_va()` internally */
     test_str_content(str, val, len);
+    test_str_clear(str, val, len);
+    test_str_length(str, val, len);
 
     bk_str_free(str);
     return EXIT_SUCCESS;
