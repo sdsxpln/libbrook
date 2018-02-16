@@ -49,6 +49,10 @@ if (BUILD_TESTING)
             utils
             str)
     set(BK_TESTS ${BK_TESTS} PARENT_SCOPE)
+    list(APPEND _libs brook)
+    if (MSVC_VERSION GREATER 1800)
+        list(APPEND _libs legacy_stdio_definitions)
+    endif ()
     foreach (_test ${BK_TESTS})
         string(TOUPPER ${_test} _TEST)
         option(BK_BUILD_${_TEST}_TESTING "Build bk_${_test} testing" ON)
@@ -57,12 +61,11 @@ if (BUILD_TESTING)
             add_executable(test_${_test}
                     ${BK_TESTS_DIR}/bk_assert.h
                     ${BK_TESTS_DIR}/test_${_test}.c)
-            if (MSVC)
-                target_compile_definitions(test_${_test} PUBLIC
-                        _CRT_STDIO_INLINE=static
-                        _CRT_SECURE_NO_WARNINGS)
+            if (MSVC_VERSION GREATER 1800)
+                target_compile_definitions(test_${_test} PUBLIC _NO_CRT_STDIO_INLINE)
+                target_link_libraries(test_${_test} ${_libs})
             endif ()
-            target_link_libraries(test_${_test} brook)
+            target_link_libraries(test_${_test} ${_libs})
             add_test(NAME test_${_test}
                     WORKING_DIRECTORY ${BK_TESTS_DIR}
                     COMMAND test_${_test})
