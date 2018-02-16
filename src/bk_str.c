@@ -44,20 +44,14 @@ void bk_str_free(struct bk_str *str) {
     bk_free(str);
 }
 
-int bk_str_write_raw(struct bk_str *str, const char *val, size_t len) {
+int bk_str_write(struct bk_str *str, const char *val, size_t len) {
     if (!str || !val || len == 0)
         return -EINVAL;
     utstring_bincpy(str->buf, val, len);
     return 0;
 }
 
-int bk_str_write(struct bk_str *str, const char *val) {
-    if (!val)
-        return -EINVAL;
-    return bk_str_write_raw(str, val, strlen(val));
-}
-
-int bk_str_read_raw(struct bk_str *str, char *val, size_t *len) {
+int bk_str_read(struct bk_str *str, char *val, size_t *len) {
     if (!str || !val || !len || *len == 0)
         return -EINVAL;
     if (utstring_len(str->buf) >= *len) {
@@ -67,16 +61,6 @@ int bk_str_read_raw(struct bk_str *str, char *val, size_t *len) {
     memcpy(val, utstring_body(str->buf), utstring_len(str->buf) + sizeof(char));
     *len = utstring_len(str->buf);
     return 0;
-}
-
-int bk_str_read(struct bk_str *str, char *val) {
-    size_t len;
-    if (!str)
-        return -EINVAL;
-    len = UTSTRING_INITIAL_SIZE;
-    if (utstring_len(str->buf) >= len)
-        len = utstring_len(str->buf) + sizeof(char);
-    return bk_str_read_raw(str, val, &len);
 }
 
 const char *bk_str_content(struct bk_str *str) {

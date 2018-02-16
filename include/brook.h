@@ -116,16 +116,7 @@ extern void bk_str_free(struct bk_str *str);
  * @retval 0 - Success.
  * @retval -EINVAL - Invalid argument.
  */
-extern int bk_str_write_raw(struct bk_str *str, const char *val, size_t len);
-
-/**
- * Writes a zero-terminated value into string handle @p str. All values previously written are kept.
- * @param[in] str String handle.
- * @param[in] val Value to be written.
- * @retval 0 - Success.
- * @retval -EINVAL - Invalid argument.
- */
-extern int bk_str_write(struct bk_str *str, const char *val);
+extern int bk_str_write(struct bk_str *str, const char *val, size_t len);
 
 /**
  * Reads a zero-terminated value from the string handle @p str.
@@ -136,16 +127,7 @@ extern int bk_str_write(struct bk_str *str, const char *val);
  * @retval -EINVAL - Invalid argument.
  * @retval -ENOBUFS - No buffer space available.
  */
-extern int bk_str_read_raw(struct bk_str *str, char *val, size_t *len);
-
-/**
- * Reads a zero-terminated value from the string handle @p str.
- * @param[in] str String handle.
- * @param[out] val Value to be read.
- * @retval 0 - Success.
- * @retval -EINVAL - Invalid argument.
- */
-extern int bk_str_read(struct bk_str *str, char *val);
+extern int bk_str_read(struct bk_str *str, char *val, size_t *len);
 
 /**
  * Gets the zero-terminated string content from handle @p str.

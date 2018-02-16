@@ -34,91 +34,54 @@
 #include <string.h>
 #include "brook.h"
 
-static inline void test_str_write_raw(struct bk_str *str, const char *val, size_t len) {
-    size_t res_len;
-
-    ASSERT(bk_str_write_raw(NULL, val, len) == -EINVAL);
-    ASSERT(bk_str_write_raw(str, NULL, len) == -EINVAL);
-    ASSERT(bk_str_write_raw(str, val, 0) == -EINVAL);
-
-    bk_str_clear(str);
-    ASSERT(bk_str_write_raw(str, val, len) == 0);
-    res_len = 0;
-    bk_str_length(str, &res_len);
-    ASSERT(res_len == len);
-}
-
 static inline void test_str_write(struct bk_str *str, const char *val, size_t len) {
     size_t res_len;
 
-    ASSERT(bk_str_write(NULL, val) == -EINVAL);
-    ASSERT(bk_str_write(str, NULL) == -EINVAL);
+    ASSERT(bk_str_write(NULL, val, len) == -EINVAL);
+    ASSERT(bk_str_write(str, NULL, len) == -EINVAL);
+    ASSERT(bk_str_write(str, val, 0) == -EINVAL);
 
     bk_str_clear(str);
-    ASSERT(bk_str_write(str, val) == 0);
+    ASSERT(bk_str_write(str, val, len) == 0);
     res_len = 0;
     bk_str_length(str, &res_len);
     ASSERT(res_len == len);
 }
 
-static inline void test_str_read_raw(struct bk_str *str, const char *val, size_t len) {
+static inline void test_str_read(struct bk_str *str, const char *val, size_t len) {
     char res[16 * sizeof(char)];
     size_t res_len;
 
-    ASSERT(bk_str_read_raw(NULL, res, &res_len) == -EINVAL);
-    ASSERT(bk_str_read_raw(str, NULL, &res_len) == -EINVAL);
-    ASSERT(bk_str_read_raw(str, res, NULL) == -EINVAL);
-    ASSERT(bk_str_read_raw(str, res, (size_t *) 0) == -EINVAL);
+    ASSERT(bk_str_read(NULL, res, &res_len) == -EINVAL);
+    ASSERT(bk_str_read(str, NULL, &res_len) == -EINVAL);
+    ASSERT(bk_str_read(str, res, NULL) == -EINVAL);
+    ASSERT(bk_str_read(str, res, (size_t *) 0) == -EINVAL);
 
     bk_str_clear(str);
     res_len = 10;
     strcpy(res, val);
     ASSERT(strlen(res) == len);
-    ASSERT(bk_str_read_raw(str, res, &res_len) == 0);
+    ASSERT(bk_str_read(str, res, &res_len) == 0);
     ASSERT(res_len == 0);
     ASSERT(strlen(res) == 0);
 
-    bk_str_write_raw(str, val, len);
+    bk_str_write(str, val, len);
     res_len = 1;
-    ASSERT(bk_str_read_raw(str, res, &res_len) == -ENOBUFS);
+    ASSERT(bk_str_read(str, res, &res_len) == -ENOBUFS);
     ASSERT(res_len == len + sizeof(char));
 
     res_len = len;
-    ASSERT(bk_str_read_raw(str, res, &res_len) == -ENOBUFS);
+    ASSERT(bk_str_read(str, res, &res_len) == -ENOBUFS);
     ASSERT(res_len == len + sizeof(char));
 
     res_len = len + len;
-    ASSERT(bk_str_read_raw(str, res, &res_len) == 0);
+    ASSERT(bk_str_read(str, res, &res_len) == 0);
     ASSERT(res_len == len);
 
     res_len = len + sizeof(char);
-    ASSERT(bk_str_read_raw(str, res, &res_len) == 0);
+    ASSERT(bk_str_read(str, res, &res_len) == 0);
     ASSERT(strcmp(res, val) == 0);
     ASSERT(res[res_len] == '\0');
-}
-
-static inline void test_str_read(struct bk_str *str, const char *val, size_t len) {
-    char res[16 * sizeof(char)];
-    char small[sizeof(char)];
-
-    ASSERT(bk_str_read(NULL, res) == -EINVAL);
-    ASSERT(bk_str_read(str, NULL) == -EINVAL);
-
-    bk_str_clear(str);
-    strcpy(res, val);
-    ASSERT(strlen(res) == len);
-    ASSERT(bk_str_read(str, res) == 0);
-    ASSERT(strlen(res) == 0);
-
-    bk_str_write_raw(str, val, len);
-    ASSERT(bk_str_read(str, small) == 0);
-    ASSERT(strcmp(small, val) == 0);
-    ASSERT(strlen(small) == len);
-
-    memset(res, 'a', sizeof(res));
-    ASSERT(bk_str_read(str, res) == 0);
-    ASSERT(strcmp(res, val) == 0);
-    ASSERT(res[len] == '\0');
 }
 
 static inline void test_str_length(struct bk_str *str, const char *val, size_t len) {
@@ -132,7 +95,7 @@ static inline void test_str_length(struct bk_str *str, const char *val, size_t l
     ASSERT(bk_str_length(str, &res_len) == 0);
     ASSERT(res_len == 0);
 
-    bk_str_write_raw(str, val, len);
+    bk_str_write(str, val, len);
     ASSERT(bk_str_length(str, &res_len) == 0);
     ASSERT(res_len == len);
 }
@@ -143,7 +106,7 @@ static inline void test_str_clear(struct bk_str *str, const char *val, size_t le
     ASSERT(bk_str_clear(NULL) == -EINVAL);
 
     bk_str_clear(str);
-    bk_str_write_raw(str, val, len);
+    bk_str_write(str, val, len);
     ASSERT(bk_str_length(str, &tmp_len) == 0);
     ASSERT(tmp_len > 0);
     bk_str_clear(str);
@@ -156,7 +119,7 @@ static inline void test_str_content(struct bk_str *str, const char *val, size_t 
 
     bk_str_clear(str);
     ASSERT(strlen(bk_str_content(str)) == 0);
-    bk_str_write_raw(str, val, len);
+    bk_str_write(str, val, len);
     ASSERT(strcmp(bk_str_content(str), val) == 0);
 }
 
@@ -168,9 +131,7 @@ int main(void) {
     str = bk_str_new();
     ASSERT(str);
 
-    test_str_write_raw(str, val, len);
     test_str_write(str, val, len);
-    test_str_read_raw(str, val, len);
     test_str_read(str, val, len);
     test_str_length(str, val, len);
     test_str_clear(str, val, len);
