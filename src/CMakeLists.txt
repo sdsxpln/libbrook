@@ -71,6 +71,9 @@ if (BUILD_SHARED_LIBS)
                 SUFFIX ${VERSION_SUFFIX}.dll)
     endif ()
 endif ()
+if (MSVC AND MSVC_VERSION GREATER 1800)
+    target_compile_definitions(brook PUBLIC _NO_CRT_STDIO_INLINE)
+endif ()
 
 install(TARGETS brook
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT lib
