@@ -4,13 +4,13 @@
 #
 # Library testing.
 #
-# All library testings.
+# All library testings building.
 #
 # ::
 #
 #   BK_TESTS_DIR - Directory containing the library testings.
 #   BK_TESTS - All available testings.
-#   BK_TESTS_SOURCE - All available source.
+#   BK_TESTS_SOURCE - All available testing source.
 #   BK_BUILD_<TEST>_TESTING - Enable/disable a <TEST> listed by BK_TESTS, e.g: -DBK_BUILD_UTILS_TESTING=ON.
 
 #    _____   _____    _____   _____   _   __
@@ -40,10 +40,10 @@
 # along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-if (__BK_TEST_INCLUDED)
+if (__BK_TESTS_INCLUDED)
     return()
 endif ()
-set(__BK_TEST_INCLUDED ON)
+set(__BK_TESTS_INCLUDED ON)
 
 if (BUILD_TESTING)
     if (WIN32)
