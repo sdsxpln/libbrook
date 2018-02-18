@@ -113,7 +113,7 @@ extern void bk_str_free(struct bk_str *str);
  * Writes a zero-terminated value to string handle @p str. All values previously written are kept.
  * @param[in] str String handle.
  * @param[in] val Value to be written.
- * @param[in] len Length of the value to be written including the terminating null byte (`'\0'`).
+ * @param[in] len Length of the value to be written including the terminating null byte (<tt>`\0`</tt>).
  * @retval 0 - Success.
  * @retval -EINVAL - Invalid argument.
  */
@@ -123,7 +123,7 @@ extern int bk_str_write(struct bk_str *str, const char *val, size_t len);
  * Reads a zero-terminated value from string handle @p str.
  * @param[in] str String handle.
  * @param[out] val Value to be read.
- * @param[in,out] len Pointer to specify then store the value length including the terminating null byte (`'\0'`).
+ * @param[in,out] len Pointer to specify then store the value length including the terminating null byte (<tt>`\0`</tt>).
  * @retval 0 - Success.
  * @retval -EINVAL - Invalid argument.
  * @retval -ENOBUFS - No buffer space available.
