@@ -25,12 +25,12 @@
  * along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EXEMPLO_STR_H
-#define EXEMPLO_STR_H
+#ifndef EXAMPLE_STR_H
+#define EXAMPLE_STR_H
 
 /**
  * \example example_str.c
  * Simple example showing a basic usage of `bk_str` feature.
  */
 
-#endif /* EXEMPLO_STR_H */
+#endif /* EXAMPLE_STR_H */
