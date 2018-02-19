@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <brook.h>
 
-int main() {
+int main(void) {
     struct bk_str *str;
 
     str = bk_str_new(); /* create the string handle `str`. */
