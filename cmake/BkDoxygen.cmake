@@ -100,7 +100,7 @@ if (BK_BUILD_HTML)
         if (BK_GENERATE_PDF)
             set(DOXYGEN_LATEX_DIR ${DOXYGEN_DOC_DIR}/latex)
             add_custom_target(pdf
-                    COMMAND ${CMAKE_MAKE_PROGRAM} -C ${DOXYGEN_LATEX_DIR}
+                    COMMAND ${CMAKE_COMMAND} -E chdir ${DOXYGEN_LATEX_DIR} ${CMAKE_BUILD_TOOL}
                     COMMAND ${CMAKE_COMMAND} -E rename ${DOXYGEN_LATEX_DIR}/refman.pdf ${DOXYGEN_LATEX_DIR}/libbrook-v${VERSION}.pdf
                     WORKING_DIRECTORY ${DOXYGEN_LATEX_DIR}
                     COMMENT "Generating API reference with Doxygen [PDF]"
