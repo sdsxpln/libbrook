@@ -11,8 +11,9 @@
 #
 #   BK_BUILD_HTML - Enable/disable the API reference generation as HTML.
 #   BK_BUILD_PDF - Enable/disable the API reference generation as PDF. Note: it depends on BK_BUILD_HTML=ON.
-#   BK_GENERATE_HTML - True when there is the possibility to generating the API reference as HTML.
+#   BK_GENERATE_HTML - True when enabled the API reference generation as HTML.
 #   BK_GENERATE_PDF - True when there is the possibility to generating the API reference as PDF.
+#   BK_BUILD_MAN_PAGES - True when enabled the API man pages generation.
 #
 #   DOXYGEN_FOUND - True when Doxygen executable is found.
 #   DOXYGEN_INPUT_FILE - Template file used to generate the DOXYGEN_OUTPUT_FILE.
@@ -59,6 +60,7 @@ set(__BK_DOXYGEN_INCLUDED ON)
 
 option(BK_BUILD_HTML "Generate API reference [HTML]" ON)
 option(BK_BUILD_PDF "Generate API reference [PDF]" ${BK_BUILD_HTML})
+option(BK_BUILD_MAN_PAGES "Generate API man pages" ${BK_BUILD_HTML})
 
 if (BK_BUILD_HTML)
     find_package(Doxygen QUIET)
