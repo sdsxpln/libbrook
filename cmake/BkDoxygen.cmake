@@ -91,7 +91,7 @@ if (BK_BUILD_HTML)
         endif ()
         configure_file(${DOXYGEN_INPUT_FILE} ${DOXYGEN_OUTPUT_FILE} @ONLY)
         message(STATUS "Generating Doxygen file - done")
-        add_custom_target(doc
+        add_custom_target(doc ALL
                 COMMAND ${CMAKE_COMMAND} -E make_directory ${DOXYGEN_DOC_DIR}
                 COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUTPUT_FILE}
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
@@ -113,6 +113,8 @@ if (BK_BUILD_HTML)
                 set(_filename ${DOXYGEN_MAN_DIR}/man3/${_filename}.3)
                 add_custom_command(TARGET doc POST_BUILD
                         COMMAND ${CMAKE_COMMAND} -E tar -zcf ${_filename}.gz ${_filename})
+                install(FILES ${_filename}.gz
+                        DESTINATION ${CMAKE_INSTALL_MANDIR}/man3)
                 unset(_filename)
             endforeach ()
         endif ()
