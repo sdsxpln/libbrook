@@ -100,6 +100,12 @@ else ()
     endif ()
 endif ()
 
+if (BK_BUILD_MAN_PAGES AND BK_GENERATE_MAN_PAGES)
+    set(_build_man_pages "Yes")
+else ()
+    set(_build_man_pages "No")
+endif ()
+
 if (BK_BUILD_EXAMPLES)
     set(_build_examples "Yes")
     if (BK_EXAMPLES)
@@ -138,6 +144,7 @@ Brook library ${VERSION} - building summary:
   Docs:
     HTML: ${_build_html}
     PDF: ${_build_pdf}
+    man pages: ${_build_man_pages}
   Run tests: ${_build_testing}
 ")
 
