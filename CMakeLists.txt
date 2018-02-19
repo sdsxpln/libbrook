@@ -75,6 +75,7 @@ endif ()
 include_directories(${BK_INCLUDE_DIR})
 
 add_subdirectory(src)
+add_subdirectory(examples)
 add_subdirectory(test)
 
 include(BkSummary)

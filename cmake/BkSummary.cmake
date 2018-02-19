@@ -100,6 +100,16 @@ else ()
     endif ()
 endif ()
 
+if (BK_BUILD_EXAMPLES)
+    set(_build_examples "Yes")
+    if (BK_EXAMPLES)
+        string(CONCAT _build_examples ${_build_examples} " (${BK_EXAMPLES})")
+        string(REPLACE ";" ", " _build_examples "${_build_examples}")
+    endif ()
+else ()
+    set(_build_examples "No")
+endif ()
+
 if (BUILD_TESTING)
     set(_build_testing "Yes")
     if (BK_TESTS)
@@ -124,6 +134,7 @@ Brook library ${VERSION} - building summary:
     Version: ${CMAKE_C_COMPILER_VERSION}
     CFLAGS: ${_cflags}
   Build: ${_build_type}-${_build_arch} (${_lib_type})
+  Examples: ${_build_examples}
   Docs:
     HTML: ${_build_html}
     PDF: ${_build_pdf}
