@@ -25,6 +25,13 @@
  * along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+    the full output is:
+    ./example_str
+    Hello, world!
+    abc123
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <brook.h>
@@ -43,13 +50,6 @@ int main() {
     printf("%s", bk_str_content(str)); /* get the printed content "abc123" from `str` to the output screen. */
 
     bk_str_free(str); /* free the string handle `str`. */
-
-/*
-    the full output is:
-    ./example_str
-    Hello, world!
-    abc123
-*/
 
     return EXIT_SUCCESS;
 }
