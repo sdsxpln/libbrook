@@ -55,7 +55,7 @@
 
 #TODO: Graphviz
 
-if (__BK_DOXYGEN_INCLUDED)
+if (__BK_DOXYGEN_INCLUDED OR (NOT CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE"))
     return()
 endif ()
 set(__BK_DOXYGEN_INCLUDED ON)
