@@ -114,7 +114,7 @@ if (BK_BUILD_HTML)
                     get_filename_component(_filename ${_src} NAME_WE)
                     set(_filename ${DOXYGEN_MAN_DIR}/man3/${_filename}.3)
                     add_custom_command(TARGET doc POST_BUILD
-                            COMMAND ${_gzip} ${_filename})
+                            COMMAND ${_gzip} -f ${_filename})
                     install(FILES ${_filename}.gz
                             DESTINATION ${CMAKE_INSTALL_MANDIR}/man3)
                     unset(_filename)
