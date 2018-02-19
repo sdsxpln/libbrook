@@ -24,6 +24,7 @@
 #   DOXYGEN_PDFLATEX_EXECUTABLE - The path of the `pdflatex` executable when it is found.
 #   DOXYGEN_MAKEINDEX_EXECUTABLE - The path of the `makeindex` executable when it is found.
 #   DOXYGEN_LATEX_DIR - Directory containing the generated PDF file.
+#   DOXYGEN_MAN_DIR - Directory containing the generated man page files.
 
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
@@ -86,6 +87,7 @@ if (BK_BUILD_HTML)
         endif ()
         if (BK_BUILD_MAN_PAGES)
             set(BK_GENERATE_MAN_PAGES YES)
+            set(DOXYGEN_MAN_DIR ${DOXYGEN_DOC_DIR}/man)
         endif ()
         configure_file(${DOXYGEN_INPUT_FILE} ${DOXYGEN_OUTPUT_FILE} @ONLY)
         message(STATUS "Generating Doxygen file - done")
@@ -104,6 +106,14 @@ if (BK_BUILD_HTML)
                     COMMENT "Generating API reference with Doxygen [PDF]"
                     DEPENDS doc
                     VERBATIM)
+        endif ()
+        if (BK_GENERATE_MAN_PAGES)
+            foreach (_src ${BK_C_SOURCE})
+                get_filename_component(_filename ${_src} NAME_WE)
+                add_custom_command(TARGET doc POST_BUILD
+                        COMMAND ${CMAKE_COMMAND} -E tar -zcf ${DOXYGEN_MAN_DIR}/man3/${_filename}.3.gz ${DOXYGEN_MAN_DIR}/man3/${_filename}.3)
+                unset(_filename)
+            endforeach ()
         endif ()
     else ()
         message(WARNING "Doxygen required to generate the API reference [HTML/PDF]")

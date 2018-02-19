@@ -9,6 +9,7 @@
 # ::
 #
 #   BK_SOURCE_DIR - Directory containing the library source.
+#   BK_C_SOURCE - All pure C available source.
 #   BK_SOURCE - All available source.
 
 #    _____   _____    _____   _____   _   __
@@ -53,11 +54,15 @@ endif ()
 
 set(BK_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 
+list(APPEND BK_C_SOURCE
+        ${BK_SOURCE_DIR}/bk_utils.c
+        ${BK_SOURCE_DIR}/bk_str.c)
+set(BK_C_SOURCE ${BK_C_SOURCE} PARENT_SCOPE)
+
 list(APPEND BK_SOURCE
         ${BK_INCLUDE_DIR}/brook.h # allows many IDEs to find it
         ${BK_SOURCE_DIR}/bk_macros.h
-        ${BK_SOURCE_DIR}/bk_utils.c
-        ${BK_SOURCE_DIR}/bk_str.c)
+        ${BK_C_SOURCE})
 set(BK_SOURCE ${BK_SOURCE} PARENT_SCOPE)
 
 add_library(brook ${BK_SOURCE})
