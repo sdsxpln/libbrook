@@ -68,7 +68,7 @@ endif ()
 
 if (NOT MSVC)
     add_custom_target(dist
-            COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
+            COMMAND ${CMAKE_BUILD_TOOL} package_source)
 endif ()
 
 include(CPack)
