@@ -60,7 +60,7 @@ if (__BK_DOXYGEN_INCLUDED OR (NOT CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
 endif ()
 set(__BK_DOXYGEN_INCLUDED ON)
 
-option(BK_BUILD_HTML "Generate API reference [HTML]" ON)
+option(BK_BUILD_HTML "Generate API reference [HTML]" OFF)
 option(BK_BUILD_PDF "Generate API reference [PDF]" ${BK_BUILD_HTML})
 option(BK_BUILD_MAN_PAGES "Generate API reference [man pages]" ${BK_BUILD_HTML})
 
@@ -111,9 +111,8 @@ if (BK_BUILD_HTML)
             foreach (_src ${BK_C_SOURCE})
                 get_filename_component(_filename ${_src} NAME_WE)
                 set(_filename ${DOXYGEN_MAN_DIR}/man3/${_filename}.3)
-                add_custom_command(TARGET doc POST_BUILD
-                        COMMAND ${CMAKE_COMMAND} -E tar -zcf ${_filename}.gz ${_filename})
-                install(FILES ${_filename}.gz
+                #TODO: generate .gz files
+                install(FILES ${_filename}
                         DESTINATION ${CMAKE_INSTALL_MANDIR}/man3)
                 unset(_filename)
             endforeach ()
