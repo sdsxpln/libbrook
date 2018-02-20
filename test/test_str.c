@@ -162,6 +162,7 @@ int main(void) {
     test_str_write(str, val, len);
     test_str_read(str, val, len);
     test_str_printf(str, "%s%d%s%d", "abc", 123, "def", 456);
+    /* test_str_printf_va()` is already called by `test_str_printf`. */
     test_str_content(str, val, len);
     test_str_clear(str, val, len);
     test_str_length(str, val, len);
