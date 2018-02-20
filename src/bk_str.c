@@ -54,12 +54,10 @@ int bk_str_write(struct bk_str *str, const char *val, size_t len) {
 int bk_str_read(struct bk_str *str, char *val, size_t *len) {
     if (!str || !val || !len || *len == 0)
         return -EINVAL;
-    if (utstring_len(str->buf) >= *len) {
-        *len = utstring_len(str->buf) + sizeof(char);
-        return -ENOBUFS;
-    }
-    memcpy(val, utstring_body(str->buf), utstring_len(str->buf) + sizeof(char));
-    *len = utstring_len(str->buf);
+    if (*len > utstring_len(str->buf))
+        *len = utstring_len(str->buf);
+    memcpy(val, utstring_body(str->buf), *len);
+    val[*len] = '\0';
     return 0;
 }
 
