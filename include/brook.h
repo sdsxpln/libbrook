@@ -110,28 +110,27 @@ extern struct bk_str *bk_str_new(void);
 extern void bk_str_free(struct bk_str *str);
 
 /**
- * Writes a zero-terminated value to string handle \p str. All values previously written are kept.
+ * Writes a C string to the string handle \p str. All strings previously written are kept.
  * \param[in] str String handle.
- * \param[in] val Value to be written.
- * \param[in] len Length of the value to be written including the terminating null byte (<tt>`\0`</tt>).
+ * \param[in] val String to be written.
+ * \param[in] len Length of the string to be written.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
 extern int bk_str_write(struct bk_str *str, const char *val, size_t len);
 
 /**
- * Reads a zero-terminated value from string handle \p str.
+ * Reads a C string from the string handle \p str.
  * \param[in] str String handle.
- * \param[out] val Value to be read.
- * \param[in,out] len Pointer to specify then store the value length including the terminating null byte (<tt>`\0`</tt>).
+ * \param[out] val String to be read.
+ * \param[in,out] len Pointer to specify then store the string length.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
- * \retval -ENOBUFS - No buffer space available.
  */
 extern int bk_str_read(struct bk_str *str, char *val, size_t *len);
 
 /**
- * Writes a formatted value from variable argument list to string handle \p str.
+ * Writes a formatted C string from variable argument list to the string handle \p str.
  * \param[in] str String handle.
  * \param[in] fmt Formatted string (following the same [`printf()`](https://linux.die.net/man/3/printf) format
  *  specification).
@@ -143,7 +142,7 @@ extern int bk_str_read(struct bk_str *str, char *val, size_t *len);
 extern int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap);
 
 /**
- * Writes a formatted value to string handle \p str.
+ * Writes a formatted C string to the string handle \p str. All strings previously written are kept.
  * \param[in] str String handle.
  * \param[in] fmt Formatted string (following the same [`printf()`](https://linux.die.net/man/3/printf) format
  *  specification).
@@ -155,7 +154,7 @@ extern int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap);
 extern int bk_str_printf(struct bk_str *str, const char *fmt, ...);
 
 /**
- * Gets the zero-terminated string content from handle \p str.
+ * Gets the C string content from the string handle \p str.
  * \param[in] str String handle.
  * \return Content as static string.
  * \retval NULL When Invalid argument.
@@ -172,7 +171,7 @@ extern const char *bk_str_content(struct bk_str *str);
 extern int bk_str_length(struct bk_str *str, size_t *len);
 
 /**
- * Cleans all written string present in the handle \p str.
+ * Cleans all written string present in the string handle \p str.
  * \param[in] str String handle.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
