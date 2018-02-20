@@ -59,7 +59,8 @@ static inline void test_str_read(struct bk_str *str, const char *val, size_t len
 
     bk_str_clear(str);
     res_len = 10;
-    strcpy(res, val);
+	memcpy(res, val, len);
+	res[len] = '\0';
     ASSERT(strlen(res) == len);
     ASSERT(bk_str_read(str, res, &res_len) == 0);
     ASSERT(res_len == 0);
@@ -94,7 +95,7 @@ static inline void test_str_printf_va(struct bk_str *str, const char *fmt, va_li
     /* the `test_str_printf_va()` is called and tested by `test_str_printf()`. */
 }
 
-static inline void test_str_printf(struct bk_str *str, const char *fmt, ...) {
+static void test_str_printf(struct bk_str *str, const char *fmt, ...) {
     va_list ap;
 
     ASSERT(bk_str_printf(NULL, fmt) == -EINVAL);
@@ -160,7 +161,7 @@ int main(void) {
 
     test_str_write(str, val, len);
     test_str_read(str, val, len);
-    test_str_printf(str, "%s%d%s%d", "abc", 123, "def", 456); /* it already calls `test_str_printf_va()` internally */
+    test_str_printf(str, "%s%d%s%d", "abc", 123, "def", 456);
     test_str_content(str, val, len);
     test_str_clear(str, val, len);
     test_str_length(str, val, len);
