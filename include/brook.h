@@ -87,12 +87,13 @@ extern void bk_free(void *ptr);
 /**
  * \ingroup bk_api
  * \defgroup bk_str String
- * String structure and its related functions.
+ * String handle and its related functions.
  * \{
  */
 
 /**
  * Handle for the string structure used to represent a HTML body, POST payload and more.
+ * \struct bk_str
  */
 struct bk_str;
 
@@ -177,6 +178,22 @@ extern int bk_str_length(struct bk_str *str, size_t *len);
  * \retval -EINVAL - Invalid argument.
  */
 extern int bk_str_clear(struct bk_str *str);
+
+/** \} */
+
+/**
+ * \ingroup bk_api
+ * \defgroup bk_strmap String map
+ * String map handle and its related functions.
+ * \{
+ */
+
+/**
+ * Handle for the hash table that maps keys to strings. Each _key-value_ represents a HTML field, a query-string
+ * parameter and more.
+ * \struct bk_strmap
+ */
+struct bk_strmap;
 
 /** \} */
 
