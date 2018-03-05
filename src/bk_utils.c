@@ -61,8 +61,16 @@ void bk_free(void *ptr) {
 int bk__toasciilower(char *str, size_t len) {
     if (!str || len == 0)
         return -EINVAL;
-    while (len) {
-        if (isupper(*str))
+    while (len
+#ifdef _MSC_VER
+        && *str
+#endif
+            ) {
+        if (
+#ifdef _MSC_VER
+                isascii(*str) &&
+#endif
+                isupper(*str))
             *str = (char) tolower(*str);
         str++;
         len--;

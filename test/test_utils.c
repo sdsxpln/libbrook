@@ -72,10 +72,15 @@ static inline void test_memory(void) {
     bk_free(buf);
 }
 
-static inline void test__toasciilower() {
+static inline void test__toasciilower(void) {
     char str[100];
     size_t len;
-    sprintf(str, "ABC");
+#ifdef _MSC_VER
+    sprintf_s(str, sizeof(str)
+#else
+    sprintf(str
+#endif
+            , "ABC");
     len = strlen(str);
     ASSERT(bk__toasciilower(NULL, len) == -EINVAL);
     ASSERT(bk__toasciilower(str, 0) == -EINVAL);
@@ -86,29 +91,64 @@ static inline void test__toasciilower() {
     len = 10;
     ASSERT(bk__toasciilower(str, len) == 0);
     ASSERT(*str == 0);
-    sprintf(str, "A");
+#ifdef _MSC_VER
+    sprintf_s(str, sizeof(str)
+#else
+    sprintf(str
+#endif
+            , "A");
     len = strlen(str);
     ASSERT(bk__toasciilower(str, len) == 0);
     ASSERT(strcmp(str, "a") == 0);
-    sprintf(str, "ABC");
+#ifdef _MSC_VER
+    sprintf_s(str, sizeof(str)
+#else
+    sprintf(str
+#endif
+            , "ABC");
     len = strlen(str);
     ASSERT(bk__toasciilower(str, len) == 0);
     ASSERT(strcmp(str, "abc") == 0);
-    sprintf(str, "ABC123 def456");
+#ifdef _MSC_VER
+    sprintf_s(str, sizeof(str)
+#else
+    sprintf(str
+#endif
+            , "ABC123 def456");
     len = strlen(str);
     ASSERT(bk__toasciilower(str, len) == 0);
     ASSERT(strcmp(str, "abc123 def456") == 0);
-    sprintf(str, "ABC");
+#ifdef _MSC_VER
+    sprintf_s(str, sizeof(str)
+#else
+    sprintf(str
+#endif
+            , "ABC");
     len = strlen(str) * 2;
     ASSERT(bk__toasciilower(str, len) == 0);
     ASSERT(strcmp(str, "abc") == 0);
-    sprintf(str, "ABÇñãÁÊD");
+#ifdef _MSC_VER
+    sprintf_s(str, sizeof(str)
+#else
+    sprintf(str
+#endif
+            , "ABÇñãÁÊD");
     len = strlen(str);
     ASSERT(bk__toasciilower(str, len) == 0);
     ASSERT(strcmp(str, "abÇñãÁÊd") == 0);
-    sprintf(str, "AB");
+#ifdef _MSC_VER
+    sprintf_s(str, sizeof(str)
+#else
+    sprintf(str
+#endif
+            , "AB");
     len = strlen(str);
-    strcat(str, "CD");
+#ifdef _MSC_VER
+    strcat_s(str, sizeof(str)
+#else
+    strcat(str
+#endif
+            , "CD");
     ASSERT(bk__toasciilower(str, len) == 0);
     ASSERT(strcmp(str, "abCD") == 0);
 }
