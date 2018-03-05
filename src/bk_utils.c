@@ -27,6 +27,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "bk_macros.h"
 #include "brook.h"
 
@@ -53,4 +54,18 @@ void *bk_alloc(size_t size) {
 
 void bk_free(void *ptr) {
     free(ptr);
+}
+
+/* String */
+
+int bk__toasciilower(char *str, size_t len) {
+    if (!str || len == 0)
+        return -EINVAL;
+    while (len) {
+        if (isupper(*str))
+            *str = (char) tolower(*str);
+        str++;
+        len--;
+    }
+    return 0;
 }

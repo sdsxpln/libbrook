@@ -53,6 +53,7 @@ if (WIN32)
 endif ()
 
 set(BK_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
+set(BK_SOURCE_DIR ${BK_SOURCE_DIR} PARENT_SCOPE)
 
 list(APPEND BK_C_SOURCE
         ${BK_SOURCE_DIR}/bk_utils.c

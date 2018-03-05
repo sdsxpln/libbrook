@@ -29,6 +29,7 @@
 
 #include <string.h>
 #include "brook.h"
+#include "bk_utils.h"
 
 static inline void test_version(void) {
     const char *ver_original;
@@ -67,8 +68,50 @@ static inline void test_memory(void) {
     bk_free(buf);
 }
 
+static inline void test__toasciilower() {
+    char str[100];
+    size_t len;
+    sprintf(str, "ABC");
+    len = strlen(str);
+    ASSERT(bk__toasciilower(NULL, len) == -EINVAL);
+    ASSERT(bk__toasciilower(str, 0) == -EINVAL);
+    memset(str, 0, sizeof(str));
+    ASSERT(bk__toasciilower(str, 0) == -EINVAL);
+
+    memset(str, 0, sizeof(str));
+    len = 10;
+    ASSERT(bk__toasciilower(str, len) == 0);
+    ASSERT(*str == 0);
+    sprintf(str, "A");
+    len = strlen(str);
+    ASSERT(bk__toasciilower(str, len) == 0);
+    ASSERT(strcmp(str, "a") == 0);
+    sprintf(str, "ABC");
+    len = strlen(str);
+    ASSERT(bk__toasciilower(str, len) == 0);
+    ASSERT(strcmp(str, "abc") == 0);
+    sprintf(str, "ABC123 def456");
+    len = strlen(str);
+    ASSERT(bk__toasciilower(str, len) == 0);
+    ASSERT(strcmp(str, "abc123 def456") == 0);
+    sprintf(str, "ABC");
+    len = strlen(str) * 2;
+    ASSERT(bk__toasciilower(str, len) == 0);
+    ASSERT(strcmp(str, "abc") == 0);
+    sprintf(str, "ABÇñãÁÊD");
+    len = strlen(str);
+    ASSERT(bk__toasciilower(str, len) == 0);
+    ASSERT(strcmp(str, "abÇñãÁÊd") == 0);
+    sprintf(str, "AB");
+    len = strlen(str);
+    strcat(str, "CD");
+    ASSERT(bk__toasciilower(str, len) == 0);
+    ASSERT(strcmp(str, "abCD") == 0);
+}
+
 int main(void) {
     test_version();
     test_memory();
+    test__toasciilower();
     return EXIT_SUCCESS;
 }

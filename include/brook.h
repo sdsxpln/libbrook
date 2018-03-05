@@ -147,7 +147,7 @@ extern int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap);
  * \param[in] str String handle.
  * \param[in] fmt Formatted string (following the same [`printf()`](https://linux.die.net/man/3/printf) format
  *  specification).
- * \param ... Additional arguments (following the same [`printf()`](https://linux.die.net/man/3/printf) arguments
+ * \param[in] ... Additional arguments (following the same [`printf()`](https://linux.die.net/man/3/printf) arguments
  *  specification).
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
