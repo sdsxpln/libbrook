@@ -27,6 +27,10 @@
 
 #include "bk_assert.h"
 
+#ifndef _ERRNO_H
+#include <errno.h>
+#endif
+
 #include <string.h>
 #include "brook.h"
 #include "bk_utils.h"
