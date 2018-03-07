@@ -58,6 +58,20 @@ void bk_free(void *ptr) {
 
 /* String */
 
+#ifdef __MINGW32__
+char *bk__strndup(const char *str, size_t len) {
+    char *ret;
+    size_t size = strlen(str);
+    if (len < size)
+        size = len;
+    ret = malloc(size + sizeof(char));
+    if (!ret)
+        return NULL;
+    ret[size] = '\0';
+    return memcpy(ret, str, size);
+}
+#endif
+
 int bk__toasciilower(char *str, size_t len) {
     while (len
 #ifdef _MSC_VER

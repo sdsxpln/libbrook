@@ -47,15 +47,15 @@ int bk_strmap_add(struct bk_strmap **map, const char *name, size_t name_len, con
     pair = bk_alloc(sizeof(struct bk_strmap));
     if (!pair)
         return -ENOMEM;
-    pair->name = strndup(name, name_len);
+    pair->name = bk__strndup(name, name_len);
     pair->name_len = name_len;
-    pair->val = strndup(val, val_len);
+    pair->val = bk__strndup(val, val_len);
     pair->val_len = val_len;
     if (!pair->name || !pair->val) {
         bk__strmap_cleanup(pair);
         return -ENOMEM;
     }
-    pair->key = strndup(pair->name, pair->name_len);
+    pair->key = bk__strndup(pair->name, pair->name_len);
     if ((ret = bk__toasciilower(pair->key, pair->name_len)) != 0) {
         bk__strmap_cleanup(pair);
         return ret;
@@ -70,7 +70,7 @@ int bk_strmap_find(struct bk_strmap *map, const char *name, size_t name_len, cha
     int ret;
     if (!map || !name || name_len == 0 || !val || !val_len || *val_len == 0)
         return -EINVAL;
-    key = strndup(name, name_len);
+    key = bk__strndup(name, name_len);
     ret = bk__toasciilower(key, name_len);
     if (ret == 0) {
         HASH_FIND(hh, map, key, name_len, pair);
