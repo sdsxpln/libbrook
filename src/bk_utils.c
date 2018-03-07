@@ -59,8 +59,6 @@ void bk_free(void *ptr) {
 /* String */
 
 int bk__toasciilower(char *str, size_t len) {
-    if (!str || len == 0)
-        return -EINVAL;
     while (len
 #ifdef _MSC_VER
         && *str
