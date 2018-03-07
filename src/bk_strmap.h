@@ -32,6 +32,7 @@
 
 struct bk_strmap {
     char *key, *name, *val;
+    size_t name_len, val_len;
     UT_hash_handle hh;
 };
 
