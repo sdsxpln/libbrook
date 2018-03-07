@@ -127,6 +127,7 @@ extern int bk_str_write(struct bk_str *str, const char *val, size_t len);
  * \param[in,out] len Pointer to specify then store the string length.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
+ * \retval -ENOBUFS - No buffer space available to store the string.
  */
 extern int bk_str_read(struct bk_str *str, char *val, size_t *len);
 

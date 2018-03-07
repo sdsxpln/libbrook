@@ -59,8 +59,8 @@ static inline void test_str_read(struct bk_str *str, const char *val, size_t len
 
     bk_str_clear(str);
     res_len = 10;
-	memcpy(res, val, len);
-	res[len] = '\0';
+    memcpy(res, val, len);
+    res[len] = '\0';
     ASSERT(strlen(res) == len);
     ASSERT(bk_str_read(str, res, &res_len) == 0);
     ASSERT(res_len == 0);
@@ -68,15 +68,16 @@ static inline void test_str_read(struct bk_str *str, const char *val, size_t len
 
     bk_str_write(str, val, len);
     res_len = sizeof(char);
+    ASSERT(bk_str_read(str, res, &res_len) == -ENOBUFS);
     ASSERT(bk_str_read(str, res, &res_len) == 0);
-    ASSERT(res_len == sizeof(char));
+    ASSERT(res_len == len);
     ASSERT(memcmp(val, res, sizeof(char)) == 0);
 
     res_len = len + len;
     ASSERT(bk_str_read(str, res, &res_len) == 0);
     ASSERT(res_len == len);
 
-    res_len = len;
+    res_len = len + sizeof(char);
     ASSERT(bk_str_read(str, res, &res_len) == 0);
     ASSERT(res_len == len);
     ASSERT(strcmp(res, val) == 0);
