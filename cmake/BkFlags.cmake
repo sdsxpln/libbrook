@@ -47,14 +47,14 @@ set(__BK_FLAGS_INCLUDED ON)
 option(BK_PICKY_COMPILER "Enable picky compiler options" ON)
 
 if (BK_PICKY_COMPILER)
-    if ((NOT CMAKE_COMPILER_IS_GNUCC) OR (NOT CMAKE_COMPILER_IS_CLANG))
-        message(FATALERROR "Unknown C compiler: ${CMAKE_C_COMPILER}")
-    else ()
+    if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
         #-Wsign-conversion
         #-Wpadded
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra -Wpedantic -Wdeclaration-after-statement -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wc90-c99-compat")
         if (ARM)
             set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static")
         endif ()
+    else ()
+        message(FATAL_ERROR "Unknown C compiler: ${CMAKE_C_COMPILER}")
     endif ()
 endif ()
