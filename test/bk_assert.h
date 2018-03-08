@@ -56,14 +56,14 @@ extern const char *__progname;
 #ifdef NDEBUG
 #define ASSERT(expr) ((void) 0)
 #else
-#define ASSERT(expr)                                                        \
-do {                                                                        \
-    if (!(expr)) {                                                          \
-        fprintf(stderr, "%s: %s:%d: %s: Assertion `%s' failed.\n",          \
-            __progname, __FILE__, __LINE__, __FUNCTION__, #expr);           \
-        fflush(stderr);                                                     \
-        exit(EXIT_FAILURE);                                                 \
-    }                                                                       \
+#define ASSERT(expr)                                                            \
+do {                                                                            \
+    if (!(expr)) {                                                              \
+        fprintf(stderr, "%s: %s:%d: %s: Assertion `%s' failed.\n",              \
+            __progname, __FILE__, __LINE__, __extension__ __FUNCTION__, #expr); \
+        fflush(stderr);                                                         \
+        exit(EXIT_FAILURE);                                                     \
+    }                                                                           \
 } while (0)
 #endif
 
