@@ -31,7 +31,9 @@
 #include <errno.h>
 #endif
 
+#ifndef __ANDROID__
 #include <string.h>
+#endif
 #include "brook.h"
 
 static inline void test_str_write(struct bk_str *str, const char *val, size_t len) {
@@ -87,7 +89,9 @@ static inline void test_str_read(struct bk_str *str, const char *val, size_t len
 static inline void test_str_printf_va(struct bk_str *str, const char *fmt, va_list ap) {
     ASSERT(bk_str_printf_va(NULL, fmt, ap) == -EINVAL);
     ASSERT(bk_str_printf_va(str, NULL, ap) == -EINVAL);
+#ifndef __ANDROID__
     ASSERT(bk_str_printf_va(str, fmt, NULL) == -EINVAL);
+#endif
 
     bk_str_clear(str);
     bk_str_printf_va(str, fmt, ap);

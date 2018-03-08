@@ -65,7 +65,11 @@ int bk_str_read(struct bk_str *str, char *val, size_t *len) {
 }
 
 int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap) {
-    if (!str || !fmt || !ap)
+    if (!str || !fmt
+#ifndef __ANDROID__
+        || !ap
+#endif
+            )
         return -EINVAL;
     utstring_printf_va(str->buf, fmt, ap);
     return 0;
