@@ -48,7 +48,9 @@ option(BK_PICKY_COMPILER "Enable picky compiler options" ON)
 
 if (BK_PICKY_COMPILER)
     if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra")
+        #-Wsign-conversion
+        #-Wpadded
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra -Wpedantic -Wdeclaration-after-statement -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wc90-c99-compat")
         if (ARM)
             set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static")
         endif ()
