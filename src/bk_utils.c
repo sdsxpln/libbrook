@@ -74,16 +74,8 @@ char *bk__strndup(const char *str, size_t len) {
 #endif
 
 int bk__toasciilower(char *str, size_t len) {
-    while (len
-#ifdef _MSC_VER
-        && *str
-#endif
-            ) {
-        if (
-#ifdef _MSC_VER
-                isascii(*str) &&
-#endif
-                isupper(*str))
+    while (len /*&& *str*/) {
+        if (/*isascii(*str) &&*/ isupper(*str))
             *str = (char) tolower(*str);
         str++;
         len--;

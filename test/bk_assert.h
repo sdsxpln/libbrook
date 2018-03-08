@@ -37,7 +37,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32)
 #define __progname __argv[0]
 #elif(_WIN32)
 extern char __declspec(dllimport) *__progname;
@@ -47,10 +47,6 @@ extern char __declspec(dllimport) *__progname;
 #else
 extern const char *__progname;
 #endif
-#endif
-
-#ifdef _MSC_VER
-#define fprintf fprintf_s
 #endif
 
 #ifdef NDEBUG
