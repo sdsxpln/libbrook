@@ -5,7 +5,7 @@
 # CPack variables for the Brook library packaging distribution.
 #
 # Adds the CPack targets to generate the distribution package of the Brook library. An extra added target `make dist`
-# is just an intuitive alias to the `make package_source` (non-VS).
+# is just an intuitive alias to the `make package_source`.
 
 #    _____   _____    _____   _____   _   __
 #   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
@@ -66,9 +66,7 @@ if (NOT CPACK_SOURCE_IGNORE_FILES)
             "cmake-build-*")
 endif ()
 
-if (NOT MSVC)
-    add_custom_target(dist
-            COMMAND ${CMAKE_BUILD_TOOL} package_source)
-endif ()
+add_custom_target(dist
+        COMMAND ${CMAKE_BUILD_TOOL} package_source)
 
 include(CPack)

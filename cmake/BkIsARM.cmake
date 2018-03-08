@@ -39,8 +39,6 @@
 
 # It was tested only using `arm-linux-androideabi-gcc`. Be aware!
 
-#TODO: MSVC support
-
 if (__BK_IS_ARM_INCLUDED)
     return()
 endif ()

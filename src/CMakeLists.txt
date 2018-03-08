@@ -45,10 +45,6 @@ endif ()
 set(__BK_SRC_INCLUDED ON)
 
 if (WIN32)
-    if (MSVC)
-        set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-        set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-    endif ()
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 endif ()
 
@@ -73,13 +69,10 @@ if (BUILD_SHARED_LIBS)
             PUBLIC_HEADER ${BK_INCLUDE_DIR}/brook.h
             VERSION ${VERSION}
             SOVERSION ${SOVERSION})
-    if (WIN32 AND NOT MSVC)
+    if (WIN32)
         set_target_properties(brook PROPERTIES
                 SUFFIX ${VERSION_SUFFIX}.dll)
     endif ()
-endif ()
-if (MSVC AND MSVC_VERSION GREATER 1800)
-    target_compile_definitions(brook PUBLIC _NO_CRT_STDIO_INLINE)
 endif ()
 
 install(TARGETS brook
