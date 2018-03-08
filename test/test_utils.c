@@ -75,17 +75,6 @@ static inline void test_memory(void) {
 static inline void test__toasciilower(void) {
     char str[100];
     size_t len;
-#ifdef _MSC_VER
-    sprintf_s(str, sizeof(str)
-#else
-    sprintf(str
-#endif
-            , "ABC");
-    len = strlen(str);
-    ASSERT(bk__toasciilower(NULL, len) == -EINVAL);
-    ASSERT(bk__toasciilower(str, 0) == -EINVAL);
-    memset(str, 0, sizeof(str));
-    ASSERT(bk__toasciilower(str, 0) == -EINVAL);
 
     memset(str, 0, sizeof(str));
     len = 10;
