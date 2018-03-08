@@ -46,13 +46,17 @@ set(__BK_FLAGS_INCLUDED ON)
 
 option(BK_PICKY_COMPILER "Enable picky compiler options" ON)
 
+if (ARM)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static")
+endif ()
+
 if (BK_PICKY_COMPILER)
     if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
         #-Wsign-conversion - needs to fix (un)signed bugs in utstring.h
         #-Wpadded - depends on https://github.com/troydhanson/uthash/pull/151
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra -Wpedantic -Wdeclaration-after-statement -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wc90-c99-compat")
-        if (ARM)
-            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra -Wdeclaration-after-statement -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline")
+        if (NOT ARM)
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wpedantic -Wc90-c99-compat")
         endif ()
     else ()
         message(FATAL_ERROR "Unknown C compiler: ${CMAKE_C_COMPILER}")
