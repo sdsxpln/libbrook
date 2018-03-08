@@ -29,6 +29,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "bk_macros.h"
+#include "bk_utils.h"
 #include "brook.h"
 
 #define BK_VERSION_STR xstr(BK_VERSION_MAJOR) "." xstr(BK_VERSION_MINOR) "." xstr(BK_VERSION_PATCH)

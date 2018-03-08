@@ -72,9 +72,9 @@ int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap) {
 }
 
 int bk_str_printf(struct bk_str *str, const char *fmt, ...) {
+    va_list ap;
     if (!str || !fmt)
         return -EINVAL;
-    va_list ap;
     va_start(ap, fmt);
     utstring_printf_va(str->buf, fmt, ap);
     va_end(ap);
