@@ -44,7 +44,8 @@ if (NOT ${_system_name} MATCHES ${CMAKE_C_PLATFORM_ID})
 endif ()
 
 string(TOUPPER "${CMAKE_BUILD_TYPE}" _BUILD_TYPE)
-string(CONCAT _cflags "${CMAKE_C_FLAGS_${_BUILD_TYPE}}" "${CMAKE_C_FLAGS}")
+string(CONCAT _cflags "${CMAKE_C_FLAGS_${_BUILD_TYPE}}" " ${CMAKE_C_FLAGS}")
+string(REPLACE "  " " " _cflags "${_cflags}")
 unset(_BUILD_TYPE)
 
 if (CMAKE_SIZEOF_VOID_P MATCHES "8")
