@@ -73,6 +73,13 @@ elseif (BUILD_TESTING)
     enable_testing()
 endif ()
 
+if (UNIX AND (NOT APPLE))
+    include(CheckIncludeFiles)
+    check_include_files(errno.h HAVE_ERRNO_H)
+    if (NOT HAVE_ERRNO_H)
+        include_directories(/usr/include/asm-generic)
+    endif ()
+endif ()
 include_directories(${BK_INCLUDE_DIR})
 
 add_subdirectory(src)

@@ -40,7 +40,7 @@
 #ifdef _WIN32
 #define __progname __argv[0]
 #else
-#ifdef __USE_GNU
+#if defined(__USE_GNU) && !defined(__i386__)
 #define __progname program_invocation_short_name
 #else
 extern const char *__progname;
