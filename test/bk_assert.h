@@ -39,8 +39,6 @@
 
 #if defined(_WIN32)
 #define __progname __argv[0]
-#elif(_WIN32)
-extern char __declspec(dllimport) *__progname;
 #else
 #ifdef __USE_GNU
 #define __progname program_invocation_short_name
