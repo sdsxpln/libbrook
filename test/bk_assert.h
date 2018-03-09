@@ -37,7 +37,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#if defined(_WIN32)
+#ifdef _WIN32
 #define __progname __argv[0]
 #else
 #ifdef __USE_GNU
