@@ -39,7 +39,15 @@ static void bk__strmap_cleanup(struct bk_strmap *pair) {
     bk_free(pair);
 }
 
-int bk_strmap_name(struct bk_strmap *pair, char *name, size_t *len) {
+const char *bk_strmap_name(struct bk_strmap *pair) {
+    return pair ? pair->name : NULL;
+}
+
+const char *bk_strmap_val(struct bk_strmap *pair) {
+    return pair ? pair->val : NULL;
+}
+
+int bk_strmap_readname(struct bk_strmap *pair, char *name, size_t *len) {
     if (!pair || !name || !len || *len == 0)
         return -EINVAL;
     if (*len < pair->name_len)
@@ -51,7 +59,7 @@ int bk_strmap_name(struct bk_strmap *pair, char *name, size_t *len) {
     return 0;
 }
 
-int bk_strmap_val(struct bk_strmap *pair, char *val, size_t *len) {
+int bk_strmap_readval(struct bk_strmap *pair, char *val, size_t *len) {
     if (!pair || !val || !len || *len == 0)
         return -EINVAL;
     if (*len < pair->val_len)
@@ -112,6 +120,15 @@ int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb iter_cb, void *iter_
         if ((ret = iter_cb(iter_cls, pair)) != 0)
             return ret;
     }
+    return 0;
+}
+
+int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cmp_cb, void *cmp_cls) {
+    if (!map || !cmp_cb)
+        return -EINVAL;
+#define _BK_CMP(a, b) cmp_cb(cmp_cls, a, b)
+    HASH_SORT(*map, _BK_CMP);
+#undef _BK_CMP
     return 0;
 }
 

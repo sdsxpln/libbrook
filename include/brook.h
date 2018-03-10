@@ -200,10 +200,19 @@ struct bk_strmap;
 typedef int (*bk_strmap_iter_cb)(void *cls, struct bk_strmap *pair);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern int bk_strmap_name(struct bk_strmap *pair, char *name, size_t *len);
+typedef int (*bk_strmap_sort_cb)(void *cls, struct bk_strmap *pair_a, struct bk_strmap *pair_b);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern int bk_strmap_val(struct bk_strmap *pair, char *val, size_t *len);
+extern const char *bk_strmap_name(struct bk_strmap *pair);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern const char *bk_strmap_val(struct bk_strmap *pair);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern int bk_strmap_readname(struct bk_strmap *pair, char *name, size_t *len);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern int bk_strmap_readval(struct bk_strmap *pair, char *val, size_t *len);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern int bk_strmap_add(struct bk_strmap **map, const char *name, size_t name_len, const char *val, size_t val_len);
@@ -213,6 +222,9 @@ extern int bk_strmap_find(struct bk_strmap *map, const char *name, size_t len, s
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb iter_cb, void *iter_cls);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cmp_cb, void *cmp_cls);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern void bk_strmap_cleanup(struct bk_strmap **map);
