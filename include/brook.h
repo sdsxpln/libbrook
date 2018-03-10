@@ -218,6 +218,9 @@ extern int bk_strmap_readval(struct bk_strmap *pair, char *val, size_t *len);
 extern int bk_strmap_add(struct bk_strmap **map, const char *name, size_t name_len, const char *val, size_t val_len);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern int bk_strmap_set(struct bk_strmap **map, const char *name, size_t name_len, const char *val, size_t val_len);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern int bk_strmap_find(struct bk_strmap *map, const char *name, size_t len, struct bk_strmap **pair);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
