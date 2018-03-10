@@ -39,6 +39,30 @@ static void bk__strmap_cleanup(struct bk_strmap *pair) {
     bk_free(pair);
 }
 
+int bk_strmap_name(struct bk_strmap *pair, char *name, size_t *len) {
+    if (!pair || !name || !len || *len == 0)
+        return -EINVAL;
+    if (*len < pair->name_len)
+        return -ENOBUFS;
+    if (*len > pair->name_len)
+        *len = pair->name_len;
+    memcpy(name, pair->name, *len);
+    name[*len] = '\0';
+    return 0;
+}
+
+int bk_strmap_val(struct bk_strmap *pair, char *val, size_t *len) {
+    if (!pair || !val || !len || *len == 0)
+        return -EINVAL;
+    if (*len < pair->val_len)
+        return -ENOBUFS;
+    if (*len > pair->val_len)
+        *len = pair->val_len;
+    memcpy(val, pair->val, *len);
+    val[*len] = '\0';
+    return 0;
+}
+
 int bk_strmap_add(struct bk_strmap **map, const char *name, size_t name_len, const char *val, size_t val_len) {
     struct bk_strmap *pair;
     int ret;
@@ -64,26 +88,15 @@ int bk_strmap_add(struct bk_strmap **map, const char *name, size_t name_len, con
     return 0;
 }
 
-int bk_strmap_find(struct bk_strmap *map, const char *name, size_t name_len, char *val, size_t *val_len) {
-    struct bk_strmap *pair;
+int bk_strmap_find(struct bk_strmap *map, const char *name, size_t len, struct bk_strmap **pair) {
     char *key;
     int ret;
-    if (!map || !name || name_len == 0 || !val || !val_len || *val_len == 0)
+    if (!map || !pair)
         return -EINVAL;
-    key = bk__strndup(name, name_len);
-    ret = bk__toasciilower(key, name_len);
-    if (ret == 0) {
-        HASH_FIND(hh, map, key, name_len, pair);
-        if (pair) {
-            if (*val_len < pair->val_len)
-                ret = -ENOBUFS;
-            else {
-                if (*val_len > pair->val_len)
-                    *val_len = pair->val_len;
-                memcpy(val, pair->val, *val_len);
-                val[*val_len] = '\0';
-            }
-        } else
+    key = bk__strndup(name, len);
+    if ((ret = bk__toasciilower(key, len)) == 0) {
+        HASH_FIND(hh, map, key, len, *pair);
+        if (!*pair)
             ret = -ENOENT;
     }
     bk_free(key);
@@ -96,7 +109,7 @@ int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb iter_cb, void *iter_
     if (!map || !iter_cb)
         return -EINVAL;
     HASH_ITER(hh, map, pair, tmp) {
-        if ((ret = iter_cb(iter_cls, pair->name, pair->name_len, pair->val, pair->val_len)) != 0)
+        if ((ret = iter_cb(iter_cls, pair)) != 0)
             return ret;
     }
     return 0;

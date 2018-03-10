@@ -197,15 +197,19 @@ extern int bk_str_clear(struct bk_str *str);
 struct bk_strmap;
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-typedef int (*bk_strmap_iter_cb)(void *cls, const char *name, size_t name_len, const char *val, size_t val_len);
+typedef int (*bk_strmap_iter_cb)(void *cls, struct bk_strmap *pair);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern int bk_strmap_name(struct bk_strmap *pair, char *name, size_t *len);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern int bk_strmap_val(struct bk_strmap *pair, char *val, size_t *len);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern int bk_strmap_add(struct bk_strmap **map, const char *name, size_t name_len, const char *val, size_t val_len);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern int bk_strmap_find(struct bk_strmap *map, const char *name, size_t name_len, char *val, size_t *val_len);
-
-/* replace? */
+extern int bk_strmap_find(struct bk_strmap *map, const char *name, size_t len, struct bk_strmap **pair);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb iter_cb, void *iter_cls);
