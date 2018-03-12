@@ -224,10 +224,19 @@ extern int bk_strmap_set(struct bk_strmap **map, const char *name, size_t name_l
 extern int bk_strmap_find(struct bk_strmap *map, const char *name, size_t len, struct bk_strmap **pair);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern int bk_strmap_rm(struct bk_strmap **map, const char *name, size_t len);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb iter_cb, void *iter_cls);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cmp_cb, void *cmp_cls);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern int bk_strmap_count(struct bk_strmap *map, unsigned int *count);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern int bk_strmap_next(struct bk_strmap **map);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern void bk_strmap_cleanup(struct bk_strmap **map);

@@ -137,6 +137,16 @@ int bk_strmap_find(struct bk_strmap *map, const char *name, size_t len, struct b
     return ret;
 }
 
+int bk_strmap_rm(struct bk_strmap **map, const char *name, size_t len) {
+    struct bk_strmap *pair;
+    int ret;
+    if ((ret = bk_strmap_find(*map, name, len, &pair)) == 0) {
+        HASH_DELETE_HH(hh, *map, &pair->hh);
+        bk__strmap_cleanup(pair);
+    }
+    return ret;
+}
+
 int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb iter_cb, void *iter_cls) {
     struct bk_strmap *pair, *tmp;
     int ret;
@@ -155,6 +165,20 @@ int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cmp_cb, void *cmp_c
 #define _BK_CMP(a, b) cmp_cb(cmp_cls, a, b)
     HASH_SORT(*map, _BK_CMP);
 #undef _BK_CMP
+    return 0;
+}
+
+int bk_strmap_count(struct bk_strmap *map, unsigned int *count) {
+    if (!map || !count)
+        return -EINVAL;
+    *count = HASH_COUNT(map);
+    return 0;
+}
+
+int bk_strmap_next(struct bk_strmap **map) {
+    if (!map)
+        return -EINVAL;
+    *map = *map ? (*map)->hh.next : NULL;
     return 0;
 }
 
