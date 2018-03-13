@@ -190,8 +190,8 @@ extern int bk_str_clear(struct bk_str *str);
  */
 
 /**
- * Handle for the hash table that maps pairs of strings. Each pair contains a name and a value useful to represent a
- * HTML field, a query-string parameter and more.
+ * Handle for the hash table that maps pairs of strings. Each pair contains a name and a value. It is useful to
+ * represent a HTML field, a query-string parameter and more.
  * \struct bk_strmap
  */
 struct bk_strmap;

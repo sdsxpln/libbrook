@@ -53,7 +53,8 @@ if (BK_BUILD_EXAMPLES)
     endif ()
     set(BK_EXAMPLES_DIR ${CMAKE_SOURCE_DIR}/examples)
     list(APPEND BK_EXAMPLES
-            str)
+            str
+            strmap)
     set(BK_EXAMPLES ${BK_EXAMPLES} PARENT_SCOPE)
     list(APPEND _libs brook)
     foreach (_example ${BK_EXAMPLES})

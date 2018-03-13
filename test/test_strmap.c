@@ -25,40 +25,31 @@
  * along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BK_ASSERT_H
-#define BK_ASSERT_H
+#include "bk_assert.h"
 
-#ifndef _WIN32
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
+#include <string.h>
+#include <brook.h>
 
-#ifdef _WIN32
-#define __progname __argv[0]
-#else
-#if defined(__USE_GNU) && !defined(__i386__)
-#define __progname program_invocation_short_name
-#else
-extern const char *__progname;
-#endif
-#endif
+extern int bk__strmap_new(struct bk_strmap **pair, const char *name, size_t name_len, const char *val, size_t val_len);
 
-#ifdef NDEBUG
-#define ASSERT(expr) ((void) 0)
-#else
-#define ASSERT(expr)                                                            \
-do {                                                                            \
-    if (!(expr)) {                                                              \
-        fprintf(stderr, "%s: %s:%d: %s: Assertion `%s' failed.\n",              \
-            __progname, __FILE__, __LINE__, __extension__ __FUNCTION__, #expr); \
-        fflush(stderr);                                                         \
-        exit(EXIT_FAILURE);                                                     \
-    }                                                                           \
-} while (0)
-#endif
+extern void bk__strmap_free(struct bk_strmap *pair);
 
-#endif /* BK_ASSERT_H */
+static inline void test_strmap_name(void) {
+    struct bk_strmap *pair = NULL;
+    ASSERT(bk_strmap_name(pair) == NULL);
+    ASSERT(bk_strmap_val(pair) == NULL);
+
+    bk__strmap_new(&pair, "abc", strlen("abc"), "def", strlen("def"));
+    ASSERT(pair);
+    ASSERT(strcmp(bk_strmap_name(pair), "abc") == 0);
+    ASSERT(strcmp(bk_strmap_val(pair), "def") == 0);
+
+    bk__strmap_free(pair);
+}
+
+/*TODO: add more tests.*/
+
+int main(void) {
+    test_strmap_name();
+    return EXIT_SUCCESS;
+}

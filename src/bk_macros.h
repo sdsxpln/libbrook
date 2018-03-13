@@ -35,6 +35,12 @@
 #define xstr(a) str(a) /* stringify the result of expansion of a macro argument */
 #define str(a) #a
 
+#ifdef _BK_TESTING
+#define _BK_FUNC_EXP
+#else
+#define _BK_FUNC_EXP static inline /* hidden function */
+#endif
+
 /* oom() - macro used by libs `ut` for handling `Out of memory` errors. */
 #define oom()                               \
 do {                                        \

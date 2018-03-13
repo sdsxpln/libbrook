@@ -52,7 +52,8 @@ if (BUILD_TESTING)
     set(BK_TESTS_DIR ${CMAKE_SOURCE_DIR}/test)
     list(APPEND BK_TESTS
             utils
-            str)
+            str
+            strmap)
     set(BK_TESTS ${BK_TESTS} PARENT_SCOPE)
     list(APPEND _libs brook)
     foreach (_test ${BK_TESTS})

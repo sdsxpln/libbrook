@@ -27,10 +27,6 @@
 
 #include "bk_assert.h"
 
-#ifndef _ERRNO_H
-#include <errno.h>
-#endif
-
 #ifndef __ANDROID__
 #include <string.h>
 #endif
