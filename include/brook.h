@@ -64,14 +64,14 @@ extern unsigned int bk_version(void);
 
 /**
  * Returns the library version number as string.
- * \return Library version packed into a static string.
+ * \return Library version packed into a null-terminated static string.
  */
 extern const char *bk_version_str(void);
 
 /**
- * Allocates a new memory space and zero-initialize it.
+ * Allocates a new zero-initialize memory space.
  * \param[in] size Memory size to be allocated.
- * \return Pointer of the allocated zero-initialized memory.
+ * \return Pointer of the zero-initialized allocated memory.
  * \retval NULL When size is `0` or no memory space.
  */
 extern void *bk_alloc(size_t size);
@@ -98,8 +98,8 @@ extern void bk_free(void *ptr);
 struct bk_str;
 
 /**
- * Creates a new string instance zero-initialized.
- * \return String instance zero-initialized.
+ * Creates a new zero-initialized string instance.
+ * \return String instance.
  * \retval NULL When no memory space.
  */
 extern struct bk_str *bk_str_new(void);
@@ -158,7 +158,7 @@ extern int bk_str_printf(struct bk_str *str, const char *fmt, ...);
 /**
  * Gets the C string content from the string handle \p str.
  * \param[in] str String handle.
- * \return Content as static string.
+ * \return Content as static null-terminated string.
  * \retval NULL When Invalid argument.
  */
 extern const char *bk_str_content(struct bk_str *str);
@@ -196,16 +196,35 @@ extern int bk_str_clear(struct bk_str *str);
  */
 struct bk_strmap;
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Callback signature used by #bk_strmap_iter() to iterate pairs of name-value.
+ * \param[out] cls User-defined closure.
+ * \param[out] pair Current iterated pair.
+ */
 typedef int (*bk_strmap_iter_cb)(void *cls, struct bk_strmap *pair);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Callback signature used by #bk_strmap_sort() to sort pairs of name-value.
+ * \param[out] cls User-defined closure.
+ * \param[out] pair_a Current left pair (A).
+ * \param[out] pair_b Current right pair (B).
+ */
 typedef int (*bk_strmap_sort_cb)(void *cls, struct bk_strmap *pair_a, struct bk_strmap *pair_b);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Gets the value from a pair of name-value.
+ * \param[in] pair Pair of name-value.
+ * \return Value as null-terminated string.
+ * \retval NULL When no memory space.
+ */
 extern const char *bk_strmap_name(struct bk_strmap *pair);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Gets the name from a pair of name-value.
+ * \param[in] pair Pair of name-value.
+ * \return Name as null-terminated string.
+ * \retval NULL When no memory space.
+ */
 extern const char *bk_strmap_val(struct bk_strmap *pair);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */

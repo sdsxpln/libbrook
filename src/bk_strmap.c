@@ -75,8 +75,10 @@ const char *bk_strmap_val(struct bk_strmap *pair) {
 int bk_strmap_readname(struct bk_strmap *pair, char *name, size_t *len) {
     if (!pair || !name || !len || *len == 0)
         return -EINVAL;
-    if (*len < pair->name_len)
+    if (*len < pair->name_len) {
+        *len = pair->name_len + sizeof(char);
         return -ENOBUFS;
+    }
     if (*len > pair->name_len)
         *len = pair->name_len;
     memcpy(name, pair->name, *len);
@@ -87,8 +89,10 @@ int bk_strmap_readname(struct bk_strmap *pair, char *name, size_t *len) {
 int bk_strmap_readval(struct bk_strmap *pair, char *val, size_t *len) {
     if (!pair || !val || !len || *len == 0)
         return -EINVAL;
-    if (*len < pair->val_len)
+    if (*len < pair->val_len) {
+        *len = pair->val_len + sizeof(char);
         return -ENOBUFS;
+    }
     if (*len > pair->val_len)
         *len = pair->val_len;
     memcpy(val, pair->val, *len);
