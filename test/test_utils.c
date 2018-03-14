@@ -53,7 +53,6 @@ static inline void test_memory(void) {
     char *buf;
 #define _BUF_LEN 10
     buf = bk_alloc(_BUF_LEN);
-    ASSERT(buf);
     for (unsigned char i = 0; i < _BUF_LEN; i++)
         ASSERT(buf[i] == 0);
     memset(buf, 'a', _BUF_LEN - 1);

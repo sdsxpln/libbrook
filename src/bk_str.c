@@ -32,8 +32,7 @@
 struct bk_str *bk_str_new(void) {
     struct bk_str *str;
     str = bk_alloc(sizeof(struct bk_str));
-    if (str)
-        utstring_new(str->buf);
+    utstring_new(str->buf);
     return str;
 }
 

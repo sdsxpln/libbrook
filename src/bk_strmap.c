@@ -25,7 +25,6 @@
  * along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <errno.h>
 #include "bk_macros.h"
 #include "brook.h"
 #include "bk_utils.h"
@@ -51,8 +50,6 @@ _BK_FUNC_EXP void bk__strmap_free(struct bk_strmap *pair) {
 _BK_FUNC_EXP int bk__strmap_new(struct bk_strmap **pair, const char *name, size_t name_len, const char *val,
                                 size_t val_len) {
     *pair = bk_alloc(sizeof(struct bk_strmap));
-    if (!pair)
-        return -ENOMEM;
     (*pair)->name = bk__strndup(name, name_len);
     (*pair)->name_len = name_len;
     (*pair)->val = bk__strndup(val, val_len);
@@ -122,8 +119,6 @@ int bk_strmap_set(struct bk_strmap **map, const char *name, size_t name_len, con
     if (!map || !name || name_len == 0 || !val || val_len == 0)
         return -EINVAL;
     pair = bk_alloc(sizeof(struct bk_strmap));
-    if (!pair)
-        return -ENOMEM;
     pair->name = bk__strndup(name, name_len);
     pair->name_len = name_len;
     pair->val = bk__strndup(val, val_len);
