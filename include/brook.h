@@ -72,7 +72,7 @@ extern const char *bk_version_str(void);
  * Allocates a new zero-initialize memory space.
  * \param[in] size Memory size to be allocated.
  * \return Pointer of the zero-initialized allocated memory.
- * \warning By default it exits the application when no memory space available.
+ * \retval NULL When size is `0` or no memory space.
  */
 extern void *bk_alloc(size_t size);
 
@@ -100,7 +100,7 @@ struct bk_str;
 /**
  * Creates a new zero-initialized string instance.
  * \return String instance.
- * \retval NULL When no memory space available.
+ * \warning It exits the application when no memory space available.
  */
 extern struct bk_str *bk_str_new(void);
 
@@ -159,7 +159,7 @@ extern int bk_str_printf(struct bk_str *str, const char *fmt, ...);
  * Gets the C string content from the string handle \p str.
  * \param[in] str String handle.
  * \return Content as static null-terminated string.
- * \retval NULL When Invalid argument.
+ * \retval NULL When \p str is `NULL`.
  */
 extern const char *bk_str_content(struct bk_str *str);
 
@@ -215,7 +215,7 @@ typedef int (*bk_strmap_sort_cb)(void *cls, struct bk_strmap *pair_a, struct bk_
  * Returns the name from the \p pair.
  * \param[in] pair Pair of name-value.
  * \return Name as null-terminated string.
- * \retval NULL When no memory space available.
+ * \retval NULL When the \p pair is `NULL`.
  */
 extern const char *bk_strmap_name(struct bk_strmap *pair);
 
@@ -223,7 +223,7 @@ extern const char *bk_strmap_name(struct bk_strmap *pair);
  * Returns the value from the \p pair.
  * \param[in] pair Pair of name-value.
  * \return Value as null-terminated string.
- * \retval NULL When no memory space available.
+ * \retval NULL When the \p pair is `NULL`.
  */
 extern const char *bk_strmap_val(struct bk_strmap *pair);
 
@@ -258,9 +258,9 @@ extern int bk_strmap_readval(struct bk_strmap *pair, char *val, size_t *len);
  * \param val_len Length of the \p value.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
- * \retval -ENOMEM - No memory available available.
- * \note This function does not check if a name already exists in a pair added to the \p map, then the uniqueness must
- * be managed by the application.
+ * \note It does not check if a name already exists in a pair added to the \p map, then the uniqueness must be managed
+ * by the application.
+ * \warning It exits the application when no memory space available.
  */
 extern int bk_strmap_add(struct bk_strmap **map, const char *name, size_t name_len, const char *val, size_t val_len);
 
@@ -273,9 +273,9 @@ extern int bk_strmap_add(struct bk_strmap **map, const char *name, size_t name_l
  * \param val_len Length of the \p value.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
- * \retval -ENOMEM - No memory available available.
  * \note When a name already exists in pair previously added into the \p map, then the function replaces its value,
  * otherwise it is added as a new pair.
+ * \warning It exits the application when no memory space available.
  */
 extern int bk_strmap_set(struct bk_strmap **map, const char *name, size_t name_len, const char *val, size_t val_len);
 

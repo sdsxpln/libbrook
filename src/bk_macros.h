@@ -44,10 +44,4 @@ do {                                        \
     exit(-ENOMEM);                          \
 } while (0)
 
-#ifdef _BK_TESTING
-#define _BK_FUNC_EXP
-#else
-#define _BK_FUNC_EXP static inline /* hidden function */
-#endif
-
 #endif /* BK_MACROS_H */

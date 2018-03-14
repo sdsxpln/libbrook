@@ -82,10 +82,6 @@ if (UNIX AND (NOT APPLE))
 endif ()
 include_directories(${BK_INCLUDE_DIR})
 
-if (BUILD_TESTING)
-    add_definitions(-D_BK_TESTING)
-endif ()
-
 add_subdirectory(src)
 add_subdirectory(examples)
 add_subdirectory(test)

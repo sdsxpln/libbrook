@@ -48,9 +48,8 @@ const char *bk_version_str(void) {
 
 void *bk_alloc(size_t size) {
     void *p = malloc(size);
-    if (!p)
-        oom();
-    memset(p, 0, size);
+    if (p)
+        memset(p, 0, size);
     return p;
 }
 

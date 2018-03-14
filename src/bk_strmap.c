@@ -25,40 +25,19 @@
  * along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include "bk_macros.h"
 #include "brook.h"
 #include "bk_utils.h"
 #include "bk_strmap.h"
 
-#ifdef _BK_TESTING
-
-extern void bk__strmap_free(struct bk_strmap *pair);
-
-extern int bk__strmap_new(struct bk_strmap **pair, const char *name, size_t name_len, const char *val, size_t val_len);
-
-#endif
-
-_BK_FUNC_EXP void bk__strmap_free(struct bk_strmap *pair) {
+static inline void bk__strmap_cleanup(struct bk_strmap *pair) {
     if (!pair)
         return;
     bk_free(pair->key);
     bk_free(pair->name);
     bk_free(pair->val);
     bk_free(pair);
-}
-
-_BK_FUNC_EXP int bk__strmap_new(struct bk_strmap **pair, const char *name, size_t name_len, const char *val,
-                                size_t val_len) {
-    *pair = bk_alloc(sizeof(struct bk_strmap));
-    (*pair)->name = bk__strndup(name, name_len);
-    (*pair)->name_len = name_len;
-    (*pair)->val = bk__strndup(val, val_len);
-    (*pair)->val_len = val_len;
-    if (!(*pair)->name || !(*pair)->val) {
-        bk__strmap_free(*pair);
-        return -ENOMEM;
-    }
-    return 0;
 }
 
 const char *bk_strmap_name(struct bk_strmap *pair) {
@@ -102,11 +81,20 @@ int bk_strmap_add(struct bk_strmap **map, const char *name, size_t name_len, con
     int ret;
     if (!map || !name || name_len == 0 || !val || val_len == 0)
         return -EINVAL;
-    if ((ret = bk__strmap_new(&pair, name, name_len, val, val_len)) != 0)
-        return ret;
+    pair = bk_alloc(sizeof(struct bk_strmap));
+    if (!pair)
+        oom();
+    pair->name = bk__strndup(name, name_len);
+    pair->name_len = name_len;
+    pair->val = bk__strndup(val, val_len);
+    pair->val_len = val_len;
+    if (!pair->name || !pair->val) {
+        bk__strmap_cleanup(pair);
+        oom();
+    }
     pair->key = bk__strndup(pair->name, pair->name_len);
     if ((ret = bk__toasciilower(pair->key, pair->name_len)) != 0) {
-        bk__strmap_free(pair);
+        bk__strmap_cleanup(pair);
         return ret;
     }
     HASH_ADD_KEYPTR(hh, *map, pair->key, name_len, pair);
@@ -119,21 +107,23 @@ int bk_strmap_set(struct bk_strmap **map, const char *name, size_t name_len, con
     if (!map || !name || name_len == 0 || !val || val_len == 0)
         return -EINVAL;
     pair = bk_alloc(sizeof(struct bk_strmap));
+    if (!pair)
+        oom();
     pair->name = bk__strndup(name, name_len);
     pair->name_len = name_len;
     pair->val = bk__strndup(val, val_len);
     pair->val_len = val_len;
     if (!pair->name || !pair->val) {
-        bk__strmap_free(pair);
-        return -ENOMEM;
+        bk__strmap_cleanup(pair);
+        oom();
     }
     pair->key = bk__strndup(pair->name, pair->name_len);
     if ((ret = bk__toasciilower(pair->key, pair->name_len)) != 0) {
-        bk__strmap_free(pair);
+        bk__strmap_cleanup(pair);
         return ret;
     }
     HASH_REPLACE(hh, *map, key[0], name_len, pair, tmp);
-    bk__strmap_free(tmp);
+    bk__strmap_cleanup(tmp);
     return 0;
 }
 
@@ -157,7 +147,7 @@ int bk_strmap_rm(struct bk_strmap **map, const char *name, size_t len) {
     int ret;
     if ((ret = bk_strmap_find(*map, name, len, &pair)) == 0) {
         HASH_DELETE_HH(hh, *map, &pair->hh);
-        bk__strmap_free(pair);
+        bk__strmap_cleanup(pair);
     }
     return ret;
 }
@@ -202,7 +192,7 @@ void bk_strmap_cleanup(struct bk_strmap **map) {
     if (map && *map) {
         HASH_ITER(hh, *map, pair, tmp) {
             HASH_DEL(*map, pair);
-            bk__strmap_free(pair);
+            bk__strmap_cleanup(pair);
         }
         *map = NULL;
     }
