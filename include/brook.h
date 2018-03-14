@@ -111,7 +111,7 @@ extern struct bk_str *bk_str_new(void);
 extern void bk_str_free(struct bk_str *str);
 
 /**
- * Writes a C string to the string handle \p str. All strings previously written are kept.
+ * Writes a null-terminated string to the string handle \p str. All strings previously written are kept.
  * \param[in] str String handle.
  * \param[in] val String to be written.
  * \param[in] len Length of the string to be written.
@@ -121,7 +121,7 @@ extern void bk_str_free(struct bk_str *str);
 extern int bk_str_write(struct bk_str *str, const char *val, size_t len);
 
 /**
- * Reads a C string from the string handle \p str.
+ * Reads a null-terminated string from the string handle \p str.
  * \param[in] str String handle.
  * \param[out] val String to be read.
  * \param[in,out] len Pointer to specify then store the string length.
@@ -132,7 +132,7 @@ extern int bk_str_write(struct bk_str *str, const char *val, size_t len);
 extern int bk_str_read(struct bk_str *str, char *val, size_t *len);
 
 /**
- * Writes a formatted C string from variable argument list to the string handle \p str.
+ * Writes a formatted null-terminated string from variable argument list to the string handle \p str.
  * \param[in] str String handle.
  * \param[in] fmt Formatted string (following the same [`printf()`](https://linux.die.net/man/3/printf) format
  *  specification).
@@ -144,7 +144,7 @@ extern int bk_str_read(struct bk_str *str, char *val, size_t *len);
 extern int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap);
 
 /**
- * Writes a formatted C string to the string handle \p str. All strings previously written are kept.
+ * Writes a formatted null-terminated string to the string handle \p str. All strings previously written are kept.
  * \param[in] str String handle.
  * \param[in] fmt Formatted string (following the same [`printf()`](https://linux.die.net/man/3/printf) format
  *  specification).
@@ -156,10 +156,10 @@ extern int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap);
 extern int bk_str_printf(struct bk_str *str, const char *fmt, ...);
 
 /**
- * Gets the C string content from the string handle \p str.
+ * Gets the null-terminated string content from the string handle \p str.
  * \param[in] str String handle.
  * \return Content as static null-terminated string.
- * \retval NULL When \p str is `NULL`.
+ * \retval NULL When the \p str is `NULL`.
  */
 extern const char *bk_str_content(struct bk_str *str);
 
@@ -190,21 +190,21 @@ extern int bk_str_clear(struct bk_str *str);
  */
 
 /**
- * Handle for the hash table that maps pairs of strings. Each pair contains a name and a value. It is useful to
- * represent a HTML field, a query-string parameter and more.
+ * Handle for the hash table that maps pairs of null-terminated strings. Each pair contains a name and a value. It is
+ * useful to represent a HTML field, a query-string parameter and more.
  * \struct bk_strmap
  */
 struct bk_strmap;
 
 /**
- * Callback signature used by #bk_strmap_iter() to iterate pairs of name-value.
+ * Callback signature used by #bk_strmap_iter() to iterate pairs of strings.
  * \param[out] cls User-defined closure.
  * \param[out] pair Current iterated pair.
  */
 typedef int (*bk_strmap_iter_cb)(void *cls, struct bk_strmap *pair);
 
 /**
- * Callback signature used by #bk_strmap_sort() to sort pairs of `name-value`.
+ * Callback signature used by #bk_strmap_sort() to sort pairs of strings.
  * \param[out] cls User-defined closure.
  * \param[out] pair_a Current left pair (A).
  * \param[out] pair_b Current right pair (B).
@@ -228,62 +228,36 @@ extern const char *bk_strmap_name(struct bk_strmap *pair);
 extern const char *bk_strmap_val(struct bk_strmap *pair);
 
 /**
- * Reads the name from the \p pair.
- * \param[in] pair Pair of name-value.
- * \param[out] name Name to be read.
- * \param[in,out] len Pointer to specify then store the name length.
- * \retval 0 - Success.
- * \retval -EINVAL - Invalid argument.
- * \retval -ENOBUFS - No buffer space available to store the name.
- */
-extern int bk_strmap_readname(struct bk_strmap *pair, char *name, size_t *len);
-
-/**
- * Reads the value from the \p pair.
- * \param[in] pair Pair of name-value.
- * \param[out] val Value to be read.
- * \param[in,out] len Pointer to specify then store the value length.
- * \retval 0 - Success.
- * \retval -EINVAL - Invalid argument.
- * \retval -ENOBUFS - No buffer space available to store the value.
- */
-extern int bk_strmap_readval(struct bk_strmap *pair, char *val, size_t *len);
-
-/**
- * Adds a pair of name-value to the list \p map.
+ * Adds a pair of null-terminated string to the list \p map.
  * \param[in,out] map Pointer of the list to add the new pair.
  * \param[in] name Name of the pair to be added.
- * \param name_len Length of the \p name.
  * \param val Value of the pair to be added.
- * \param val_len Length of the \p value.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  * \note It does not check if a name already exists in a pair added to the \p map, then the uniqueness must be managed
  * by the application.
  * \warning It exits the application when no memory space available.
  */
-extern int bk_strmap_add(struct bk_strmap **map, const char *name, size_t name_len, const char *val, size_t val_len);
+extern int bk_strmap_add(struct bk_strmap **map, const char *name, const char *val);
 
 /**
- * Sets a pair of name-value to the list \p map.
+ * Sets a pair of null-terminated string to the list \p map.
  * \param[in,out] map Pointer of the list to set the new pair.
  * \param[in] name Name of the pair to be set.
- * \param name_len Length of the \p name.
  * \param val Value of the pair to be set.
- * \param val_len Length of the \p value.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  * \note When a name already exists in pair previously added into the \p map, then the function replaces its value,
  * otherwise it is added as a new pair.
  * \warning It exits the application when no memory space available.
  */
-extern int bk_strmap_set(struct bk_strmap **map, const char *name, size_t name_len, const char *val, size_t val_len);
+extern int bk_strmap_set(struct bk_strmap **map, const char *name, const char *val);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern int bk_strmap_find(struct bk_strmap *map, const char *name, size_t len, struct bk_strmap **pair);
+extern int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_strmap **pair);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern int bk_strmap_rm(struct bk_strmap **map, const char *name, size_t len);
+extern int bk_strmap_rm(struct bk_strmap **map, const char *name);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb iter_cb, void *iter_cls);

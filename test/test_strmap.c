@@ -32,97 +32,55 @@
 
 static inline void test_strmap_name(struct bk_strmap *pair) {
     ASSERT(bk_strmap_name(NULL) == NULL);
-    ASSERT(strcmp(bk_strmap_name(pair), "abc") == 0);
+    ASSERT(strcmp(bk_strmap_name(pair), "abç") == 0);
 }
 
 static inline void test_strmap_val(struct bk_strmap *pair) {
     ASSERT(bk_strmap_val(NULL) == NULL);
-    ASSERT(strcmp(bk_strmap_val(pair), "def") == 0);
+    ASSERT(strcmp(bk_strmap_val(pair), "déf") == 0);
 }
 
-static inline void test_strmap_readname(struct bk_strmap *pair, const char *name, size_t name_len) {
-    char res[16 * sizeof(char)];
-    size_t res_len;
+static inline void test_strmap_add(struct bk_strmap **map, const char *name, const char *val) {
+    unsigned int count;
 
-    ASSERT(bk_strmap_readname(NULL, res, &res_len) == -EINVAL);
-    ASSERT(bk_strmap_readname(pair, NULL, &res_len) == -EINVAL);
-    ASSERT(bk_strmap_readname(pair, res, NULL) == -EINVAL);
-    ASSERT(bk_strmap_readname(pair, res, (size_t *) 0) == -EINVAL);
-
-    res_len = sizeof(char);
-    ASSERT(bk_strmap_readname(pair, res, &res_len) == -ENOBUFS);
-    ASSERT(bk_strmap_readname(pair, res, &res_len) == 0);
-    ASSERT(res_len == name_len);
-    ASSERT(memcmp(name, res, sizeof(char)) == 0);
-
-    res_len = name_len + name_len;
-    ASSERT(bk_strmap_readname(pair, res, &res_len) == 0);
-    ASSERT(res_len == name_len);
-
-    res_len = name_len + sizeof(char);
-    ASSERT(bk_strmap_readname(pair, res, &res_len) == 0);
-    ASSERT(res_len == name_len);
-    ASSERT(strcmp(res, name) == 0);
-    ASSERT(res[res_len] == '\0');
-}
-
-static inline void test_strmap_readval(struct bk_strmap *pair, const char *val, size_t val_len) {
-    char res[16 * sizeof(char)];
-    size_t res_len;
-
-    ASSERT(bk_strmap_readval(NULL, res, &res_len) == -EINVAL);
-    ASSERT(bk_strmap_readval(pair, NULL, &res_len) == -EINVAL);
-    ASSERT(bk_strmap_readval(pair, res, NULL) == -EINVAL);
-    ASSERT(bk_strmap_readval(pair, res, (size_t *) 0) == -EINVAL);
-
-    res_len = sizeof(char);
-    ASSERT(bk_strmap_readval(pair, res, &res_len) == -ENOBUFS);
-    ASSERT(bk_strmap_readval(pair, res, &res_len) == 0);
-    ASSERT(res_len == val_len);
-    ASSERT(memcmp(val, res, sizeof(char)) == 0);
-
-    res_len = val_len + val_len;
-    ASSERT(bk_strmap_readval(pair, res, &res_len) == 0);
-    ASSERT(res_len == val_len);
-
-    res_len = val_len + sizeof(char);
-    ASSERT(bk_strmap_readval(pair, res, &res_len) == 0);
-    ASSERT(res_len == val_len);
-    ASSERT(strcmp(res, val) == 0);
-    ASSERT(res[res_len] == '\0');
-}
-
-static inline void test_strmap_add(struct bk_strmap **map, const char *name, size_t name_len, const char *val,
-                                   size_t val_len) {
-    ASSERT(bk_strmap_add(map, name, name_len, val, val_len) == 0);
-    ASSERT(bk_strmap_add(NULL, name, name_len, val, val_len) == -EINVAL);
-    ASSERT(bk_strmap_add(map, NULL, name_len, val, val_len) == -EINVAL);
-    ASSERT(bk_strmap_add(map, name, 0, val, val_len) == -EINVAL);
-    ASSERT(bk_strmap_add(map, name, name_len, NULL, val_len) == -EINVAL);
-    ASSERT(bk_strmap_add(map, name, name_len, val, 0) == -EINVAL);
+    ASSERT(bk_strmap_add(NULL, name, val) == -EINVAL);
+    ASSERT(bk_strmap_add(map, NULL, val) == -EINVAL);
+    ASSERT(bk_strmap_add(map, name, NULL) == -EINVAL);
 
     bk_strmap_cleanup(map);
-    ASSERT(!*map);
+    bk_strmap_count(*map, &count);
+    ASSERT(count == 0);
+
+    ASSERT(bk_strmap_add(map, "", val) == 0);
+    bk_strmap_count(*map, &count);
+    ASSERT(count == 1);
+
+    bk_strmap_cleanup(map);
+    ASSERT(bk_strmap_add(map, name, "") == 0);
+    bk_strmap_count(*map, &count);
+    ASSERT(count == 1);
+
+    bk_strmap_cleanup(map);
+    ASSERT(bk_strmap_add(map, name, val) == 0);
+    ASSERT(bk_strmap_add(map, name, val) == 0);
+    bk_strmap_count(*map, &count);
+    ASSERT(count == 2);
 }
 
 /*TODO: add more tests.*/
 
 int main(void) {
     struct bk_strmap *map = NULL, *pair;
-    char name[] = "abc";
-    char val[] = "def";
-    size_t name_len = strlen(name);
-    size_t val_len = strlen(val);
+    char name[] = "abç";
+    char val[] = "déf";
 
-    bk_strmap_add(&map, name, name_len, val, val_len);
-    bk_strmap_find(map, name, name_len, &pair);
+    bk_strmap_add(&map, name, val);
+    bk_strmap_find(map, name, &pair);
     ASSERT(pair);
 
     test_strmap_name(pair);
     test_strmap_val(pair);
-    test_strmap_readname(pair, name, name_len);
-    test_strmap_readval(pair, val, val_len);
-    test_strmap_add(&map, name, name_len, val, val_len);
+    test_strmap_add(&map, name, val);
 
     bk_strmap_cleanup(&map);
 

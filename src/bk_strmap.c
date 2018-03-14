@@ -48,108 +48,70 @@ const char *bk_strmap_val(struct bk_strmap *pair) {
     return pair ? pair->val : NULL;
 }
 
-int bk_strmap_readname(struct bk_strmap *pair, char *name, size_t *len) {
-    if (!pair || !name || !len || *len == 0)
-        return -EINVAL;
-    if (*len < pair->name_len) {
-        *len = pair->name_len + sizeof(char);
-        return -ENOBUFS;
-    }
-    if (*len > pair->name_len)
-        *len = pair->name_len;
-    memcpy(name, pair->name, *len);
-    name[*len] = '\0';
-    return 0;
-}
-
-int bk_strmap_readval(struct bk_strmap *pair, char *val, size_t *len) {
-    if (!pair || !val || !len || *len == 0)
-        return -EINVAL;
-    if (*len < pair->val_len) {
-        *len = pair->val_len + sizeof(char);
-        return -ENOBUFS;
-    }
-    if (*len > pair->val_len)
-        *len = pair->val_len;
-    memcpy(val, pair->val, *len);
-    val[*len] = '\0';
-    return 0;
-}
-
-int bk_strmap_add(struct bk_strmap **map, const char *name, size_t name_len, const char *val, size_t val_len) {
+int bk_strmap_add(struct bk_strmap **map, const char *name, const char *val) {
     struct bk_strmap *pair;
-    int ret;
-    if (!map || !name || name_len == 0 || !val || val_len == 0)
+    if (!map || !name || !val)
         return -EINVAL;
     pair = bk_alloc(sizeof(struct bk_strmap));
     if (!pair)
         oom();
-    pair->name = bk__strndup(name, name_len);
-    pair->name_len = name_len;
-    pair->val = bk__strndup(val, val_len);
-    pair->val_len = val_len;
-    if (!pair->name || !pair->val) {
+    pair->key = strdup(name);
+    pair->name = strdup(name);
+    pair->val = strdup(val);
+    if (!pair->key || !pair->name || !pair->val) {
         bk__strmap_cleanup(pair);
         oom();
     }
-    pair->key = bk__strndup(pair->name, pair->name_len);
-    if ((ret = bk__toasciilower(pair->key, pair->name_len)) != 0) {
-        bk__strmap_cleanup(pair);
-        return ret;
-    }
-    HASH_ADD_KEYPTR(hh, *map, pair->key, name_len, pair);
+    bk__toasciilower(pair->key);
+    HASH_ADD_STR(*map, key, pair);
     return 0;
 }
 
-int bk_strmap_set(struct bk_strmap **map, const char *name, size_t name_len, const char *val, size_t val_len) {
+int bk_strmap_set(struct bk_strmap **map, const char *name, const char *val) {
     struct bk_strmap *pair, *tmp;
-    int ret;
-    if (!map || !name || name_len == 0 || !val || val_len == 0)
+    if (!map || !name || !val)
         return -EINVAL;
     pair = bk_alloc(sizeof(struct bk_strmap));
     if (!pair)
         oom();
-    pair->name = bk__strndup(name, name_len);
-    pair->name_len = name_len;
-    pair->val = bk__strndup(val, val_len);
-    pair->val_len = val_len;
-    if (!pair->name || !pair->val) {
+    pair->key = strdup(pair->name);
+    pair->name = strdup(name);
+    pair->val = strdup(val);
+    if (!pair->key || !pair->name || !pair->val) {
         bk__strmap_cleanup(pair);
         oom();
     }
-    pair->key = bk__strndup(pair->name, pair->name_len);
-    if ((ret = bk__toasciilower(pair->key, pair->name_len)) != 0) {
-        bk__strmap_cleanup(pair);
-        return ret;
-    }
-    HASH_REPLACE(hh, *map, key[0], name_len, pair, tmp);
+    bk__toasciilower(pair->key);
+    HASH_REPLACE_STR(*map, key, pair, tmp);
     bk__strmap_cleanup(tmp);
     return 0;
 }
 
-int bk_strmap_find(struct bk_strmap *map, const char *name, size_t len, struct bk_strmap **pair) {
+int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_strmap **pair) {
     char *key;
-    int ret;
     if (!map || !pair)
         return -EINVAL;
-    key = bk__strndup(name, len);
-    if ((ret = bk__toasciilower(key, len)) == 0) {
-        HASH_FIND(hh, map, key, len, *pair);
-        if (!*pair)
-            ret = -ENOENT;
+    key = strdup(name);
+    if (!key)
+        oom();
+    bk__toasciilower(key);
+    HASH_FIND_STR(map, key, *pair);
+    if (!*pair) {
+        bk_free(key);
+        return -ENOENT;
     }
     bk_free(key);
-    return ret;
+    return 0;
 }
 
-int bk_strmap_rm(struct bk_strmap **map, const char *name, size_t len) {
+int bk_strmap_rm(struct bk_strmap **map, const char *name) {
     struct bk_strmap *pair;
-    int ret;
-    if ((ret = bk_strmap_find(*map, name, len, &pair)) == 0) {
-        HASH_DELETE_HH(hh, *map, &pair->hh);
-        bk__strmap_cleanup(pair);
-    }
-    return ret;
+    int ret = bk_strmap_find(*map, name, &pair);
+    if (ret != 0)
+        return ret;
+    HASH_DELETE_HH(hh, *map, &pair->hh);
+    bk__strmap_cleanup(pair);
+    return 0;
 }
 
 int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb iter_cb, void *iter_cls) {
