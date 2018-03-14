@@ -72,7 +72,7 @@ extern const char *bk_version_str(void);
  * Allocates a new zero-initialize memory space.
  * \param[in] size Memory size to be allocated.
  * \return Pointer of the zero-initialized allocated memory.
- * \retval NULL When size is `0` or no memory space.
+ * \warning By default it exits the application when no memory space available.
  */
 extern void *bk_alloc(size_t size);
 
@@ -100,7 +100,7 @@ struct bk_str;
 /**
  * Creates a new zero-initialized string instance.
  * \return String instance.
- * \retval NULL When no memory space.
+ * \retval NULL When no memory space available.
  */
 extern struct bk_str *bk_str_new(void);
 
@@ -204,7 +204,7 @@ struct bk_strmap;
 typedef int (*bk_strmap_iter_cb)(void *cls, struct bk_strmap *pair);
 
 /**
- * Callback signature used by #bk_strmap_sort() to sort pairs of name-value.
+ * Callback signature used by #bk_strmap_sort() to sort pairs of `name-value`.
  * \param[out] cls User-defined closure.
  * \param[out] pair_a Current left pair (A).
  * \param[out] pair_b Current right pair (B).
@@ -212,31 +212,71 @@ typedef int (*bk_strmap_iter_cb)(void *cls, struct bk_strmap *pair);
 typedef int (*bk_strmap_sort_cb)(void *cls, struct bk_strmap *pair_a, struct bk_strmap *pair_b);
 
 /**
- * Gets the value from a pair of name-value.
+ * Returns the name from the \p pair.
  * \param[in] pair Pair of name-value.
- * \return Value as null-terminated string.
- * \retval NULL When no memory space.
+ * \return Name as null-terminated string.
+ * \retval NULL When no memory space available.
  */
 extern const char *bk_strmap_name(struct bk_strmap *pair);
 
 /**
- * Gets the name from a pair of name-value.
+ * Returns the value from the \p pair.
  * \param[in] pair Pair of name-value.
- * \return Name as null-terminated string.
- * \retval NULL When no memory space.
+ * \return Value as null-terminated string.
+ * \retval NULL When no memory space available.
  */
 extern const char *bk_strmap_val(struct bk_strmap *pair);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Reads the name from the \p pair.
+ * \param[in] pair Pair of name-value.
+ * \param[out] name Name to be read.
+ * \param[in,out] len Pointer to specify then store the name length.
+ * \retval 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ * \retval -ENOBUFS - No buffer space available to store the name.
+ */
 extern int bk_strmap_readname(struct bk_strmap *pair, char *name, size_t *len);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Reads the value from the \p pair.
+ * \param[in] pair Pair of name-value.
+ * \param[out] val Value to be read.
+ * \param[in,out] len Pointer to specify then store the value length.
+ * \retval 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ * \retval -ENOBUFS - No buffer space available to store the value.
+ */
 extern int bk_strmap_readval(struct bk_strmap *pair, char *val, size_t *len);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Adds a pair of name-value to the list \p map.
+ * \param[in,out] map Pointer of the list to add the new pair.
+ * \param[in] name Name of the pair to be added.
+ * \param name_len Length of the \p name.
+ * \param val Value of the pair to be added.
+ * \param val_len Length of the \p value.
+ * \retval 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ * \retval -ENOMEM - No memory available available.
+ * \note This function does not check if a name already exists in a pair added to the \p map, then the uniqueness must
+ * be managed by the application.
+ */
 extern int bk_strmap_add(struct bk_strmap **map, const char *name, size_t name_len, const char *val, size_t val_len);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Sets a pair of name-value to the list \p map.
+ * \param[in,out] map Pointer of the list to set the new pair.
+ * \param[in] name Name of the pair to be set.
+ * \param name_len Length of the \p name.
+ * \param val Value of the pair to be set.
+ * \param val_len Length of the \p value.
+ * \retval 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ * \retval -ENOMEM - No memory available available.
+ * \note When a name already exists in pair previously added into the \p map, then the function replaces its value,
+ * otherwise it is added as a new pair.
+ */
 extern int bk_strmap_set(struct bk_strmap **map, const char *name, size_t name_len, const char *val, size_t val_len);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
