@@ -57,8 +57,8 @@ static int map_iter(void *cls, struct bk_strmap *pair) {
 
 static void chat(struct bk_strmap **map, const char *name, const char *msg) {
     struct bk_strmap *pair;
-    bk_strmap_set(map, name, strlen(name), msg, strlen(msg));
-    if (msg && (bk_strmap_find(*map, name, strlen(name), &pair) == 0))
+    bk_strmap_set(map, name, msg);
+    if (msg && (bk_strmap_find(*map, name, &pair) == 0))
         printf("%c:\t%s\n", *name, bk_strmap_val(pair));
 }
 
