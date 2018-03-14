@@ -98,41 +98,30 @@ extern void bk_free(void *ptr);
 struct bk_str;
 
 /**
- * Creates a new zero-initialized string instance.
- * \return String instance.
+ * Creates a new zero-initialized string handle.
+ * \return String handle.
  * \warning It exits the application when no memory space available.
  */
 extern struct bk_str *bk_str_new(void);
 
 /**
- * Frees a string instance previous allocated by #bk_str_new().
- * \param[in] str Pointer of the string instance to be freed.
+ * Frees a string handle previous allocated by #bk_str_new().
+ * \param[in] str Pointer of the string handle to be freed.
  */
 extern void bk_str_free(struct bk_str *str);
 
 /**
- * Writes a null-terminated string to the string handle \p str. All strings previously written are kept.
+ * Copies a null-terminated string to the string handle \p str. All strings previously copied are kept.
  * \param[in] str String handle.
- * \param[in] val String to be written.
- * \param[in] len Length of the string to be written.
+ * \param[in] val String to be copied.
+ * \param[in] len Length of the string to be copied.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_str_write(struct bk_str *str, const char *val, size_t len);
+extern int bk_str_strcpy(struct bk_str *str, const char *val, size_t len);
 
 /**
- * Reads a null-terminated string from the string handle \p str.
- * \param[in] str String handle.
- * \param[out] val String to be read.
- * \param[in,out] len Pointer to specify then store the string length.
- * \retval 0 - Success.
- * \retval -EINVAL - Invalid argument.
- * \retval -ENOBUFS - No buffer space available to store the string.
- */
-extern int bk_str_read(struct bk_str *str, char *val, size_t *len);
-
-/**
- * Writes a formatted null-terminated string from variable argument list to the string handle \p str.
+ * Prints a formatted null-terminated string from variable argument list to the string handle \p str.
  * \param[in] str String handle.
  * \param[in] fmt Formatted string (following the same [`printf()`](https://linux.die.net/man/3/printf) format
  *  specification).
@@ -144,7 +133,7 @@ extern int bk_str_read(struct bk_str *str, char *val, size_t *len);
 extern int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap);
 
 /**
- * Writes a formatted null-terminated string to the string handle \p str. All strings previously written are kept.
+ * Prints a formatted null-terminated string to the string handle \p str. All strings previously written are kept.
  * \param[in] str String handle.
  * \param[in] fmt Formatted string (following the same [`printf()`](https://linux.die.net/man/3/printf) format
  *  specification).
@@ -156,7 +145,7 @@ extern int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap);
 extern int bk_str_printf(struct bk_str *str, const char *fmt, ...);
 
 /**
- * Gets the null-terminated string content from the string handle \p str.
+ * Returns the null-terminated string content from the string handle \p str.
  * \param[in] str String handle.
  * \return Content as static null-terminated string.
  * \retval NULL When the \p str is `NULL`.
@@ -164,13 +153,12 @@ extern int bk_str_printf(struct bk_str *str, const char *fmt, ...);
 extern const char *bk_str_content(struct bk_str *str);
 
 /**
- * Gets the total string length written in the handle \p str.
+ * Returns the total string length from the handle \p str.
  * \param[in] str String handle.
- * \param[out] len Pointer to store the string length.
- * \retval 0 - Success.
+ * \return Total string length.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_str_length(struct bk_str *str, size_t *len);
+extern size_t bk_str_length(struct bk_str *str);
 
 /**
  * Cleans all written string present in the string handle \p str.

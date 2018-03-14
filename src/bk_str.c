@@ -45,29 +45,16 @@ void bk_str_free(struct bk_str *str) {
     bk_free(str);
 }
 
-int bk_str_write(struct bk_str *str, const char *val, size_t len) {
+int bk_str_strcpy(struct bk_str *str, const char *val, size_t len) {
     if (!str || !val || len == 0)
         return -EINVAL;
     utstring_bincpy(str->buf, val, len);
     return 0;
 }
 
-int bk_str_read(struct bk_str *str, char *val, size_t *len) {
-    if (!str || !val || !len || *len == 0)
-        return -EINVAL;
-    if (utstring_len(str->buf) >= *len) {
-        *len = utstring_len(str->buf) + sizeof(char);
-        return -ENOBUFS;
-    }
-    if (*len > utstring_len(str->buf))
-        *len = utstring_len(str->buf);
-    memcpy(val, utstring_body(str->buf), *len + sizeof(char));
-    return 0;
-}
-
 int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap) {
     if (!str || !fmt
-#ifndef __ANDROID__
+        #ifndef __ANDROID__
         || !ap
 #endif
             )
@@ -92,11 +79,10 @@ const char *bk_str_content(struct bk_str *str) {
     return utstring_body(str->buf);
 }
 
-int bk_str_length(struct bk_str *str, size_t *len) {
-    if (!str || !len)
-        return -EINVAL;
-    *len = utstring_len(str->buf);
-    return 0;
+size_t bk_str_length(struct bk_str *str) {
+    if (!str)
+        return (size_t) -EINVAL;
+    return utstring_len(str->buf);
 }
 
 int bk_str_clear(struct bk_str *str) {
