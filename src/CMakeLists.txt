@@ -74,9 +74,6 @@ if (BUILD_SHARED_LIBS)
                 SUFFIX ${VERSION_SUFFIX}.dll)
     endif ()
 endif ()
-if (BK_BUILD_UTILS_TESTING)
-    target_compile_definitions(brook PUBLIC -D_BK_TESTING)
-endif ()
 
 install(TARGETS brook
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT lib
