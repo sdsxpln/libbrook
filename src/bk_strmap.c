@@ -106,9 +106,19 @@ int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_strmap **p
 
 int bk_strmap_rm(struct bk_strmap **map, const char *name) {
     struct bk_strmap *pair;
-    int ret = bk_strmap_find(*map, name, &pair);
-    if (ret != 0)
-        return ret;
+    char *key;
+    if (!map || !name)
+        return -EINVAL;
+    key = strdup(name);
+    if (!key)
+        oom();
+    bk__toasciilower(key);
+    HASH_FIND_STR(*map, key, pair);
+    if (!pair) {
+        bk_free(key);
+        return -ENOENT;
+    }
+    bk_free(key);
     HASH_DELETE_HH(hh, *map, &pair->hh);
     bk__strmap_cleanup(pair);
     return 0;
