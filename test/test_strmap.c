@@ -41,30 +41,73 @@ static inline void test_strmap_val(struct bk_strmap *pair) {
 }
 
 static inline void test_strmap_add(struct bk_strmap **map, const char *name, const char *val) {
-    unsigned int count;
-
     ASSERT(bk_strmap_add(NULL, name, val) == -EINVAL);
     ASSERT(bk_strmap_add(map, NULL, val) == -EINVAL);
     ASSERT(bk_strmap_add(map, name, NULL) == -EINVAL);
 
     bk_strmap_cleanup(map);
-    bk_strmap_count(*map, &count);
-    ASSERT(count == 0);
-
+    ASSERT(bk_strmap_count(*map) == 0);
     ASSERT(bk_strmap_add(map, "", val) == 0);
-    bk_strmap_count(*map, &count);
-    ASSERT(count == 1);
-
+    ASSERT(bk_strmap_count(*map) == 1);
     bk_strmap_cleanup(map);
     ASSERT(bk_strmap_add(map, name, "") == 0);
-    bk_strmap_count(*map, &count);
-    ASSERT(count == 1);
+    ASSERT(bk_strmap_count(*map) == 1);
 
     bk_strmap_cleanup(map);
     ASSERT(bk_strmap_add(map, name, val) == 0);
     ASSERT(bk_strmap_add(map, name, val) == 0);
-    bk_strmap_count(*map, &count);
-    ASSERT(count == 2);
+    ASSERT(bk_strmap_count(*map) == 2);
+}
+
+static inline void test_strmap_set(struct bk_strmap **map, const char *name, const char *val) {
+    ASSERT(bk_strmap_set(NULL, name, val) == -EINVAL);
+    ASSERT(bk_strmap_set(map, NULL, val) == -EINVAL);
+    ASSERT(bk_strmap_set(map, name, NULL) == -EINVAL);
+
+    bk_strmap_cleanup(map);
+    ASSERT(bk_strmap_count(*map) == 0);
+    ASSERT(bk_strmap_set(map, "", val) == 0);
+    ASSERT(bk_strmap_count(*map) == 1);
+    bk_strmap_cleanup(map);
+    ASSERT(bk_strmap_set(map, name, "") == 0);
+    ASSERT(bk_strmap_count(*map) == 1);
+    bk_strmap_cleanup(map);
+    ASSERT(bk_strmap_set(map, name, val) == 0);
+    ASSERT(bk_strmap_set(map, name, val) == 0);
+    ASSERT(bk_strmap_count(*map) == 1);
+}
+
+static inline void test_strmap_find(struct bk_strmap **map, const char *name, const char *val) {
+    struct bk_strmap *pair;
+    ASSERT(bk_strmap_find(NULL, name, &pair) == -EINVAL);
+    ASSERT(bk_strmap_find(*map, NULL, &pair) == -EINVAL);
+    ASSERT(bk_strmap_find(*map, name, NULL) == -EINVAL);
+
+    bk_strmap_cleanup(map);
+    bk_strmap_add(map, name, val);
+
+    ASSERT(bk_strmap_find(*map, "", &pair) == -ENOENT);
+    ASSERT(!pair);
+    ASSERT(bk_strmap_find(*map, "xxx", &pair) == -ENOENT);
+    ASSERT(!pair);
+    ASSERT(bk_strmap_find(*map, "yyy", &pair) == -ENOENT);
+    ASSERT(!pair);
+
+    bk_strmap_add(map, "", "");
+    bk_strmap_add(map, "xxx", "yyy");
+    bk_strmap_add(map, "yyy", "xxx");
+    ASSERT(bk_strmap_find(*map, name, &pair) == 0);
+    ASSERT(pair);
+    ASSERT(strcmp(bk_strmap_name(pair), name) == 0 && strcmp(bk_strmap_val(pair), val) == 0);
+    ASSERT(bk_strmap_find(*map, "", &pair) == 0);
+    ASSERT(pair);
+    ASSERT(strcmp(bk_strmap_name(pair), "") == 0 && strcmp(bk_strmap_val(pair), "") == 0);
+    ASSERT(bk_strmap_find(*map, "xxx", &pair) == 0);
+    ASSERT(pair);
+    ASSERT(strcmp(bk_strmap_name(pair), "xxx") == 0 && strcmp(bk_strmap_val(pair), "yyy") == 0);
+    ASSERT(bk_strmap_find(*map, "yyy", &pair) == 0);
+    ASSERT(pair);
+    ASSERT(strcmp(bk_strmap_name(pair), "yyy") == 0 && strcmp(bk_strmap_val(pair), "xxx") == 0);
 }
 
 /*TODO: add more tests.*/
@@ -81,6 +124,8 @@ int main(void) {
     test_strmap_name(pair);
     test_strmap_val(pair);
     test_strmap_add(&map, name, val);
+    test_strmap_set(&map, name, val);
+    test_strmap_find(&map, name, val);
 
     bk_strmap_cleanup(&map);
 

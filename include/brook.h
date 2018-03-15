@@ -241,7 +241,15 @@ extern int bk_strmap_add(struct bk_strmap **map, const char *name, const char *v
  */
 extern int bk_strmap_set(struct bk_strmap **map, const char *name, const char *val);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Finds a pair by the name defined to it.
+ * \param[in] map Pointer of the pair list.
+ * \param[in] name Name of the pair to be found.
+ * \param[in,out] pair Pointer to store found pair.
+ * \retval 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ * \retval -ENOENT -  Pair not found.
+ */
 extern int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_strmap **pair);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
@@ -254,7 +262,7 @@ extern int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb iter_cb, void
 extern int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cmp_cb, void *cmp_cls);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern int bk_strmap_count(struct bk_strmap *map, unsigned int *count);
+extern unsigned int bk_strmap_count(struct bk_strmap *map);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern int bk_strmap_next(struct bk_strmap **map);

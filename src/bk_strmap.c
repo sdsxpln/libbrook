@@ -74,7 +74,7 @@ int bk_strmap_set(struct bk_strmap **map, const char *name, const char *val) {
     pair = bk_alloc(sizeof(struct bk_strmap));
     if (!pair)
         oom();
-    pair->key = strdup(pair->name);
+    pair->key = strdup(name);
     pair->name = strdup(name);
     pair->val = strdup(val);
     if (!pair->key || !pair->name || !pair->val) {
@@ -89,7 +89,7 @@ int bk_strmap_set(struct bk_strmap **map, const char *name, const char *val) {
 
 int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_strmap **pair) {
     char *key;
-    if (!map || !pair)
+    if (!map || !pair || !name)
         return -EINVAL;
     key = strdup(name);
     if (!key)
@@ -135,11 +135,8 @@ int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cmp_cb, void *cmp_c
     return 0;
 }
 
-int bk_strmap_count(struct bk_strmap *map, unsigned int *count) {
-    if (!map || !count)
-        return -EINVAL;
-    *count = HASH_COUNT(map);
-    return 0;
+unsigned int bk_strmap_count(struct bk_strmap *map) {
+    return HASH_COUNT(map);
 }
 
 int bk_strmap_next(struct bk_strmap **map) {
