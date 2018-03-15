@@ -248,11 +248,18 @@ extern int bk_strmap_set(struct bk_strmap **map, const char *name, const char *v
  * \param[in,out] pair Pointer to store found pair.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
- * \retval -ENOENT -  Pair not found.
+ * \retval -ENOENT - Pair not found.
  */
 extern int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_strmap **pair);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Removes a pair by the name defined to it.
+ * \param[in] map Pointer of the pair list.
+ * \param[in] name Name of the pair to be removed.
+ * \retval 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ * \retval -ENOENT - Pair already removed.
+ */
 extern int bk_strmap_rm(struct bk_strmap **map, const char *name);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
