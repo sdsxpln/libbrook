@@ -293,11 +293,11 @@ extern unsigned int bk_strmap_count(struct bk_strmap *map);
 
 /**
  * Returns the next pair in a map.
- * \param[in,out] map Pointer to the pairs map.
+ * \param[in,out] next Pointer to the next pair.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_strmap_next(struct bk_strmap **map);
+extern int bk_strmap_next(struct bk_strmap **next);
 
 /**
  * Cleans the entire map.

@@ -149,10 +149,10 @@ unsigned int bk_strmap_count(struct bk_strmap *map) {
     return HASH_COUNT(map);
 }
 
-int bk_strmap_next(struct bk_strmap **map) {
-    if (!map)
+int bk_strmap_next(struct bk_strmap **next) {
+    if (!next)
         return -EINVAL;
-    *map = *map ? (*map)->hh.next : NULL;
+    *next = *next ? (*next)->hh.next : NULL;
     return 0;
 }
 
