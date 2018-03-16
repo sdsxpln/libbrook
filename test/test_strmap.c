@@ -154,6 +154,127 @@ static inline void test_strmap_rm(struct bk_strmap **map, const char *name, cons
     ASSERT(bk_strmap_find(*map, "yyy", &pair) == -EINVAL);
 }
 
+static int strmap_iter_123(void *cls, struct bk_strmap *pair) {
+    (void) cls;
+    (void) pair;
+    return 123;
+}
+
+static int strmap_iter_empty(void *cls, struct bk_strmap *pair) {
+    (void) cls;
+    (void) pair;
+    return 0;
+}
+
+static int strmap_iter_concat(void *cls, struct bk_strmap *pair) {
+    strcat(cls, bk_strmap_name(pair));
+    strcat(cls, bk_strmap_val(pair));
+    return 0;
+}
+
+static inline void test_strmap_iter(struct bk_strmap **map) {
+    char str[100];
+    ASSERT(bk_strmap_iter(NULL, strmap_iter_empty, "") == -EINVAL);
+    ASSERT(bk_strmap_iter(*map, NULL, "") == -EINVAL);
+
+    bk_strmap_cleanup(map);
+    bk_strmap_add(map, "abc", "123");
+    bk_strmap_add(map, "def", "456");
+
+    ASSERT(bk_strmap_iter(*map, strmap_iter_empty, NULL) == 0);
+    ASSERT(bk_strmap_iter(*map, strmap_iter_123, NULL) == 123);
+
+    memset(str, 0, sizeof(str));
+    ASSERT(strcmp(str, "") == 0);
+    ASSERT(bk_strmap_iter(*map, strmap_iter_concat, str) == 0);
+    ASSERT(strcmp(str, "abc123def456") == 0);
+}
+
+static int strmap_sort_empty(void *cls, struct bk_strmap *pair_a, struct bk_strmap *pair_b) {
+    strcat(cls, cls);
+    (void) pair_a;
+    (void) pair_b;
+    return 0;
+}
+
+static int strmap_sort_name_desc(void *cls, struct bk_strmap *pair_a, struct bk_strmap *pair_b) {
+    (void) cls;
+    return strcmp(bk_strmap_name(pair_b), bk_strmap_name(pair_a));
+}
+
+static int strmap_sort_name_asc(void *cls, struct bk_strmap *pair_a, struct bk_strmap *pair_b) {
+    (void) cls;
+    return strcmp(bk_strmap_name(pair_a), bk_strmap_name(pair_b));
+}
+
+static int strmap_sort_val_desc(void *cls, struct bk_strmap *pair_a, struct bk_strmap *pair_b) {
+    (void) cls;
+    return strcmp(bk_strmap_val(pair_b), bk_strmap_val(pair_a));
+}
+
+static int strmap_sort_val_asc(void *cls, struct bk_strmap *pair_a, struct bk_strmap *pair_b) {
+    (void) cls;
+    return strcmp(bk_strmap_val(pair_a), bk_strmap_val(pair_b));
+}
+
+static inline void test_strmap_sort(struct bk_strmap **map) {
+    char str[100];
+    ASSERT(bk_strmap_sort(NULL, strmap_sort_empty, "") == -EINVAL);
+    ASSERT(bk_strmap_sort(map, NULL, "") == -EINVAL);
+
+    bk_strmap_cleanup(map);
+    bk_strmap_add(map, "abc", "123");
+    bk_strmap_add(map, "def", "456");
+
+    memset(str, 0, sizeof(str));
+    strcpy(str, "abc");
+    ASSERT(strcmp(str, "abc") == 0);
+    ASSERT(bk_strmap_sort(map, strmap_sort_empty, str) == 0);
+    ASSERT(strcmp(str, "abcabc") == 0);
+
+    memset(str, 0, sizeof(str));
+    ASSERT(strcmp(str, "") == 0);
+    bk_strmap_iter(*map, strmap_iter_concat, str);
+    ASSERT(strcmp(str, "abc123def456") == 0);
+    ASSERT(bk_strmap_sort(map, strmap_sort_name_desc, NULL) == 0);
+    memset(str, 0, sizeof(str));
+    bk_strmap_iter(*map, strmap_iter_concat, str);
+    ASSERT(strcmp(str, "def456abc123") == 0);
+
+    ASSERT(bk_strmap_sort(map, strmap_sort_name_asc, NULL) == 0);
+    memset(str, 0, sizeof(str));
+    bk_strmap_iter(*map, strmap_iter_concat, str);
+    ASSERT(strcmp(str, "abc123def456") == 0);
+
+    ASSERT(bk_strmap_sort(map, strmap_sort_val_desc, NULL) == 0);
+    memset(str, 0, sizeof(str));
+    bk_strmap_iter(*map, strmap_iter_concat, str);
+    ASSERT(strcmp(str, "def456abc123") == 0);
+
+    ASSERT(bk_strmap_sort(map, strmap_sort_val_asc, NULL) == 0);
+    memset(str, 0, sizeof(str));
+    bk_strmap_iter(*map, strmap_iter_concat, str);
+    ASSERT(strcmp(str, "abc123def456") == 0);
+}
+
+static inline void test_strmap_count(struct bk_strmap **map, const char *name, const char *val) {
+    ASSERT(bk_strmap_count(NULL) == 0);
+    bk_strmap_cleanup(map);
+    ASSERT(bk_strmap_count(*map) == 0);
+    bk_strmap_add(map, name, val);
+    ASSERT(bk_strmap_count(*map) == 1);
+    bk_strmap_add(map, "xxx", "yyy");
+    ASSERT(bk_strmap_count(*map) == 2);
+    bk_strmap_add(map, "yyy", "xxx");
+    ASSERT(bk_strmap_count(*map) == 3);
+    bk_strmap_add(map, name, val);
+    ASSERT(bk_strmap_count(*map) == 4);
+    bk_strmap_rm(map, name);
+    ASSERT(bk_strmap_count(*map) == 3);
+    bk_strmap_cleanup(map);
+    ASSERT(bk_strmap_count(*map) == 0);
+}
+
 /*TODO: add more tests.*/
 
 int main(void) {
@@ -171,6 +292,9 @@ int main(void) {
     test_strmap_set(&map, name, val);
     test_strmap_find(&map, name, val);
     test_strmap_rm(&map, name, val);
+    test_strmap_iter(&map);
+    test_strmap_sort(&map);
+    test_strmap_count(&map, name, val);
 
     bk_strmap_cleanup(&map);
 

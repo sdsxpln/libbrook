@@ -124,22 +124,22 @@ int bk_strmap_rm(struct bk_strmap **map, const char *name) {
     return 0;
 }
 
-int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb iter_cb, void *iter_cls) {
+int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb cb, void *cls) {
     struct bk_strmap *pair, *tmp;
     int ret;
-    if (!map || !iter_cb)
+    if (!map || !cb)
         return -EINVAL;
     HASH_ITER(hh, map, pair, tmp) {
-        if ((ret = iter_cb(iter_cls, pair)) != 0)
+        if ((ret = cb(cls, pair)) != 0)
             return ret;
     }
     return 0;
 }
 
-int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cmp_cb, void *cmp_cls) {
-    if (!map || !cmp_cb)
+int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cb, void *cls) {
+    if (!map || !cb)
         return -EINVAL;
-#define _BK_CMP(a, b) cmp_cb(cmp_cls, a, b)
+#define _BK_CMP(a, b) cb(cls, a, b)
     HASH_SORT(*map, _BK_CMP);
 #undef _BK_CMP
     return 0;

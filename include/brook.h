@@ -216,10 +216,10 @@ extern const char *bk_strmap_name(struct bk_strmap *pair);
 extern const char *bk_strmap_val(struct bk_strmap *pair);
 
 /**
- * Adds a pair of null-terminated string to the list \p map.
- * \param[in,out] map Pointer of the list to add the new pair.
+ * Adds a pair of null-terminated string to the \p map.
+ * \param[in,out] map Pairs map pointer to add a new pair.
  * \param[in] name Name of the pair to be added.
- * \param val Value of the pair to be added.
+ * \param[in] val Value of the pair to be added.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  * \note It does not check if a name already exists in a pair added to the \p map, then the uniqueness must be managed
@@ -229,10 +229,10 @@ extern const char *bk_strmap_val(struct bk_strmap *pair);
 extern int bk_strmap_add(struct bk_strmap **map, const char *name, const char *val);
 
 /**
- * Sets a pair of null-terminated string to the list \p map.
- * \param[in,out] map Pointer of the list to set the new pair.
+ * Sets a pair of null-terminated string to the \p map.
+ * \param[in,out] map Pairs map pointer to set a new pair.
  * \param[in] name Name of the pair to be set.
- * \param val Value of the pair to be set.
+ * \param[in] val Value of the pair to be set.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  * \note When a name already exists in pair previously added into the \p map, then the function replaces its value,
@@ -242,8 +242,8 @@ extern int bk_strmap_add(struct bk_strmap **map, const char *name, const char *v
 extern int bk_strmap_set(struct bk_strmap **map, const char *name, const char *val);
 
 /**
- * Finds a pair by the name defined to it.
- * \param[in] map Pointer of the pair list.
+ * Finds a pair by its name.
+ * \param[in] map Pairs map.
  * \param[in] name Name of the pair to be found.
  * \param[in,out] pair Pointer to store found pair.
  * \retval 0 - Success.
@@ -253,8 +253,8 @@ extern int bk_strmap_set(struct bk_strmap **map, const char *name, const char *v
 extern int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_strmap **pair);
 
 /**
- * Removes a pair by the name defined to it.
- * \param[in] map Pointer of the pair list.
+ * Removes a pair by its name.
+ * \param[in] map Pointer to the pairs map.
  * \param[in] name Name of the pair to be removed.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
@@ -262,19 +262,47 @@ extern int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_str
  */
 extern int bk_strmap_rm(struct bk_strmap **map, const char *name);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb iter_cb, void *iter_cls);
+/**
+ * Iterates over pairs map.
+ * \param[in] map Pairs map.
+ * \param[in] cb Callback to iterate the pairs.
+ * \param[in,out] cls User-specified value.
+ * \retval 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ * \return Callback result when it is different from `0`.
+ */
+extern int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb cb, void *cls);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cmp_cb, void *cmp_cls);
+/**
+ * Sorts the pairs map.
+ * \param[in,out] map Pointer to the pairs map.
+ * \param[in] cb Callback to sort the pairs.
+ * \param[in,out] cls User-specified value.
+ * \retval 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ */
+extern int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cb, void *cls);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Counts the total pairs present in a map.
+ * \param[in] map Pairs map.
+ * \return Total of pairs.
+ * \retval 0 When the list is empty or null.
+ */
 extern unsigned int bk_strmap_count(struct bk_strmap *map);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Returns the next pair in a map.
+ * \param[in,out] map Pointer to the pairs map.
+ * \retval 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ */
 extern int bk_strmap_next(struct bk_strmap **map);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Cleans the entire map.
+ * \param[in] map Pointer to the pairs map.
+ */
 extern void bk_strmap_cleanup(struct bk_strmap **map);
 
 /** \} */
