@@ -31,7 +31,7 @@
 #include "bk_utils.h"
 #include "bk_strmap.h"
 
-static inline void bk__strmap_cleanup(struct bk_strmap *pair) {
+static void bk__strmap_cleanup(struct bk_strmap *pair) {
     if (!pair)
         return;
     bk_free(pair->key);
