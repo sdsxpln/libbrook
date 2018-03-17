@@ -65,37 +65,26 @@ static inline void test_memory(void) {
 
 static inline void test__toasciilower(void) {
     char str[100];
-    size_t len;
-
     memset(str, 0, sizeof(str));
-    len = 10;
-    ASSERT(bk__toasciilower(str, len) == 0);
-    ASSERT(*str == 0);
+    ASSERT(strcmp(str, "") == 0);
+    bk__toasciilower(str);
+    ASSERT(strcmp(str, "") == 0);
     sprintf(str, "A");
-    len = strlen(str);
-    ASSERT(bk__toasciilower(str, len) == 0);
+    ASSERT(strcmp(str, "A") == 0);
+    bk__toasciilower(str);
     ASSERT(strcmp(str, "a") == 0);
     sprintf(str, "ABC");
-    len = strlen(str);
-    ASSERT(bk__toasciilower(str, len) == 0);
+    bk__toasciilower(str);
     ASSERT(strcmp(str, "abc") == 0);
     sprintf(str, "ABC123 def456");
-    len = strlen(str);
-    ASSERT(bk__toasciilower(str, len) == 0);
+    bk__toasciilower(str);
     ASSERT(strcmp(str, "abc123 def456") == 0);
     sprintf(str, "ABC");
-    len = strlen(str) * 2;
-    ASSERT(bk__toasciilower(str, len) == 0);
+    bk__toasciilower(str);
     ASSERT(strcmp(str, "abc") == 0);
     sprintf(str, "ABÇñãÁÊD");
-    len = strlen(str);
-    ASSERT(bk__toasciilower(str, len) == 0);
+    bk__toasciilower(str);
     ASSERT(strcmp(str, "abÇñãÁÊd") == 0);
-    sprintf(str, "AB");
-    len = strlen(str);
-    strcat(str, "CD");
-    ASSERT(bk__toasciilower(str, len) == 0);
-    ASSERT(strcmp(str, "abCD") == 0);
 }
 
 int main(void) {
