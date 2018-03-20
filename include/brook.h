@@ -284,7 +284,7 @@ extern int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb cb, void *cls
 extern int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cb, void *cls);
 
 /**
- * Counts the total pairs present in a map.
+ * Counts the total pairs present in the map.
  * \param[in] map Pairs map.
  * \return Total of pairs.
  * \retval 0 When the list is empty or null.
@@ -292,7 +292,7 @@ extern int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cb, void *cl
 extern unsigned int bk_strmap_count(struct bk_strmap *map);
 
 /**
- * Returns the next pair in a map.
+ * Returns the next pair in the map.
  * \param[in,out] next Pointer to the next pair.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.

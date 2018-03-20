@@ -154,16 +154,16 @@ static inline void test_strmap_rm(struct bk_strmap **map, const char *name, cons
     ASSERT(bk_strmap_find(*map, "yyy", &pair) == -EINVAL);
 }
 
-static int strmap_iter_123(void *cls, struct bk_strmap *pair) {
-    (void) cls;
-    (void) pair;
-    return 123;
-}
-
 static int strmap_iter_empty(void *cls, struct bk_strmap *pair) {
     (void) cls;
     (void) pair;
     return 0;
+}
+
+static int strmap_iter_123(void *cls, struct bk_strmap *pair) {
+    (void) cls;
+    (void) pair;
+    return 123;
 }
 
 static int strmap_iter_concat(void *cls, struct bk_strmap *pair) {
