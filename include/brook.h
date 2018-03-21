@@ -307,6 +307,12 @@ extern void bk_strmap_cleanup(struct bk_strmap **map);
 
 /** \} */
 
+struct bk_httpsrv;
+
+extern struct bk_httpsrv *bk_httpsrv_new(void);
+
+extern void bk_httpsrv_free(struct bk_httpsrv *srv);
+
 #ifdef __cplusplus
 }
 #endif
