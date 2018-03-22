@@ -1,0 +1,127 @@
+#TODO: this module is experimental, it will be documented as soon as it was done
+
+if (__BK_AUTOTOOLSPKG_INCLUDED)
+    return()
+endif ()
+set(__BK_AUTOTOOLSPKG_INCLUDED ON)
+
+include(CMakeParseArguments)
+
+function(download_and_build_autotools_package)
+    set(_args NAME URL SHA256 DIR OPTIONS)
+    set(_options QUIET)
+    cmake_parse_arguments("" "${_options}" "${_args}" "" ${ARGN})
+    unset(_options)
+    unset(_args)
+    if ("${_NAME}" STREQUAL "")
+        message(FATAL_ERROR "NAME should not be empty.")
+    endif ()
+    if ("${_URL}" STREQUAL "")
+        message(FATAL_ERROR "URL should not be empty.")
+    endif ()
+    if ("${_SHA256}" STREQUAL "")
+        message(FATAL_ERROR "SHA256 should not be empty.")
+    endif ()
+    if ("${_DIR}" STREQUAL "")
+        message(FATAL_ERROR "DIR should not be empty.")
+    endif ()
+    get_filename_component(_filename ${_URL} NAME)
+    #TODO: check if file is a tar.gz
+    set(_full_filename "${_DIR}/${_filename}")
+    #TODO: check if static library already exists
+    #TODO: check if downloaded file already exists
+    if (NOT _QUIET)
+        message(STATUS "Downloading ${_NAME}...")
+    endif ()
+    file(DOWNLOAD ${_URL} ${_full_filename}
+            STATUS _status)
+    list(GET _status 0 _status_code)
+    list(GET _status 1 _status_text)
+    unset(_status)
+    if (NOT ${_status_code} EQUAL 0)
+        file(REMOVE ${_full_filename})
+        message(FATAL_ERROR "\
+Error downloading '${_URL}'
+${_status_code} - ${_status_text}")
+    endif ()
+    unset(_status_code)
+    unset(_status_text)
+    if (NOT _QUIET)
+        message(STATUS "Downloading ${_NAME}... done")
+    endif ()
+    if (NOT _QUIET)
+        message(STATUS "Checking ${_NAME}...")
+    endif ()
+    file(SHA256 ${_full_filename} _sha256)
+    if (NOT "${_sha256}" STREQUAL "${_SHA256}")
+        file(REMOVE ${_full_filename})
+        message(FATAL_ERROR "\
+Checksum failed for '${_filename}'
+Expected: ${_SHA256}
+Generated: ${_sha256}")
+    endif ()
+    unset(_sha256)
+    if (NOT _QUIET)
+        message(STATUS "Checking ${_NAME}... done")
+    endif ()
+    if (NOT _QUIET)
+        message(STATUS "Extracting ${_NAME}...")
+    endif ()
+    execute_process(COMMAND ${CMAKE_COMMAND} -E tar zxvf ${_full_filename}
+            WORKING_DIRECTORY ${_DIR}
+            RESULT_VARIABLE _result
+            OUTPUT_QUIET)
+    if (NOT _result EQUAL 0)
+        file(REMOVE_RECURSE ${_DIR})
+        message(FATAL_ERROR "Error extracting '${_filename}'")
+    endif ()
+    unset(_result)
+    if (NOT _QUIET)
+        message(STATUS "Extracting ${_NAME}... done")
+    endif ()
+    string(REPLACE ".tar.gz" "" _name ${_filename})
+    unset(_filename)
+    unset(_full_filename)
+    set(_build_dir "${_DIR}/${_name}/build")
+    unset(_name)
+    set(_configure "../configure")
+    if (_OPTIONS)
+        set(_configure "${_configure} ${_OPTIONS}")
+    endif ()
+    file(REMOVE_RECURSE ${_build_dir})
+    file(MAKE_DIRECTORY ${_build_dir})
+    if (NOT _QUIET)
+        message(STATUS "Configuring ${_NAME}...")
+    endif ()
+    execute_process(COMMAND ${_configure}
+            WORKING_DIRECTORY ${_build_dir}
+            RESULT_VARIABLE _result
+            OUTPUT_QUIET
+            ERROR_QUIET)
+    if (NOT _result EQUAL 0)
+        file(REMOVE_RECURSE ${_DIR})
+        message(FATAL_ERROR "Error configuring ${_NAME}")
+    endif ()
+    unset(_result)
+    unset(_configure)
+    if (NOT _QUIET)
+        message(STATUS "Configuring '${_NAME}'... done")
+    endif ()
+    if (NOT _QUIET)
+        message(STATUS "Building ${_NAME}...")
+    endif ()
+    execute_process(COMMAND ${CMAKE_MAKE_PROGRAM}
+            WORKING_DIRECTORY ${_build_dir}
+            RESULT_VARIABLE _result
+            OUTPUT_QUIET
+            ERROR_QUIET)
+    if (NOT _result EQUAL 0)
+        message(FATAL_ERROR "Error building ${_NAME}")
+    endif ()
+    unset(_result)
+    if (NOT _QUIET)
+        message(STATUS "Building ${_NAME}'... done")
+    endif ()
+    set(${_NAME}_BUILD_DIR "${_build_dir}" PARENT_SCOPE)
+    unset(_build_dir)
+endfunction()
