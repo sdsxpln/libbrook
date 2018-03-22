@@ -1,18 +1,18 @@
 #TODO: this module is experimental, it will be documented as soon as it was done
 
-if (__BK_AUTOTOOLSPKG_INCLUDED)
+if (__BK_DOWNLOAD_AUTOTOOLS_PKG_INCLUDED)
     return()
 endif ()
-set(__BK_AUTOTOOLSPKG_INCLUDED ON)
+set(__BK_DOWNLOAD_AUTOTOOLS_PKG_INCLUDED ON)
 
 include(CMakeParseArguments)
 
-function(download_and_build_autotools_package)
-    set(_args NAME URL SHA256 DIR OPTIONS)
+function(download_autotools_package)
+    set(_args NAME URL SHA256 DIR)
     set(_options QUIET)
     cmake_parse_arguments("" "${_options}" "${_args}" "" ${ARGN})
-    unset(_options)
     unset(_args)
+    unset(_options)
     if ("${_NAME}" STREQUAL "")
         message(FATAL_ERROR "NAME should not be empty.")
     endif ()
@@ -28,7 +28,6 @@ function(download_and_build_autotools_package)
     get_filename_component(_filename ${_URL} NAME)
     #TODO: check if file is a tar.gz
     set(_full_filename "${_DIR}/${_filename}")
-    #TODO: check if static library already exists
     #TODO: check if downloaded file already exists
     if (NOT _QUIET)
         message(STATUS "Downloading ${_NAME}...")
@@ -41,7 +40,7 @@ function(download_and_build_autotools_package)
     if (NOT ${_status_code} EQUAL 0)
         file(REMOVE ${_full_filename})
         message(FATAL_ERROR "\
-Error downloading ${_URL}
+Error downloading ${_NAME} from ${_URL}
 ${_status_code} - ${_status_text}")
     endif ()
     unset(_status_code)
@@ -71,6 +70,7 @@ Generated: ${_sha256}")
             WORKING_DIRECTORY ${_DIR}
             RESULT_VARIABLE _result
             OUTPUT_QUIET)
+    unset(_full_filename)
     if (NOT _result EQUAL 0)
         file(REMOVE_RECURSE ${_DIR})
         message(FATAL_ERROR "Error extracting ${_filename}")
@@ -81,47 +81,9 @@ Generated: ${_sha256}")
     endif ()
     string(REPLACE ".tar.gz" "" _name ${_filename})
     unset(_filename)
-    unset(_full_filename)
-    set(_build_dir "${_DIR}/${_name}/build")
-    unset(_name)
-    set(_configure "../configure")
-    if (_OPTIONS)
-        set(_configure "${_configure} ${_OPTIONS}")
-    endif ()
-    file(REMOVE_RECURSE ${_build_dir})
-    file(MAKE_DIRECTORY ${_build_dir})
-    if (NOT _QUIET)
-        message(STATUS "Configuring ${_NAME}...")
-    endif ()
-    execute_process(COMMAND ${_configure}
-            WORKING_DIRECTORY ${_build_dir}
-            RESULT_VARIABLE _result
-            OUTPUT_QUIET
-            ERROR_QUIET)
-    if (NOT _result EQUAL 0)
-        file(REMOVE_RECURSE ${_DIR})
-        message(FATAL_ERROR "Error configuring ${_NAME}")
-    endif ()
-    unset(_result)
-    unset(_configure)
-    if (NOT _QUIET)
-        message(STATUS "Configuring ${_NAME}... done")
-    endif ()
-    if (NOT _QUIET)
-        message(STATUS "Building ${_NAME}...")
-    endif ()
-    execute_process(COMMAND ${CMAKE_MAKE_PROGRAM}
-            WORKING_DIRECTORY ${_build_dir}
-            RESULT_VARIABLE _result
-            OUTPUT_QUIET
-            ERROR_QUIET)
-    if (NOT _result EQUAL 0)
-        message(FATAL_ERROR "Error building ${_NAME}")
-    endif ()
-    unset(_result)
-    if (NOT _QUIET)
-        message(STATUS "Building ${_NAME}... done")
-    endif ()
-    set(${_NAME}_BUILD_DIR "${_build_dir}" PARENT_SCOPE)
-    unset(_build_dir)
+    set(${_NAME}_DIR "${_DIR}/${_name}" PARENT_SCOPE)
+    unset(_NAME)
+    unset(_URL)
+    unset(_SHA256)
+    unset(_DIR)
 endfunction()
