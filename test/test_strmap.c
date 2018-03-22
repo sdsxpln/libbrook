@@ -27,7 +27,9 @@
 
 #include "bk_assert.h"
 
+#ifndef __ANDROID__
 #include <string.h>
+#endif
 #include <brook.h>
 
 static inline void test_strmap_name(struct bk_strmap *pair) {
@@ -191,7 +193,11 @@ static inline void test_strmap_iter(struct bk_strmap **map) {
 }
 
 static int strmap_sort_empty(void *cls, struct bk_strmap *pair_a, struct bk_strmap *pair_b) {
+#ifdef __ANDROID__
+    sprintf(cls, "%s%s", (char *) cls, (char *) cls);
+#else
     strcat(cls, cls);
+#endif
     (void) pair_a;
     (void) pair_b;
     return 0;

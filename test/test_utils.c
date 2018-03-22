@@ -27,7 +27,9 @@
 
 #include "bk_assert.h"
 
+#ifndef __ANDROID__
 #include <string.h>
+#endif
 #include "brook.h"
 #include "bk_utils.h"
 
