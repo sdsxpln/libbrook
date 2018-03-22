@@ -58,11 +58,11 @@ static inline void test_str_printf_va(struct bk_str *str, const char *fmt, va_li
 
 static void test_str_printf(struct bk_str *str, const char *fmt, ...) {
     va_list ap;
-    ASSERT(bk_str_printf(NULL, "") == -EINVAL);
+    ASSERT(bk_str_printf(NULL, "%s", "") == -EINVAL);
     ASSERT(bk_str_printf(str, NULL) == -EINVAL);
 
     bk_str_clear(str);
-    ASSERT(bk_str_printf(str, "") == 0);
+    ASSERT(bk_str_printf(str, "%s", "") == 0);
     ASSERT(strlen(bk_str_content(str)) == 0);
     ASSERT(bk_str_printf(str, "%s%d", "abc", 123) == 0);
     ASSERT(strcmp(bk_str_content(str), "abc123") == 0);
