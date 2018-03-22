@@ -74,7 +74,8 @@ extern const char *bk_version_str(void);
  * \return Pointer of the zero-initialized allocated memory.
  * \retval NULL When size is `0` or no memory space.
  */
-extern void *bk_alloc(size_t size);
+extern void *bk_alloc(size_t size)
+__attribute__((malloc));
 
 /**
  * Frees a memory space previous allocated by #bk_alloc().
@@ -102,7 +103,8 @@ struct bk_str;
  * \return String handle.
  * \warning It exits the application when no memory space available.
  */
-extern struct bk_str *bk_str_new(void);
+extern struct bk_str *bk_str_new(void)
+__attribute__((malloc));
 
 /**
  * Frees a string handle previous allocated by #bk_str_new().
@@ -142,7 +144,8 @@ extern int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap);
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_str_printf(struct bk_str *str, const char *fmt, ...);
+extern int bk_str_printf(struct bk_str *str, const char *fmt, ...)
+__attribute__((format(printf, 2, 3)));
 
 /**
  * Returns the null-terminated string content from the string handle \p str.

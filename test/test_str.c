@@ -58,7 +58,7 @@ static inline void test_str_printf_va(struct bk_str *str, const char *fmt, va_li
 
 static void test_str_printf(struct bk_str *str, const char *fmt, ...) {
     va_list ap;
-    ASSERT(bk_str_printf(NULL, fmt) == -EINVAL);
+    ASSERT(bk_str_printf(NULL, "") == -EINVAL);
     ASSERT(bk_str_printf(str, NULL) == -EINVAL);
 
     bk_str_clear(str);
