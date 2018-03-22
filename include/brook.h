@@ -310,10 +310,26 @@ extern void bk_strmap_cleanup(struct bk_strmap **map);
 
 /** \} */
 
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
 struct bk_httpsrv;
 
-extern struct bk_httpsrv *bk_httpsrv_new(void);
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+enum BK_HTTPSRV_OPT {
+    /* experimental: it will be documented and tested as soon as it is accepted as better API. */
+            BK_HTTPSRV_OPT_PORT = 0
+};
 
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern struct bk_httpsrv *bk_httpsrv_new(void)
+__attribute__((malloc));
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern int bk_httpsrv_setopt_va(struct bk_httpsrv *srv, va_list ap);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern int bk_httpsrv_setopt(struct bk_httpsrv *srv, ...);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern void bk_httpsrv_free(struct bk_httpsrv *srv);
 
 #ifdef __cplusplus

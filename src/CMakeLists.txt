@@ -55,6 +55,7 @@ list(APPEND BK_C_SOURCE
         ${BK_SOURCE_DIR}/bk_utils.c
         ${BK_SOURCE_DIR}/bk_str.c
         ${BK_SOURCE_DIR}/bk_strmap.c
+        ${BK_SOURCE_DIR}/bk_httpsrv_cfg.c
         ${BK_SOURCE_DIR}/bk_httpsrv.c)
 set(BK_C_SOURCE ${BK_C_SOURCE} PARENT_SCOPE)
 
