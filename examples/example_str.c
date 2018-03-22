@@ -32,24 +32,21 @@
     abc123
 */
 
+/* NOTE: Error checking has been omitted for clarity. */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <brook.h>
 
 int main(void) {
     struct bk_str *str;
-
-    str = bk_str_new(); /* create the string handle `str`. */
-
-    bk_str_printf(str, "%s\n", "Hello, world!"); /* print "Hello, world!" to the handle. */
-    printf("%s", bk_str_content(str)); /* get the printed content "hi" from `str` to the output screen. */
-    bk_str_clear(str); /* clear all printed content in `str`. */
-
-    bk_str_printf(str, "%s", "abc"); /* print "abc" to the handle. */
-    bk_str_printf(str, "%d\n", 123); /* print "123" to the handle. */
-    printf("%s", bk_str_content(str)); /* get the printed content "abc123" from `str` to the output screen. */
-
-    bk_str_free(str); /* free the string handle `str`. */
-
+    str = bk_str_new();
+    bk_str_printf(str, "%s\n", "Hello, world!");
+    printf("%s", bk_str_content(str));
+    bk_str_clear(str);
+    bk_str_printf(str, "%s", "abc");
+    bk_str_printf(str, "%d\n", 123);
+    printf("%s", bk_str_content(str));
+    bk_str_free(str);
     return EXIT_SUCCESS;
 }
