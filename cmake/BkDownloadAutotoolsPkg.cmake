@@ -84,7 +84,7 @@ Generated: ${_sha256}")
         message(STATUS "Extracting ${_NAME}")
     endif ()
     execute_process(COMMAND ${CMAKE_COMMAND} -E tar zxvf ${_full_filename}
-            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            WORKING_DIRECTORY ${_DIR}
             ERROR_VARIABLE _error
             RESULT_VARIABLE _result
             OUTPUT_QUIET)
@@ -102,7 +102,8 @@ ${_error}")
     endif ()
     string(REPLACE ".tar.gz" "" _name ${_filename})
     unset(_filename)
-    set(${_NAME}_DIR "${CMAKE_BINARY_DIR}/${_name}" PARENT_SCOPE)
+    set(${_NAME}_DIR "${_DIR}/${_name}" PARENT_SCOPE)
+    set(${_NAME}_NAME "${_name}" PARENT_SCOPE)
     unset(_name)
     unset(_NAME)
     unset(_URL)

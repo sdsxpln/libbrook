@@ -27,7 +27,8 @@ function(build_autotools_project)
         message(STATUS "Configuring ${_NAME}")
     endif ()
     set(_configure "../configure")
-    execute_process(COMMAND ${_configure} --prefix=${_DIR} --host=${CMAKE_C_MACHINE} ${_OPTIONS}
+    set(${_NAME}_PREFIX ${CMAKE_BINARY_DIR}/${libmicrohttpd_NAME})
+    execute_process(COMMAND ${_configure} --prefix=${libmicrohttpd_PREFIX} --host=${CMAKE_C_MACHINE} ${_OPTIONS}
             WORKING_DIRECTORY ${_build_dir}
             ERROR_VARIABLE _error
             RESULT_VARIABLE _result
@@ -88,4 +89,7 @@ ${_error}")
     set(${_NAME}_BUILD_DIR "${_build_dir}" PARENT_SCOPE)
     unset(_build_dir)
     unset(_DIR)
+    set(${_NAME}_INCLUDE ${libmicrohttpd_PREFIX}/include PARENT_SCOPE)
+    set(${_NAME}_LIB ${libmicrohttpd_PREFIX}/lib PARENT_SCOPE)
+    set(${_NAME}_A ${_NAME}_LIB/libmicrohttpd.a PARENT_SCOPE)
 endfunction()
