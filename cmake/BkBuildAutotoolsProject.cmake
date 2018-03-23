@@ -27,7 +27,7 @@ function(build_autotools_project)
         message(STATUS "Configuring ${_NAME}")
     endif ()
     set(_configure "../configure")
-    execute_process(COMMAND ${_configure} --prefix=${_build_dir} --host=${CMAKE_C_MACHINE} ${_OPTIONS}
+    execute_process(COMMAND ${_configure} --prefix=${_DIR} --host=${CMAKE_C_MACHINE} ${_OPTIONS}
             WORKING_DIRECTORY ${_build_dir}
             ERROR_VARIABLE _error
             RESULT_VARIABLE _result
@@ -62,7 +62,29 @@ ${_error}")
     if (NOT _QUIET)
         message(STATUS "Building ${_NAME} - done")
     endif ()
-    #TODO: make install / make install-strip?
+    if (NOT _QUIET)
+        message(STATUS "Installing ${_NAME}")
+    endif ()
+    set(_install_args install)
+    if (${CMAKE_BUILD_TYPE} MATCHES "[Rr]elease|RELEASE")
+        set(_install_args ${_install_args}-strip)
+    endif ()
+    execute_process(COMMAND ${CMAKE_MAKE_PROGRAM} ${_install_args}
+            WORKING_DIRECTORY ${_build_dir}
+            ERROR_VARIABLE _error
+            RESULT_VARIABLE _result
+            OUTPUT_QUIET)
+    unset(_install_args)
+    if (NOT _result EQUAL 0)
+        message(FATAL_ERROR "\
+Error installing ${_NAME}
+${_error}")
+    endif ()
+    unset(_result)
+    unset(_error)
+    if (NOT _QUIET)
+        message(STATUS "Installing ${_NAME} - done")
+    endif ()
     set(${_NAME}_BUILD_DIR "${_build_dir}" PARENT_SCOPE)
     unset(_build_dir)
     unset(_DIR)
