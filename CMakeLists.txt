@@ -112,7 +112,16 @@ if (UNIX AND (NOT APPLE))
         include_directories(/usr/include/asm-generic)
     endif ()
 endif ()
-include_directories(${BK_INCLUDE_DIR})
+
+include(BkDownloadAutotoolsPkg)
+download_autotools_package(NAME ${MHD_NAME}
+        URL ${MHD_URL}
+        SHA256 ${MHD_SHA256}
+        DIR ${BK_LIB_DIR})
+
+include_directories(
+        ${BK_INCLUDE_DIR}
+        ${libmicrohttpd_DIR})
 
 add_subdirectory(src)
 add_subdirectory(examples)
