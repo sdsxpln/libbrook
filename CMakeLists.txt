@@ -119,9 +119,7 @@ download_autotools_package(NAME ${MHD_NAME}
         SHA256 ${MHD_SHA256}
         DIR ${BK_LIB_DIR})
 
-include_directories(
-        ${BK_INCLUDE_DIR}
-        ${libmicrohttpd_DIR})
+include_directories(${BK_INCLUDE_DIR})
 
 add_subdirectory(src)
 add_subdirectory(examples)

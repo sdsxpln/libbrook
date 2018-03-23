@@ -27,8 +27,8 @@ function(build_autotools_project)
         message(STATUS "Configuring ${_NAME}")
     endif ()
     set(_configure "../configure")
-    set(${_NAME}_PREFIX ${CMAKE_BINARY_DIR}/${libmicrohttpd_NAME})
-    execute_process(COMMAND ${_configure} --prefix=${libmicrohttpd_PREFIX} --host=${CMAKE_C_MACHINE} ${_OPTIONS}
+    set(_prefix ${CMAKE_BINARY_DIR}/${_NAME})
+    execute_process(COMMAND ${_configure} --prefix=${_prefix} --host=${CMAKE_C_MACHINE} ${_OPTIONS}
             WORKING_DIRECTORY ${_build_dir}
             ERROR_VARIABLE _error
             RESULT_VARIABLE _result
@@ -86,10 +86,11 @@ ${_error}")
     if (NOT _QUIET)
         message(STATUS "Installing ${_NAME} - done")
     endif ()
-    set(${_NAME}_BUILD_DIR "${_build_dir}" PARENT_SCOPE)
+    set(${_NAME}_BUILD_DIR ${_build_dir} PARENT_SCOPE)
+    set(${_NAME}_INCLUDE ${_prefix}/include PARENT_SCOPE)
+    set(${_NAME}_LIB ${_prefix}/lib PARENT_SCOPE)
+    set(${_NAME}_A ${_NAME}_LIB/${_NAME}.a PARENT_SCOPE)
     unset(_build_dir)
+    unset(_prefix)
     unset(_DIR)
-    set(${_NAME}_INCLUDE ${libmicrohttpd_PREFIX}/include PARENT_SCOPE)
-    set(${_NAME}_LIB ${libmicrohttpd_PREFIX}/lib PARENT_SCOPE)
-    set(${_NAME}_A ${_NAME}_LIB/libmicrohttpd.a PARENT_SCOPE)
 endfunction()
