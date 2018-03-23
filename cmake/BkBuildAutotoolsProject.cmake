@@ -62,6 +62,7 @@ ${_error}")
     if (NOT _QUIET)
         message(STATUS "Building ${_NAME} - done")
     endif ()
+    #TODO: make install / make install-strip?
     set(${_NAME}_BUILD_DIR "${_build_dir}" PARENT_SCOPE)
     unset(_build_dir)
     unset(_DIR)
