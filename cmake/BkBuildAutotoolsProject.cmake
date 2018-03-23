@@ -8,9 +8,10 @@ set(__BK_BUILD_AUTOTOOLS_PROJECT_INCLUDED ON)
 include(CMakeParseArguments)
 
 function(build_autotools_project)
-    set(_args NAME DIR OPTIONS)
     set(_options QUIET)
-    cmake_parse_arguments("" "${_options}" "${_args}" "" ${ARGN})
+    set(_args NAME DIR)
+    set(_multi_args OPTIONS)
+    cmake_parse_arguments("" "${_options}" "${_args}" "${_multi_args}" ${ARGN})
     unset(_options)
     unset(_args)
     if ("${_NAME}" STREQUAL "")
@@ -26,7 +27,7 @@ function(build_autotools_project)
         message(STATUS "Configuring ${_NAME}")
     endif ()
     set(_configure "../configure")
-    execute_process(COMMAND ${_configure} ${_OPTIONS}
+    execute_process(COMMAND ${_configure} --prefix=${_build_dir} ${_OPTIONS}
             WORKING_DIRECTORY ${_build_dir}
             ERROR_VARIABLE _error
             RESULT_VARIABLE _result
