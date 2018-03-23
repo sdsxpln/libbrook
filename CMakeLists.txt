@@ -67,14 +67,14 @@ include(BkVersion)
 include(BkPC)
 include(BkUninstall)
 
-if (NOT CMAKE_MACHINE)
+if (NOT CMAKE_C_MACHINE)
     execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpmachine
             OUTPUT_VARIABLE _machine
             RESULT_VARIABLE _result
             OUTPUT_STRIP_TRAILING_WHITESPACE
             ERROR_QUIET)
     if (_result EQUAL 0)
-        set(CMAKE_MACHINE "${_machine}") # the machine which building for
+        set(CMAKE_C_MACHINE "${_machine}") # the machine which building for
     endif ()
     unset(_machine)
     unset(_result)
