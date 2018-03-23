@@ -145,6 +145,7 @@ Brook library ${VERSION} - building summary:
   Compiler:
     Executable: ${CMAKE_C_COMPILER}
     Version: ${CMAKE_C_COMPILER_VERSION}
+    Machine: ${CMAKE_MACHINE}
     CFLAGS: ${_cflags}
   Build: ${_build_type}-${_build_arch} (${_lib_type})
   Examples: ${_build_examples}
