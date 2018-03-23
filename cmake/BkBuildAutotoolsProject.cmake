@@ -27,7 +27,7 @@ function(build_autotools_project)
         message(STATUS "Configuring ${_NAME}")
     endif ()
     set(_configure "../configure")
-    execute_process(COMMAND ${_configure} --prefix=${_build_dir} ${_OPTIONS}
+    execute_process(COMMAND ${_configure} --prefix=${_build_dir} --host=${CMAKE_C_MACHINE} ${_OPTIONS}
             WORKING_DIRECTORY ${_build_dir}
             ERROR_VARIABLE _error
             RESULT_VARIABLE _result
