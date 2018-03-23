@@ -19,17 +19,14 @@ function(build_autotools_project)
     if ("${_DIR}" STREQUAL "")
         message(FATAL_ERROR "DIR should not be empty.")
     endif ()
-    set(_configure "../configure")
-    if (_OPTIONS)
-        set(_configure "${_configure} ${_OPTIONS}")
-    endif ()
     set(_build_dir "${_DIR}/build")
     file(REMOVE_RECURSE ${_build_dir})
     file(MAKE_DIRECTORY ${_build_dir})
     if (NOT _QUIET)
         message(STATUS "Configuring ${_NAME}")
     endif ()
-    execute_process(COMMAND ${_configure}
+    set(_configure "../configure")
+    execute_process(COMMAND ${_configure} ${_OPTIONS}
             WORKING_DIRECTORY ${_build_dir}
             ERROR_VARIABLE _error
             RESULT_VARIABLE _result
