@@ -8,11 +8,14 @@ set(__BK_BUILD_AUTOTOOLS_PROJECT_INCLUDED ON)
 include(CMakeParseArguments)
 
 function(build_autotools_project)
-    set(_args DIR OPTIONS)
+    set(_args NAME DIR OPTIONS)
     set(_options QUIET)
     cmake_parse_arguments("" "${_options}" "${_args}" "" ${ARGN})
     unset(_options)
     unset(_args)
+    if ("${_NAME}" STREQUAL "")
+        message(FATAL_ERROR "NAME should not be empty.")
+    endif ()
     if ("${_DIR}" STREQUAL "")
         message(FATAL_ERROR "DIR should not be empty.")
     endif ()
@@ -24,36 +27,42 @@ function(build_autotools_project)
     file(REMOVE_RECURSE ${_build_dir})
     file(MAKE_DIRECTORY ${_build_dir})
     if (NOT _QUIET)
-        message(STATUS "Configuring ${_NAME}...")
+        message(STATUS "Configuring ${_NAME}")
     endif ()
     execute_process(COMMAND ${_configure}
             WORKING_DIRECTORY ${_build_dir}
+            ERROR_VARIABLE _error
             RESULT_VARIABLE _result
-            OUTPUT_QUIET
-            ERROR_QUIET)
+            OUTPUT_QUIET)
     if (NOT _result EQUAL 0)
         file(REMOVE_RECURSE ${_DIR})
-        message(FATAL_ERROR "Error configuring ${_NAME}")
+        message(FATAL_ERROR "\
+Error configuring ${_NAME}
+${_error}")
     endif ()
     unset(_result)
+    unset(_error)
     unset(_configure)
     if (NOT _QUIET)
-        message(STATUS "Configuring ${_NAME}... done")
+        message(STATUS "Configuring ${_NAME} - done")
     endif ()
     if (NOT _QUIET)
-        message(STATUS "Building ${_NAME}...")
+        message(STATUS "Building ${_NAME}")
     endif ()
     execute_process(COMMAND ${CMAKE_MAKE_PROGRAM}
             WORKING_DIRECTORY ${_build_dir}
+            ERROR_VARIABLE _error
             RESULT_VARIABLE _result
-            OUTPUT_QUIET
-            ERROR_QUIET)
+            OUTPUT_QUIET)
     if (NOT _result EQUAL 0)
-        message(FATAL_ERROR "Error building ${_NAME}")
+        message(FATAL_ERROR "\
+Error building ${_NAME}
+${_error}")
     endif ()
     unset(_result)
+    unset(_error)
     if (NOT _QUIET)
-        message(STATUS "Building ${_NAME}... done")
+        message(STATUS "Building ${_NAME} - done")
     endif ()
     set(${_NAME}_BUILD_DIR "${_build_dir}" PARENT_SCOPE)
     unset(_build_dir)
