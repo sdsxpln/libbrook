@@ -1,0 +1,1 @@
+#TODO: implement it using abi-dumper/abi-compliance-checker (possible usage idea: make check-compatibility)
