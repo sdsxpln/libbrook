@@ -63,7 +63,6 @@ set(MHD_OPTIONS
         "--enable-https=no"
         "--enable-asserts=no"
         "--enable-coverage=no"
-        "--disable-httpupgrade"
         "--disable-doc"
         "--disable-examples"
         "--disable-curl")
@@ -83,6 +82,8 @@ include(BkIsARM)
 include(BkFlags)
 include(BkGNUSource)
 include(BkVersion)
+include(BkDownloadAutotoolsPkg)
+include(BkBuildAutotoolsProject)
 include(BkPC)
 include(BkUninstall)
 
@@ -113,7 +114,6 @@ if (UNIX AND (NOT APPLE))
     endif ()
 endif ()
 
-include(BkDownloadAutotoolsPkg)
 download_autotools_package(NAME ${MHD_NAME}
         URL ${MHD_URL}
         SHA256 ${MHD_SHA256}
