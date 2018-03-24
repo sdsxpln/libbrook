@@ -53,7 +53,6 @@ endif ()
 if (BK_PICKY_COMPILER)
     if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
         #-Wsign-conversion - needs to fix (un)signed bugs in utstring.h
-        #-Wpadded - depends on https://github.com/troydhanson/uthash/pull/151
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wextra -Wdeclaration-after-statement -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline")
         if (NOT ARM)
             set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wpedantic")
