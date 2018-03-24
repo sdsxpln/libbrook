@@ -1,4 +1,62 @@
-#TODO: this module is experimental, it will be documented as soon as it was done
+#.rst:
+# BkDownloadAutotoolsPkg
+# ----------------------
+#
+# Downloads a tar.gz package containing an autotools project.
+#
+# Allows to download a tar.gz package containing a project using autotools building system.
+#
+# ::
+#
+# Provides fucntion:
+#
+#   download_autotools_package(NAME projectName
+#           URL http[s]://<host>/projectName.tar.gz
+#           SHA256 <sha256>
+#           DIR destination
+#           [QUIET])
+#
+# Example:
+#
+#   download_autotools_package(NAME myproject
+#           URL https://host.org/myproject.tar.gz
+#           SHA256 e78286616f05390350cd47b89d096b7fe8a86447d6ebb79d75f3089dd322b808
+#           DIR ${CMAKE_SOURCE_DIR}/lib)
+#
+
+#
+# Variables:
+#
+#   projectName_DIR - Directory containing the library source.
+#   projectName_NAME - Name declared to the project.
+#
+
+#    _____   _____    _____   _____   _   __
+#   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
+#   | |_) | | |_) |  | | | | | | | | | |/ /
+#   |  _ <  |  _ <   | | | | | | | | |   (
+#   | |_) | | | \ \  | |_| | | |_| | | |\ \
+#   |_____/ |_|  \_\ \_____/ \_____/ |_| \_\
+#
+#   –– a small library which helps you write quickly REST APIs.
+#
+# Copyright (c) 2012-2018 Silvio Clecio <silvioprog@gmail.com>
+#
+# This file is part of Brook library.
+#
+# Brook library is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Brook library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
+#
 
 if (__BK_DOWNLOAD_AUTOTOOLS_PKG_INCLUDED)
     return()

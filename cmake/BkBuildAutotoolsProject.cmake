@@ -1,4 +1,52 @@
-#TODO: this module is experimental, it will be documented as soon as it was done
+#.rst:
+# BkBuildAutotoolsProject
+# -----------------------
+#
+# Builds an autotools project.
+#
+# Allows to build a project using autotools building system.
+#
+# ::
+#
+# Provides:
+#
+#   build_autotools_project(NAME projectName
+#           DIR projectDir
+#           CONFIG_OPTIONS configureOptions
+#           [QUIET])
+#
+# Example:
+#
+#   build_autotools_project(NAME myproject
+#           DIR ${CMAKE_SOURCE_DIR}/myproject
+#           CONFIG_OPTIONS "-static" "--with-pic")
+
+#    _____   _____    _____   _____   _   __
+#   |  _  \ |  _  \  /  _  \ /  _  \ | | / /
+#   | |_) | | |_) |  | | | | | | | | | |/ /
+#   |  _ <  |  _ <   | | | | | | | | |   (
+#   | |_) | | | \ \  | |_| | | |_| | | |\ \
+#   |_____/ |_|  \_\ \_____/ \_____/ |_| \_\
+#
+#   –– a small library which helps you write quickly REST APIs.
+#
+# Copyright (c) 2012-2018 Silvio Clecio <silvioprog@gmail.com>
+#
+# This file is part of Brook library.
+#
+# Brook library is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Brook library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with Brook library.  If not, see <http://www.gnu.org/licenses/>.
+#
 
 if (__BK_BUILD_AUTOTOOLS_PROJECT_INCLUDED)
     return()
@@ -10,7 +58,7 @@ include(CMakeParseArguments)
 function(build_autotools_project)
     set(_options QUIET)
     set(_args NAME DIR)
-    set(_multi_args OPTIONS)
+    set(_multi_args CONFIG_OPTIONS)
     cmake_parse_arguments("" "${_options}" "${_args}" "${_multi_args}" ${ARGN})
     unset(_options)
     unset(_args)
@@ -28,7 +76,7 @@ function(build_autotools_project)
     endif ()
     set(_configure "../configure")
     set(_prefix ${CMAKE_BINARY_DIR}/${_NAME})
-    execute_process(COMMAND ${_configure} --prefix=${_prefix} --host=${CMAKE_C_MACHINE} ${_OPTIONS}
+    execute_process(COMMAND ${_configure} --prefix=${_prefix} --host=${CMAKE_C_MACHINE} ${_CONFIG_OPTIONS}
             WORKING_DIRECTORY ${_build_dir}
             ERROR_VARIABLE _error
             RESULT_VARIABLE _result
