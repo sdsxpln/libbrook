@@ -66,15 +66,12 @@ list(APPEND BK_SOURCE
 set(BK_SOURCE ${BK_SOURCE} PARENT_SCOPE)
 
 add_library(brook ${BK_SOURCE})
-if (NOT EXISTS ${libmicrohttpd_A})
+if (NOT EXISTS ${MHD_STATIC_LIB})
     build_autotools_project(NAME ${MHD_NAME}
             DIR ${libmicrohttpd_DIR}
             OPTIONS ${MHD_OPTIONS})
-    set(libmicrohttpd_INCLUDE ${libmicrohttpd_INCLUDE} CACHE STRING "libmicrohttpd include path")
-    set(libmicrohttpd_A ${libmicrohttpd_A} CACHE STRING "libmicrohttpd static library")
 endif ()
-target_include_directories(brook PUBLIC ${libmicrohttpd_INCLUDE})
-target_link_libraries(brook ${libmicrohttpd_A})
+target_link_libraries(brook ${MHD_STATIC_LIB})
 if (UNIX)
     target_link_libraries(brook pthread)
 endif ()
