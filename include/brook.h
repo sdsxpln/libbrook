@@ -42,7 +42,13 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+#include <stdbool.h>
 #include <stdarg.h>
+
+/* auto enable library features. */
+#ifndef BK_HTTPSRV
+#define BK_HTTPSRV 1
+#endif
 
 #define BK_VERSION_MAJOR 0
 #define BK_VERSION_MINOR 0
@@ -310,27 +316,42 @@ extern void bk_strmap_cleanup(struct bk_strmap **map);
 
 /** \} */
 
+#ifdef BK_HTTPSRV
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+struct bk_httpsrv_req;
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+struct bk_httpsrv_res;
+
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 struct bk_httpsrv;
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-enum BK_HTTPSRV_OPT {
-    /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-            BK_HTTPSRV_OPT_PORT = 0
-};
+typedef void (*bk_httpsrv_err_cb)(void *cls, const char *err);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern struct bk_httpsrv *bk_httpsrv_new(void)
+typedef int (*bk_httpsrv_req_cb)(void *cls, struct bk_httpsrv_req *req, struct bk_httpsrv_res *res);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern struct bk_httpsrv *bk_httpsrv_new2(bk_httpsrv_req_cb req_cb, void *req_cls,
+                                          bk_httpsrv_err_cb err_cb, void *err_cls)
 __attribute__((malloc));
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern int bk_httpsrv_setopt_va(struct bk_httpsrv *srv, va_list ap);
-
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern int bk_httpsrv_setopt(struct bk_httpsrv *srv, ...);
+extern struct bk_httpsrv *bk_httpsrv_new(bk_httpsrv_req_cb req_cb, void *req_cls)
+__attribute__((malloc));
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern void bk_httpsrv_free(struct bk_httpsrv *srv);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern int bk_httpsrv_start(struct bk_httpsrv *srv, unsigned int port, bool threaded);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+extern int bk_httpsrv_stop(struct bk_httpsrv *srv /* TODO: bool gracefully? */);
+
+#endif
 
 #ifdef __cplusplus
 }
