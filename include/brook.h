@@ -45,10 +45,6 @@ extern "C" {
 #include <stdbool.h>
 #include <stdarg.h>
 
-#ifndef __BK_NONNULL
-#define __BK_NONNULL(...) __attribute__((__nonnull__(__VA_ARGS__)))
-#endif
-
 #ifndef __BK_MALLOC
 #define __BK_MALLOC __attribute__((malloc))
 #endif
@@ -99,8 +95,7 @@ __BK_MALLOC;
  * Frees a memory space previous allocated by #bk_alloc().
  * \param[in] ptr Pointer of the memory to be freed.
  */
-extern void bk_free(void *ptr)
-__BK_NONNULL(1);
+extern void bk_free(void *ptr);
 
 /** \} */
 
@@ -129,8 +124,7 @@ __BK_MALLOC;
  * Frees a string handle previous allocated by #bk_str_new().
  * \param[in] str Pointer of the string handle to be freed.
  */
-extern void bk_str_free(struct bk_str *str)
-__BK_NONNULL(1);
+extern void bk_str_free(struct bk_str *str);
 
 /**
  * Copies a null-terminated string to the string handle \p str. All strings previously copied are kept.
@@ -140,8 +134,7 @@ __BK_NONNULL(1);
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_str_strcpy(struct bk_str *str, const char *val, size_t len)
-__BK_NONNULL(1, 2);
+extern int bk_str_strcpy(struct bk_str *str, const char *val, size_t len);
 
 /**
  * Prints a formatted null-terminated string from variable argument list to the string handle \p str.
@@ -153,13 +146,7 @@ __BK_NONNULL(1, 2);
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap)
-#ifdef __ANDROID__
-__BK_NONNULL(1, 2)
-#else
-__BK_NONNULL(1, 2, 3)
-#endif
-;
+extern int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap);
 
 /**
  * Prints a formatted null-terminated string to the string handle \p str. All strings previously written are kept.
@@ -172,7 +159,6 @@ __BK_NONNULL(1, 2, 3)
  * \retval -EINVAL - Invalid argument.
  */
 extern int bk_str_printf(struct bk_str *str, const char *fmt, ...)
-__BK_NONNULL(1, 2)
 __BK_FORMAT(2, 3);
 
 /**
@@ -181,8 +167,7 @@ __BK_FORMAT(2, 3);
  * \return Content as static null-terminated string.
  * \retval NULL When the \p str is `NULL`.
  */
-extern const char *bk_str_content(struct bk_str *str)
-__BK_NONNULL(1);
+extern const char *bk_str_content(struct bk_str *str);
 
 /**
  * Returns the total string length from the handle \p str.
@@ -190,8 +175,7 @@ __BK_NONNULL(1);
  * \return Total string length.
  * \retval -EINVAL - Invalid argument.
  */
-extern size_t bk_str_length(struct bk_str *str)
-__BK_NONNULL(1);
+extern size_t bk_str_length(struct bk_str *str);
 
 /**
  * Cleans all written string present in the string handle \p str.
@@ -199,8 +183,7 @@ __BK_NONNULL(1);
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_str_clear(struct bk_str *str)
-__BK_NONNULL(1);
+extern int bk_str_clear(struct bk_str *str);
 
 /** \} */
 
@@ -239,8 +222,7 @@ typedef int (*bk_strmap_sort_cb)(void *cls, struct bk_strmap *pair_a, struct bk_
  * \return Name as null-terminated string.
  * \retval NULL When the \p pair is `NULL`.
  */
-extern const char *bk_strmap_name(struct bk_strmap *pair)
-__BK_NONNULL(1);
+extern const char *bk_strmap_name(struct bk_strmap *pair);
 
 /**
  * Returns the value from the \p pair.
@@ -248,8 +230,7 @@ __BK_NONNULL(1);
  * \return Value as null-terminated string.
  * \retval NULL When the \p pair is `NULL`.
  */
-extern const char *bk_strmap_val(struct bk_strmap *pair)
-__BK_NONNULL(1);
+extern const char *bk_strmap_val(struct bk_strmap *pair);
 
 /**
  * Adds a pair of null-terminated string to the \p map.
@@ -262,8 +243,7 @@ __BK_NONNULL(1);
  * by the application.
  * \warning It exits the application when no memory space available.
  */
-extern int bk_strmap_add(struct bk_strmap **map, const char *name, const char *val)
-__BK_NONNULL(1, 2, 3);
+extern int bk_strmap_add(struct bk_strmap **map, const char *name, const char *val);
 
 /**
  * Sets a pair of null-terminated string to the \p map.
@@ -276,8 +256,7 @@ __BK_NONNULL(1, 2, 3);
  * otherwise it is added as a new pair.
  * \warning It exits the application when no memory space available.
  */
-extern int bk_strmap_set(struct bk_strmap **map, const char *name, const char *val)
-__BK_NONNULL(1, 2, 3);
+extern int bk_strmap_set(struct bk_strmap **map, const char *name, const char *val);
 
 /**
  * Finds a pair by its name.
@@ -288,8 +267,7 @@ __BK_NONNULL(1, 2, 3);
  * \retval -EINVAL - Invalid argument.
  * \retval -ENOENT - Pair not found.
  */
-extern int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_strmap **pair)
-__BK_NONNULL(1, 2, 3);
+extern int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_strmap **pair);
 
 /**
  * Removes a pair by its name.
@@ -299,8 +277,7 @@ __BK_NONNULL(1, 2, 3);
  * \retval -EINVAL - Invalid argument.
  * \retval -ENOENT - Pair already removed.
  */
-extern int bk_strmap_rm(struct bk_strmap **map, const char *name)
-__BK_NONNULL(1, 2);
+extern int bk_strmap_rm(struct bk_strmap **map, const char *name);
 
 /**
  * Iterates over pairs map.
@@ -311,8 +288,7 @@ __BK_NONNULL(1, 2);
  * \retval -EINVAL - Invalid argument.
  * \return Callback result when it is different from `0`.
  */
-extern int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb cb, void *cls)
-__BK_NONNULL(1, 2);
+extern int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb cb, void *cls);
 
 /**
  * Sorts the pairs map.
@@ -322,8 +298,7 @@ __BK_NONNULL(1, 2);
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cb, void *cls)
-__BK_NONNULL(1, 2);
+extern int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cb, void *cls);
 
 /**
  * Counts the total pairs present in the map.
@@ -331,8 +306,7 @@ __BK_NONNULL(1, 2);
  * \return Total of pairs.
  * \retval 0 When the list is empty or null.
  */
-extern unsigned int bk_strmap_count(struct bk_strmap *map)
-__BK_NONNULL(1);
+extern unsigned int bk_strmap_count(struct bk_strmap *map);
 
 /**
  * Returns the next pair in the map.
@@ -340,15 +314,13 @@ __BK_NONNULL(1);
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_strmap_next(struct bk_strmap **next)
-__BK_NONNULL(1);
+extern int bk_strmap_next(struct bk_strmap **next);
 
 /**
  * Cleans the entire map.
  * \param[in] map Pointer to the pairs map.
  */
-extern void bk_strmap_cleanup(struct bk_strmap **map)
-__BK_NONNULL(1);
+extern void bk_strmap_cleanup(struct bk_strmap **map);
 
 /** \} */
 
