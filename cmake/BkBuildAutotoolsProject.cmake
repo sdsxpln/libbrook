@@ -69,8 +69,16 @@ function(build_autotools_project)
         message(FATAL_ERROR "DIR should not be empty.")
     endif ()
     set(_build_dir "${_DIR}/build")
-    file(REMOVE_RECURSE ${_build_dir})
-    file(MAKE_DIRECTORY ${_build_dir})
+    if (MINGW AND NOT UNIX)
+        execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${_build_dir})
+        # We are using "execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_build_dir})" intead of
+        # "file(MAKE_DIRECTORY ${_build_dir})" on MinGW just because it changes the
+        # "${CMAKE_BINARY_DIR}" to "${_build_dir}" on Windows.
+        execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${_build_dir})
+    else ()
+        file(REMOVE_RECURSE ${_build_dir})
+        file(MAKE_DIRECTORY ${_build_dir})
+    endif ()
     if (NOT _QUIET)
         message(STATUS "Configuring ${_NAME}")
     endif ()
@@ -82,7 +90,6 @@ function(build_autotools_project)
             RESULT_VARIABLE _result
             OUTPUT_QUIET)
     if (NOT _result EQUAL 0)
-        file(REMOVE_RECURSE ${_DIR})
         message(FATAL_ERROR "\
 Error configuring ${_NAME}
 ${_error}")
