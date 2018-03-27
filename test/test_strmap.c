@@ -195,11 +195,7 @@ static inline void test_strmap_iter(struct bk_strmap **map) {
 }
 
 static int strmap_sort_empty(void *cls, struct bk_strmap *pair_a, struct bk_strmap *pair_b) {
-#ifdef __ANDROID__
     sprintf(cls, "%s%s", (char *) cls, (char *) cls);
-#else
-    strcat(cls, cls);
-#endif
     (void) pair_a;
     (void) pair_b;
     return 0;
