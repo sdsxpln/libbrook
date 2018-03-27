@@ -44,15 +44,10 @@ project(brook C)
 set(CMAKE_C_STANDARD 99)
 
 set(PROJECT_DESCRIPTION "–– a small library which helps you write quickly REST APIs.")
-
 set(PROJECT_VENDOR "The Brook Library Development Team")
-
 set(PROJECT_URL "https://github.com/risoflora/libbrook")
-
 set(PROJECT_ISSUES_URL "${PROJECT_URL}/issues")
-
 set(BK_LIB_DIR ${CMAKE_SOURCE_DIR}/lib)
-
 set(BK_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
 if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
@@ -62,6 +57,7 @@ endif ()
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 include(GNUInstallDirs)
+include(ExternalProject)
 include(BkIsARM)
 include(BkFlags)
 include(BkGNUSource)
@@ -98,6 +94,7 @@ if (UNIX AND (NOT APPLE))
 endif ()
 
 include_directories(${BK_INCLUDE_DIR})
+include_directories(${MHD_INCLUDE_DIR})
 
 add_subdirectory(src)
 add_subdirectory(examples)

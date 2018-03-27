@@ -65,7 +65,8 @@ list(APPEND BK_SOURCE
 set(BK_SOURCE ${BK_SOURCE} PARENT_SCOPE)
 
 add_library(brook ${BK_SOURCE})
-#TODO: link MHD static library
+add_dependencies(brook ${MHD_FULL_NAME})
+target_link_libraries(brook ${MHD_ARCHIVE_LIB})
 if (UNIX)
     target_link_libraries(brook pthread)
 endif ()
