@@ -47,7 +47,6 @@ set(PROJECT_DESCRIPTION "–– a small library which helps you write quickly RE
 set(PROJECT_VENDOR "The Brook Library Development Team")
 set(PROJECT_URL "https://github.com/risoflora/libbrook")
 set(PROJECT_ISSUES_URL "${PROJECT_URL}/issues")
-set(BK_LIB_DIR ${CMAKE_SOURCE_DIR}/lib)
 set(BK_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
 if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
