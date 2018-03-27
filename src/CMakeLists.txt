@@ -65,12 +65,7 @@ list(APPEND BK_SOURCE
 set(BK_SOURCE ${BK_SOURCE} PARENT_SCOPE)
 
 add_library(brook ${BK_SOURCE})
-if (NOT EXISTS ${MHD_STATIC_LIB})
-    build_autotools_project(NAME ${MHD_NAME}
-            DIR ${libmicrohttpd_DIR}
-            CONFIG_OPTIONS ${MHD_OPTIONS})
-endif ()
-target_link_libraries(brook ${MHD_STATIC_LIB})
+#TODO: link MHD static library
 if (UNIX)
     target_link_libraries(brook pthread)
 endif ()
