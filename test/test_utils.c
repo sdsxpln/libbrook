@@ -31,7 +31,8 @@
 #include <string.h>
 #endif
 #include "brook.h"
-#include "bk_utils.h"
+
+extern void bk__toasciilower(char *str);
 
 static inline void test_version(void) {
     const char *ver_original;
