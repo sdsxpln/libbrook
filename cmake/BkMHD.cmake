@@ -41,7 +41,7 @@
 
 set(MHD_NAME "libmicrohttpd")
 set(MHD_VER "0.9.59")
-set(MHD_FULL_NAME ${MHD_NAME}-${MHD_VER})
+set(MHD_FULL_NAME "${MHD_NAME}-${MHD_VER}")
 set(MHD_URL "https://ftp.gnu.org/gnu/libmicrohttpd/${MHD_FULL_NAME}.tar.gz")
 set(MHD_SHA256 "9b9ccd7d0b11b0e179f1f58dc2caa3e0c62c8609e1e1dc7dcaadf941b67d923c")
 set(MHD_OPTIONS
@@ -54,19 +54,24 @@ set(MHD_OPTIONS
         "--disable-examples"
         "--disable-curl")
 
+if (MINGW)
+    set(_bash bash)
+endif ()
+
 ExternalProject_Add(${MHD_FULL_NAME}
         URL ${MHD_URL}
         URL_HASH SHA256=${MHD_SHA256}
         DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/lib
         PREFIX ${CMAKE_BINARY_DIR}/${MHD_FULL_NAME}
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/${MHD_FULL_NAME}
-        CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> ${MHD_OPTIONS}
+        CONFIGURE_COMMAND ${_bash} <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> ${MHD_OPTIONS}
         BUILD_COMMAND ${CMAKE_MAKE_PROGRAM}
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install
-        LOG_DOWNLOAD 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_INSTALL 1)
+        LOG_DOWNLOAD ON
+        LOG_CONFIGURE ON
+        LOG_BUILD ON
+        LOG_INSTALL ON)
+unset(_bash)
 
 ExternalProject_Get_Property(${MHD_FULL_NAME} INSTALL_DIR)
 set(MHD_INCLUDE_DIR ${INSTALL_DIR}/include)
