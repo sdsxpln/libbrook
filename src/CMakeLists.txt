@@ -69,6 +69,8 @@ add_dependencies(brook ${MHD_FULL_NAME})
 target_link_libraries(brook ${MHD_ARCHIVE_LIB})
 if (UNIX)
     target_link_libraries(brook pthread)
+elseif (WIN32)
+    target_link_libraries(brook ws2_32)
 endif ()
 if (BUILD_SHARED_LIBS)
     set_target_properties(brook PROPERTIES
