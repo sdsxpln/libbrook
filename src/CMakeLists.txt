@@ -66,12 +66,14 @@ set(BK_SOURCE ${BK_SOURCE} PARENT_SCOPE)
 
 add_library(brook ${BK_SOURCE})
 add_dependencies(brook ${MHD_FULL_NAME})
-target_link_libraries(brook ${MHD_ARCHIVE_LIB})
+list(APPEND _libs ${MHD_ARCHIVE_LIB})
 if (UNIX)
-    target_link_libraries(brook pthread)
+    list(APPEND _libs pthread)
 elseif (WIN32)
-    target_link_libraries(brook ws2_32)
+    list(APPEND _libs ws2_32)
 endif ()
+target_link_libraries(brook ${_libs})
+unset(_libs)
 if (BUILD_SHARED_LIBS)
     set_target_properties(brook PROPERTIES
             PUBLIC_HEADER ${BK_INCLUDE_DIR}/brook.h
