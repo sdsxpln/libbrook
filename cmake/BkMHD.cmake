@@ -45,19 +45,22 @@ set(MHD_FULL_NAME "${MHD_NAME}-${MHD_VER}")
 set(MHD_URL "https://ftp.gnu.org/gnu/libmicrohttpd/${MHD_FULL_NAME}.tar.gz")
 set(MHD_SHA256 "9b9ccd7d0b11b0e179f1f58dc2caa3e0c62c8609e1e1dc7dcaadf941b67d923c")
 set(MHD_OPTIONS
-        "--enable-static=yes"
-        "--enable-shared=no"
-        "--enable-messages=yes"
-        "--enable-https=no" #TODO: enable by options, something like -DBK_HTTPS_SUPPORT=ON
-        "--enable-asserts=no"
-        "--enable-coverage=no"
-        "--disable-doc"
-        "--disable-examples"
-        "--disable-curl")
+        --enable-static=yes
+        --enable-shared=no
+        --enable-messages=yes
+        --enable-https=no #TODO: enable by options, something like -DBK_HTTPS_SUPPORT=ON
+        --enable-asserts=no
+        --enable-coverage=no
+        --disable-doc
+        --disable-examples
+        --disable-curl)
 if (MINGW)
-    set(MHD_OPTIONS ${MHD_OPTIONS} "--quiet")
+    set(MHD_OPTIONS ${MHD_OPTIONS} --quiet)
     set(_manifest_tool MANIFEST_TOOL=:)
     set(_log_configure OFF)
+elseif (UNIX)
+    set(MHD_OPTIONS ${MHD_OPTIONS} --with-pic)
+    set(_log_configure ON)
 else ()
     set(_log_configure ON)
 endif ()
