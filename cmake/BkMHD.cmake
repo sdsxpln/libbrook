@@ -54,9 +54,11 @@ set(MHD_OPTIONS
         "--disable-doc"
         "--disable-examples"
         "--disable-curl")
-
 if (MINGW)
-    set(_bash bash)
+    set(MHD_OPTIONS ${MHD_OPTIONS} "--quiet")
+    set(_log_configure OFF)
+else ()
+    set(_log_configure ON)
 endif ()
 
 ExternalProject_Add(${MHD_FULL_NAME}
@@ -65,14 +67,13 @@ ExternalProject_Add(${MHD_FULL_NAME}
         DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/lib
         PREFIX ${CMAKE_BINARY_DIR}/${MHD_FULL_NAME}
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/${MHD_FULL_NAME}
-        CONFIGURE_COMMAND ${_bash} <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> ${MHD_OPTIONS}
+        CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR> ${MHD_OPTIONS}
         BUILD_COMMAND ${CMAKE_MAKE_PROGRAM}
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install
         LOG_DOWNLOAD ON
-        LOG_CONFIGURE ON
+        LOG_CONFIGURE ${_log_configure}
         LOG_BUILD ON
         LOG_INSTALL ON)
-unset(_bash)
 
 ExternalProject_Get_Property(${MHD_FULL_NAME} INSTALL_DIR)
 set(MHD_INCLUDE_DIR ${INSTALL_DIR}/include)
