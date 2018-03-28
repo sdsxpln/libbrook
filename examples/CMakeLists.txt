@@ -65,7 +65,6 @@ if (BK_BUILD_EXAMPLES)
             list(APPEND BK_EXAMPLES_SOURCE ${BK_EXAMPLES_DIR}/example_${_example}.c)
             add_executable(example_${_example}
                     ${BK_EXAMPLES_DIR}/example_${_example}.c)
-            add_dependencies(example_${_example} brook)
             target_link_libraries(example_${_example} ${_libs})
         endif ()
         unset(_EXAMPLE)
