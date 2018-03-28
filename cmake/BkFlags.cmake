@@ -46,7 +46,7 @@ set(__BK_FLAGS_INCLUDED ON)
 
 option(BK_PICKY_COMPILER "Enable picky compiler options" ON)
 
-if (ARM)
+if (ARM OR MINGW)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static")
 endif ()
 
