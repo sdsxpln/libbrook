@@ -65,7 +65,6 @@ if (BUILD_TESTING)
                     ${BK_TESTS_DIR}/bk_assert.h
                     ${BK_TESTS_DIR}/test_${_test}.c)
             target_link_libraries(test_${_test} ${_libs})
-            target_include_directories(test_${_test} PUBLIC ${BK_SOURCE_DIR})
             add_test(NAME test_${_test}
                     WORKING_DIRECTORY ${BK_TESTS_DIR}
                     COMMAND test_${_test})
