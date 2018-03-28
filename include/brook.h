@@ -352,7 +352,7 @@ extern struct bk_httpsrv *bk_httpsrv_new(bk_httpsrv_req_cb req_cb, void *req_cls
 extern void bk_httpsrv_free(struct bk_httpsrv *srv);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern int bk_httpsrv_start(struct bk_httpsrv *srv, unsigned int port, bool threaded);
+extern int bk_httpsrv_start(struct bk_httpsrv *srv, unsigned short port, bool threaded);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 extern int bk_httpsrv_stop(struct bk_httpsrv *srv /* TODO: bool gracefully? */);

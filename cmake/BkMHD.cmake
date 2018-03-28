@@ -47,6 +47,7 @@ set(MHD_SHA256 "9b9ccd7d0b11b0e179f1f58dc2caa3e0c62c8609e1e1dc7dcaadf941b67d923c
 set(MHD_OPTIONS
         "--enable-static=yes"
         "--enable-shared=no"
+        "--enable-messages=yes"
         "--enable-https=no" #TODO: enable by options, something like -DBK_HTTPS_SUPPORT=ON
         "--enable-asserts=no"
         "--enable-coverage=no"
