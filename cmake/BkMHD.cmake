@@ -56,6 +56,7 @@ set(MHD_OPTIONS
         "--disable-curl")
 if (MINGW)
     set(MHD_OPTIONS ${MHD_OPTIONS} "--quiet")
+    set(_manifest_tool MANIFEST_TOOL=:)
     set(_log_configure OFF)
 else ()
     set(_log_configure ON)
@@ -67,7 +68,7 @@ ExternalProject_Add(${MHD_FULL_NAME}
         DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/lib
         PREFIX ${CMAKE_BINARY_DIR}/${MHD_FULL_NAME}
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/${MHD_FULL_NAME}
-        CONFIGURE_COMMAND <SOURCE_DIR>/configure --host=${CMAKE_C_MACHINE} --prefix=<INSTALL_DIR> ${MHD_OPTIONS}
+        CONFIGURE_COMMAND <SOURCE_DIR>/configure ${_manifest_tool} --host=${CMAKE_C_MACHINE} --prefix=<INSTALL_DIR> ${MHD_OPTIONS}
         BUILD_COMMAND ${CMAKE_MAKE_PROGRAM}
         INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install
         LOG_DOWNLOAD ON
