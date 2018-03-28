@@ -53,18 +53,6 @@ if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_COMPILER_IS_CLANG ON)
 endif ()
 
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-
-include(GNUInstallDirs)
-include(ExternalProject)
-include(BkIsARM)
-include(BkFlags)
-include(BkGNUSource)
-include(BkVersion)
-include(BkMHD)
-include(BkPC)
-include(BkUninstall)
-
 if (NOT CMAKE_C_MACHINE)
     execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpmachine
             OUTPUT_VARIABLE _machine
@@ -77,6 +65,18 @@ if (NOT CMAKE_C_MACHINE)
     unset(_machine)
     unset(_result)
 endif ()
+
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
+include(GNUInstallDirs)
+include(ExternalProject)
+include(BkIsARM)
+include(BkFlags)
+include(BkGNUSource)
+include(BkVersion)
+include(BkMHD)
+include(BkPC)
+include(BkUninstall)
 
 if (CMAKE_BUILD_TYPE MATCHES "[Rr]elease|RELEASE")
     set(BUILD_TESTING OFF)
