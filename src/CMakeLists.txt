@@ -76,6 +76,7 @@ target_link_libraries(brook ${_libs})
 unset(_libs)
 if (BUILD_SHARED_LIBS)
     set_target_properties(brook PROPERTIES
+            COMPILE_DEFINITIONS BUILDING_LIBBROOK
             PUBLIC_HEADER ${BK_INCLUDE_DIR}/brook.h
             VERSION ${VERSION}
             SOVERSION ${SOVERSION})

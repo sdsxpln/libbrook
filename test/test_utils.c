@@ -32,7 +32,7 @@
 #endif
 #include "brook.h"
 
-extern void bk__toasciilower(char *str);
+BK_EXTERN void bk__toasciilower(char *str);
 
 static inline void test_version(void) {
     const char *ver_original;

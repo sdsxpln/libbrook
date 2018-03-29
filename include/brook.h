@@ -45,6 +45,18 @@ extern "C" {
 #include <stdbool.h>
 #include <stdarg.h>
 
+#ifndef BK_EXTERN
+# if defined(_WIN32)
+#  if defined(BUILDING_LIBBROOK)
+#   define BK_EXTERN __declspec(dllexport) extern
+#  else
+#   define BK_EXTERN __declspec(dllimport) extern
+#  endif
+# else
+#  define BK_EXTERN extern
+# endif
+#endif
+
 #ifndef __BK_MALLOC
 #define __BK_MALLOC __attribute__((malloc))
 #endif
@@ -74,13 +86,13 @@ extern "C" {
  * Returns the library version number.
  * \return Library version packed into a single integer.
  */
-extern unsigned int bk_version(void);
+BK_EXTERN unsigned int bk_version(void);
 
 /**
  * Returns the library version number as string.
  * \return Library version packed into a null-terminated static string.
  */
-extern const char *bk_version_str(void);
+BK_EXTERN const char *bk_version_str(void);
 
 /**
  * Allocates a new zero-initialize memory space.
@@ -88,14 +100,14 @@ extern const char *bk_version_str(void);
  * \return Pointer of the zero-initialized allocated memory.
  * \retval NULL When size is `0` or no memory space.
  */
-extern void *bk_alloc(size_t size)
+BK_EXTERN void *bk_alloc(size_t size)
 __BK_MALLOC;
 
 /**
  * Frees a memory space previous allocated by #bk_alloc().
  * \param[in] ptr Pointer of the memory to be freed.
  */
-extern void bk_free(void *ptr);
+BK_EXTERN void bk_free(void *ptr);
 
 /** \} */
 
@@ -117,14 +129,14 @@ struct bk_str;
  * \return String handle.
  * \warning It exits the application when no memory space available.
  */
-extern struct bk_str *bk_str_new(void)
+BK_EXTERN struct bk_str *bk_str_new(void)
 __BK_MALLOC;
 
 /**
  * Frees a string handle previous allocated by #bk_str_new().
  * \param[in] str Pointer of the string handle to be freed.
  */
-extern void bk_str_free(struct bk_str *str);
+BK_EXTERN void bk_str_free(struct bk_str *str);
 
 /**
  * Copies a null-terminated string to the string handle \p str. All strings previously copied are kept.
@@ -134,7 +146,7 @@ extern void bk_str_free(struct bk_str *str);
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_str_strcpy(struct bk_str *str, const char *val, size_t len);
+BK_EXTERN int bk_str_strcpy(struct bk_str *str, const char *val, size_t len);
 
 /**
  * Prints a formatted null-terminated string from variable argument list to the string handle \p str.
@@ -146,7 +158,7 @@ extern int bk_str_strcpy(struct bk_str *str, const char *val, size_t len);
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap);
+BK_EXTERN int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap);
 
 /**
  * Prints a formatted null-terminated string to the string handle \p str. All strings previously written are kept.
@@ -158,7 +170,7 @@ extern int bk_str_printf_va(struct bk_str *str, const char *fmt, va_list ap);
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_str_printf(struct bk_str *str, const char *fmt, ...)
+BK_EXTERN int bk_str_printf(struct bk_str *str, const char *fmt, ...)
 __BK_FORMAT(2, 3);
 
 /**
@@ -167,7 +179,7 @@ __BK_FORMAT(2, 3);
  * \return Content as static null-terminated string.
  * \retval NULL When the \p str is `NULL`.
  */
-extern const char *bk_str_content(struct bk_str *str);
+BK_EXTERN const char *bk_str_content(struct bk_str *str);
 
 /**
  * Returns the total string length from the handle \p str.
@@ -175,7 +187,7 @@ extern const char *bk_str_content(struct bk_str *str);
  * \return Total string length.
  * \retval -EINVAL - Invalid argument.
  */
-extern size_t bk_str_length(struct bk_str *str);
+BK_EXTERN size_t bk_str_length(struct bk_str *str);
 
 /**
  * Cleans all written string present in the string handle \p str.
@@ -183,7 +195,7 @@ extern size_t bk_str_length(struct bk_str *str);
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_str_clear(struct bk_str *str);
+BK_EXTERN int bk_str_clear(struct bk_str *str);
 
 /** \} */
 
@@ -222,7 +234,7 @@ typedef int (*bk_strmap_sort_cb)(void *cls, struct bk_strmap *pair_a, struct bk_
  * \return Name as null-terminated string.
  * \retval NULL When the \p pair is `NULL`.
  */
-extern const char *bk_strmap_name(struct bk_strmap *pair);
+BK_EXTERN const char *bk_strmap_name(struct bk_strmap *pair);
 
 /**
  * Returns the value from the \p pair.
@@ -230,7 +242,7 @@ extern const char *bk_strmap_name(struct bk_strmap *pair);
  * \return Value as null-terminated string.
  * \retval NULL When the \p pair is `NULL`.
  */
-extern const char *bk_strmap_val(struct bk_strmap *pair);
+BK_EXTERN const char *bk_strmap_val(struct bk_strmap *pair);
 
 /**
  * Adds a pair of null-terminated string to the \p map.
@@ -243,7 +255,7 @@ extern const char *bk_strmap_val(struct bk_strmap *pair);
  * by the application.
  * \warning It exits the application when no memory space available.
  */
-extern int bk_strmap_add(struct bk_strmap **map, const char *name, const char *val);
+BK_EXTERN int bk_strmap_add(struct bk_strmap **map, const char *name, const char *val);
 
 /**
  * Sets a pair of null-terminated string to the \p map.
@@ -256,7 +268,7 @@ extern int bk_strmap_add(struct bk_strmap **map, const char *name, const char *v
  * otherwise it is added as a new pair.
  * \warning It exits the application when no memory space available.
  */
-extern int bk_strmap_set(struct bk_strmap **map, const char *name, const char *val);
+BK_EXTERN int bk_strmap_set(struct bk_strmap **map, const char *name, const char *val);
 
 /**
  * Finds a pair by its name.
@@ -267,7 +279,7 @@ extern int bk_strmap_set(struct bk_strmap **map, const char *name, const char *v
  * \retval -EINVAL - Invalid argument.
  * \retval -ENOENT - Pair not found.
  */
-extern int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_strmap **pair);
+BK_EXTERN int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_strmap **pair);
 
 /**
  * Removes a pair by its name.
@@ -277,7 +289,7 @@ extern int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_str
  * \retval -EINVAL - Invalid argument.
  * \retval -ENOENT - Pair already removed.
  */
-extern int bk_strmap_rm(struct bk_strmap **map, const char *name);
+BK_EXTERN int bk_strmap_rm(struct bk_strmap **map, const char *name);
 
 /**
  * Iterates over pairs map.
@@ -288,7 +300,7 @@ extern int bk_strmap_rm(struct bk_strmap **map, const char *name);
  * \retval -EINVAL - Invalid argument.
  * \return Callback result when it is different from `0`.
  */
-extern int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb cb, void *cls);
+BK_EXTERN int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb cb, void *cls);
 
 /**
  * Sorts the pairs map.
@@ -298,7 +310,7 @@ extern int bk_strmap_iter(struct bk_strmap *map, bk_strmap_iter_cb cb, void *cls
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cb, void *cls);
+BK_EXTERN int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cb, void *cls);
 
 /**
  * Counts the total pairs present in the map.
@@ -306,7 +318,7 @@ extern int bk_strmap_sort(struct bk_strmap **map, bk_strmap_sort_cb cb, void *cl
  * \return Total of pairs.
  * \retval 0 When the list is empty or null.
  */
-extern unsigned int bk_strmap_count(struct bk_strmap *map);
+BK_EXTERN unsigned int bk_strmap_count(struct bk_strmap *map);
 
 /**
  * Returns the next pair in the map.
@@ -314,13 +326,13 @@ extern unsigned int bk_strmap_count(struct bk_strmap *map);
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  */
-extern int bk_strmap_next(struct bk_strmap **next);
+BK_EXTERN int bk_strmap_next(struct bk_strmap **next);
 
 /**
  * Cleans the entire map.
  * \param[in] map Pointer to the pairs map.
  */
-extern void bk_strmap_cleanup(struct bk_strmap **map);
+BK_EXTERN void bk_strmap_cleanup(struct bk_strmap **map);
 
 /** \} */
 
@@ -342,20 +354,20 @@ typedef void (*bk_httpsrv_err_cb)(void *cls, const char *err);
 typedef int (*bk_httpsrv_req_cb)(void *cls, struct bk_httpsrv_req *req, struct bk_httpsrv_res *res);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern struct bk_httpsrv *bk_httpsrv_new2(bk_httpsrv_req_cb req_cb, void *req_cls,
-                                          bk_httpsrv_err_cb err_cb, void *err_cls);
+BK_EXTERN struct bk_httpsrv *bk_httpsrv_new2(bk_httpsrv_req_cb req_cb, void *req_cls,
+                                             bk_httpsrv_err_cb err_cb, void *err_cls);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern struct bk_httpsrv *bk_httpsrv_new(bk_httpsrv_req_cb req_cb, void *req_cls);
+BK_EXTERN struct bk_httpsrv *bk_httpsrv_new(bk_httpsrv_req_cb req_cb, void *req_cls);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern void bk_httpsrv_free(struct bk_httpsrv *srv);
+BK_EXTERN void bk_httpsrv_free(struct bk_httpsrv *srv);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern int bk_httpsrv_start(struct bk_httpsrv *srv, unsigned short port, bool threaded);
+BK_EXTERN int bk_httpsrv_start(struct bk_httpsrv *srv, unsigned short port, bool threaded);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-extern int bk_httpsrv_stop(struct bk_httpsrv *srv /* TODO: bool gracefully? */);
+BK_EXTERN int bk_httpsrv_stop(struct bk_httpsrv *srv /* TODO: bool gracefully? */);
 
 #endif
 
