@@ -46,8 +46,8 @@ extern "C" {
 #include <stdarg.h>
 
 #ifndef BK_EXTERN
-# if defined(_WIN32)
-#  if defined(BUILDING_LIBBROOK)
+# ifdef _WIN32
+#  ifdef BUILDING_LIBBROOK
 #   define BK_EXTERN __declspec(dllexport) extern
 #  else
 #   define BK_EXTERN __declspec(dllimport) extern
