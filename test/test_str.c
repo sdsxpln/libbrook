@@ -27,8 +27,6 @@
 
 #include "bk_assert.h"
 
-#define __BK_NONNULL(...)
-
 #ifndef __ANDROID__
 #include <string.h>
 #endif
