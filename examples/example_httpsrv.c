@@ -5,10 +5,11 @@
 
 /* NOTE: Error checking has been omitted for clarity. */
 
-static int req_cb(void *cls, struct bk_httpsrv_req *req, struct bk_httpsrv_res *res) {
+static int req_cb(void *cls, struct bk_httpreq *req, struct bk_httpres *res) {
     (void) cls;
     (void) req;
-    (void) res;
+    bk_str_printf(bk_httpres_body(res), "%s",
+                  "<html><head><title>Hello world</title></head><body>Hello world</body></html>");
     return 0;
 }
 

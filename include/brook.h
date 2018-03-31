@@ -65,11 +65,6 @@ extern "C" {
 #define __BK_FORMAT(...) __attribute__((format(printf, __VA_ARGS__)))
 #endif
 
-/* auto enable library features. */
-#ifndef BK_HTTPSRV
-#define BK_HTTPSRV 1
-#endif
-
 #define BK_VERSION_MAJOR 0
 #define BK_VERSION_MINOR 0
 #define BK_VERSION_PATCH 1
@@ -336,29 +331,26 @@ BK_EXTERN void bk_strmap_cleanup(struct bk_strmap **map);
 
 /** \} */
 
-#ifdef BK_HTTPSRV
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+struct bk_httpreq;
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-struct bk_httpsrv_req;
-
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
-struct bk_httpsrv_res;
+struct bk_httpres;
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 struct bk_httpsrv;
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-typedef void (*bk_httpsrv_err_cb)(void *cls, const char *err);
+typedef void (*bk_httperr_cb)(void *cls, const char *err);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-typedef int (*bk_httpsrv_req_cb)(void *cls, struct bk_httpsrv_req *req, struct bk_httpsrv_res *res);
+typedef int (*bk_httpreq_cb)(void *cls, struct bk_httpreq *req, struct bk_httpres *res);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN struct bk_httpsrv *bk_httpsrv_new2(bk_httpsrv_req_cb req_cb, void *req_cls,
-                                             bk_httpsrv_err_cb err_cb, void *err_cls);
+BK_EXTERN struct bk_httpsrv *bk_httpsrv_new2(bk_httpreq_cb req_cb, void *req_cls, bk_httperr_cb err_cb, void *err_cls);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN struct bk_httpsrv *bk_httpsrv_new(bk_httpsrv_req_cb req_cb, void *req_cls);
+BK_EXTERN struct bk_httpsrv *bk_httpsrv_new(bk_httpreq_cb cb, void *cls);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN void bk_httpsrv_free(struct bk_httpsrv *srv);
@@ -367,9 +359,16 @@ BK_EXTERN void bk_httpsrv_free(struct bk_httpsrv *srv);
 BK_EXTERN int bk_httpsrv_start(struct bk_httpsrv *srv, unsigned short port, bool threaded);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN int bk_httpsrv_stop(struct bk_httpsrv *srv /* TODO: bool gracefully? */);
+BK_EXTERN int bk_httpsrv_stop(struct bk_httpsrv *srv);
 
-#endif
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN int bk_httpres_type(struct bk_httpres *res, const char *type);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN int bk_httpres_status(struct bk_httpres *res, unsigned int status);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN struct bk_str *bk_httpres_body(struct bk_httpres *res);
 
 #ifdef __cplusplus
 }
