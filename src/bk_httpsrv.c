@@ -57,6 +57,8 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
     *con_cls = NULL;
     res = bk__httpres_new();
     srv->req_cb(srv->req_cls, NULL, res);
+    if (res->status <= 0)
+        return MHD_NO;
     res->handle = MHD_create_response_from_buffer(bk_str_length(res->body), (void *) bk_str_content(res->body),
                                                   MHD_RESPMEM_MUST_COPY);
     MHD_add_response_header(res->handle, MHD_HTTP_HEADER_CONTENT_TYPE, res->type);

@@ -348,7 +348,7 @@ struct bk_httpsrv;
 typedef void (*bk_httperr_cb)(void *cls, const char *err);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-typedef int (*bk_httpreq_cb)(void *cls, struct bk_httpreq *req, struct bk_httpres *res);
+typedef void (*bk_httpreq_cb)(void *cls, struct bk_httpreq *req, struct bk_httpres *res);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN struct bk_httpsrv *bk_httpsrv_new2(/*TODO: auth callback?*/
