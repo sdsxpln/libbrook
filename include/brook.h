@@ -57,6 +57,10 @@ extern "C" {
 # endif
 #endif
 
+#ifndef __BK_UNUSED
+#define __BK_UNUSED __attribute__((unused))
+#endif
+
 #ifndef __BK_MALLOC
 #define __BK_MALLOC __attribute__((malloc))
 #endif
@@ -347,7 +351,9 @@ typedef void (*bk_httperr_cb)(void *cls, const char *err);
 typedef int (*bk_httpreq_cb)(void *cls, struct bk_httpreq *req, struct bk_httpres *res);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN struct bk_httpsrv *bk_httpsrv_new2(bk_httpreq_cb req_cb, void *req_cls, bk_httperr_cb err_cb, void *err_cls);
+BK_EXTERN struct bk_httpsrv *bk_httpsrv_new2(/*TODO: auth callback?*/
+        bk_httpreq_cb req_cb, void *req_cls,
+        bk_httperr_cb err_cb, void *err_cls);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN struct bk_httpsrv *bk_httpsrv_new(bk_httpreq_cb cb, void *cls);
@@ -369,6 +375,12 @@ BK_EXTERN int bk_httpres_status(struct bk_httpres *res, unsigned int status);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN struct bk_str *bk_httpres_body(struct bk_httpres *res);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN int bk_httpres_download(struct bk_httpres *res, const char *filename, bool rendered);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/*BK_EXTERN int bk_httpres_stream(struct bk_httpres *res, );*/
 
 #ifdef __cplusplus
 }

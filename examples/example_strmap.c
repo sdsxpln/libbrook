@@ -43,14 +43,12 @@
 #include <string.h>
 #include <brook.h>
 
-static int map_sort(void *cls, struct bk_strmap *pair_a, struct bk_strmap *pair_b) {
-    (void) cls;
+static int map_sort(__BK_UNUSED void *cls, struct bk_strmap *pair_a, struct bk_strmap *pair_b) {
     return strcmp(bk_strmap_val(pair_b), bk_strmap_val(pair_a)); /* desc */
 }
 
-static int map_iter(void *cls, struct bk_strmap *pair) {
+static int map_iter(__BK_UNUSED void *cls, struct bk_strmap *pair) {
     const char *name = bk_strmap_name(pair);
-    (void) cls;
     printf("\t%c: %s\n", *name, name);
     return 0;
 }

@@ -137,3 +137,10 @@ struct bk_str *bk_httpres_body(struct bk_httpres *res) {
         return NULL;
     return res->body;
 }
+
+int bk_httpres_download(struct bk_httpres *res, const char *filename, bool rendered) {
+    (void) res;
+    (void) filename;
+    (void) rendered;
+    return 0;
+}
