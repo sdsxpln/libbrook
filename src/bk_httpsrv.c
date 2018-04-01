@@ -128,7 +128,7 @@ int bk_httpres_type(struct bk_httpres *res, const char *type) {
 }
 
 int bk_httpres_status(struct bk_httpres *res, unsigned int status) {
-    if (!res || status == 0)
+    if (!res)
         return -EINVAL;
     res->status = status;
     return 0;
