@@ -43,6 +43,7 @@ extern "C" {
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdarg.h>
 
 #ifndef BK_EXTERN
@@ -362,25 +363,27 @@ BK_EXTERN struct bk_httpsrv *bk_httpsrv_new(bk_httpreq_cb cb, void *cls);
 BK_EXTERN void bk_httpsrv_free(struct bk_httpsrv *srv);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN int bk_httpsrv_start(struct bk_httpsrv *srv, unsigned short port, bool threaded);
+BK_EXTERN int bk_httpsrv_start(struct bk_httpsrv *srv, uint16_t port, bool threaded);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN int bk_httpsrv_stop(struct bk_httpsrv *srv);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN int bk_httpres_type(struct bk_httpres *res, const char *type);
+BK_EXTERN int bk_httpres_send(struct bk_httpres *res, const char *val, const char *content_type, unsigned int status);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN int bk_httpres_status(struct bk_httpres *res, unsigned int status);
+BK_EXTERN int bk_httpres_sendbinary(struct bk_httpres *res, void *buffer, size_t size, const char *content_type,
+                                    unsigned int status);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN struct bk_str *bk_httpres_body(struct bk_httpres *res);
+BK_EXTERN int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, const char *content_type,
+                                 unsigned int status);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN int bk_httpres_download(struct bk_httpres *res, const char *filename, bool rendered);
+BK_EXTERN int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-/*BK_EXTERN int bk_httpres_stream(struct bk_httpres *res, );*/
+/*BK_EXTERN int bk_httpres_sendstream(struct bk_httpres *res);*/
 
 #ifdef __cplusplus
 }

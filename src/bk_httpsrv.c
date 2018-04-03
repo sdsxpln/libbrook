@@ -17,34 +17,16 @@ static void bk__httpsrv_oel(void *cls, const char *fmt, va_list ap) {
     srv->err_cb(srv->err_cls, err);
 }
 
-static void bk__httpres_free(struct bk_httpres *res) {
-    if (!res)
-        return;
-    bk_str_free(res->body);
-    bk_free(res->type);
-    bk_free(res);
-}
-
-static struct bk_httpres *bk__httpres_new(void) {
-    struct bk_httpres *res = bk_alloc(sizeof(struct bk_httpres));
-    if (!res)
-        return NULL;
-    res->body = bk_str_new();
-    res->type = strdup("text/html; charset=utf-8");
-    res->status = MHD_HTTP_OK;
-    if (!res->body || !res->type) {
-        bk__httpres_free(res);
-        return NULL;
-    }
-    return res;
+static void bk__httpres_init(struct MHD_Connection *con, struct bk_httpres *res) {
+    memset(res, 0, sizeof(struct bk_httpres));
+    res->con = con;
+    res->ret = MHD_NO;
 }
 
 static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *url, const char *method,
                            const char *version, const char *upld_data, size_t *upld_data_size, void **con_cls) {
     struct bk_httpsrv *srv = cls;
-    struct bk_httpres *res;
-    int ret;
-    (void) cls;
+    struct bk_httpres res;
     (void) url;
     (void) version;
     (void) method;
@@ -55,17 +37,9 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
         return MHD_YES;
     }
     *con_cls = NULL;
-    res = bk__httpres_new();
-    srv->req_cb(srv->req_cls, NULL, res);
-    if (res->status <= 0)
-        return MHD_NO;
-    res->handle = MHD_create_response_from_buffer(bk_str_length(res->body), (void *) bk_str_content(res->body),
-                                                  MHD_RESPMEM_MUST_COPY);
-    MHD_add_response_header(res->handle, MHD_HTTP_HEADER_CONTENT_TYPE, res->type);
-    ret = MHD_queue_response(con, res->status, res->handle);
-    MHD_destroy_response(res->handle);
-    bk__httpres_free(res);
-    return ret;
+    bk__httpres_init(con, &res);
+    srv->req_cb(srv->req_cls, NULL, &res);
+    return res.ret;
 }
 
 struct bk_httpsrv *bk_httpsrv_new2(bk_httpreq_cb req_cb, void *req_cls, bk_httperr_cb err_cb, void *err_cls) {
@@ -86,12 +60,11 @@ struct bk_httpsrv *bk_httpsrv_new(bk_httpreq_cb cb, void *cls) {
 void bk_httpsrv_free(struct bk_httpsrv *srv) {
     if (!srv)
         return;
-    if (srv->handle)
-        bk_httpsrv_stop(srv);
+    bk_httpsrv_stop(srv);
     bk_free(srv);
 }
 
-int bk_httpsrv_start(struct bk_httpsrv *srv, unsigned short port, bool threaded) {
+int bk_httpsrv_start(struct bk_httpsrv *srv, uint16_t port, bool threaded) {
     (void) threaded;
     if (!srv || port <= 0)
         return -EINVAL;
@@ -120,29 +93,41 @@ int bk_httpsrv_stop(struct bk_httpsrv *srv) {
     return 0;
 }
 
-int bk_httpres_type(struct bk_httpres *res, const char *type) {
-    if (!res || !type)
+int bk_httpres_send(struct bk_httpres *res, const char *val, const char *content_type, unsigned int status) {
+    if (!val)
         return -EINVAL;
-    res->type = strdup(type);
+    bk_httpres_sendbinary(res, (void *) val, strlen(val), content_type, status);
     return 0;
 }
 
-int bk_httpres_status(struct bk_httpres *res, unsigned int status) {
-    if (!res)
+int bk_httpres_sendbinary(struct bk_httpres *res, void *buffer, size_t size, const char *content_type,
+                          unsigned int status) {
+    if (!res || !buffer || !content_type || status <= 0)
         return -EINVAL;
-    res->status = status;
+    if (res->handle)
+        return -EALREADY;
+    res->handle = MHD_create_response_from_buffer(size, buffer, MHD_RESPMEM_MUST_COPY);
+    MHD_add_response_header(res->handle, MHD_HTTP_HEADER_CONTENT_TYPE, content_type);
+    res->ret = MHD_queue_response(res->con, status, res->handle);
+    MHD_destroy_response(res->handle);
     return 0;
 }
 
-struct bk_str *bk_httpres_body(struct bk_httpres *res) {
-    if (!res)
-        return NULL;
-    return res->body;
+int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, const char *content_type,
+                       unsigned int status) {
+    if (!str)
+        return -EINVAL;
+    bk_httpres_sendbinary(res, (void *) bk_str_content(str), bk_str_length(str), content_type, status);
+    return 0;
 }
 
-int bk_httpres_download(struct bk_httpres *res, const char *filename, bool rendered) {
+int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered) {
     (void) res;
     (void) filename;
     (void) rendered;
     return 0;
 }
+
+/*int bk_httpres_sendstream(struct bk_httpres *res) {
+    return 0;
+}*/
