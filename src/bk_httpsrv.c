@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <errno.h>
+#include <sys/stat.h>
+#ifdef __linux__
+#include <linux/limits.h>
+#endif
 #include "microhttpd.h"
 #include "brook.h"
 #include "bk_httpsrv.h"
@@ -40,6 +44,17 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
     bk__httpres_init(con, &res);
     srv->req_cb(srv->req_cls, NULL, &res);
     return res.ret;
+}
+
+static ssize_t bk__httpfilewrite_cb(void *cls, uint64_t offset, char *buf, size_t size) {
+    FILE *file = cls;
+    fseek(file, offset, SEEK_SET);
+    return fread(buf, sizeof(char), size, file);
+}
+
+
+static void bk__httpfilefree_cb(void *cls) {
+    fclose(cls);
 }
 
 struct bk_httpsrv *bk_httpsrv_new2(bk_httpreq_cb req_cb, void *req_cls, bk_httperr_cb err_cb, void *err_cls) {
@@ -100,13 +115,13 @@ int bk_httpres_send(struct bk_httpres *res, const char *val, const char *content
     return 0;
 }
 
-int bk_httpres_sendbinary(struct bk_httpres *res, void *buffer, size_t size, const char *content_type,
+int bk_httpres_sendbinary(struct bk_httpres *res, void *buf, size_t size, const char *content_type,
                           unsigned int status) {
-    if (!res || !buffer || !content_type || status <= 0)
+    if (!res || !buf || !content_type || status <= 0)
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
-    res->handle = MHD_create_response_from_buffer(size, buffer, MHD_RESPMEM_MUST_COPY);
+    res->handle = MHD_create_response_from_buffer(size, buf, MHD_RESPMEM_MUST_COPY);
     MHD_add_response_header(res->handle, MHD_HTTP_HEADER_CONTENT_TYPE, content_type);
     res->ret = MHD_queue_response(res->con, status, res->handle);
     MHD_destroy_response(res->handle);
@@ -122,12 +137,47 @@ int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, const char *c
 }
 
 int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered) {
-    (void) res;
-    (void) filename;
-    (void) rendered;
+    FILE *file;
+    struct stat buf;
+    char attach_filename[PATH_MAX];
+    int fd, ret;
+    file = fopen(filename, "rb");
+    if (!file)
+        return -errno;
+    fd = fileno(file);
+    if (fd == -1) {
+        fclose(file);
+        return -errno;
+    }
+    if ((ret = fstat(fd, &buf) != 0)) {
+        fclose(file);
+        return -ret;
+    }
+    if (!(ret = S_ISREG(buf.st_mode))) {
+        fclose(file);
+        return ret;
+    }
+    sprintf(attach_filename, "%s; filename=\"%s\"", (rendered ? "inline" : "attachment"), basename(filename));
+    MHD_add_response_header(res->handle, MHD_HTTP_HEADER_CONTENT_DISPOSITION, attach_filename);
+    ret = bk_httpres_sendstream(res, bk__httpfilewrite_cb, bk__httpfilefree_cb, file, (uint64_t) buf.st_size, 32768);
+    if (ret != 0)
+        fclose(file);
+    return ret;
+}
+
+int bk_httpres_sendstream(struct bk_httpres *res, bk_httpread_cb write_cb, bk_httpfree_cb flush_cb, void *cls,
+                          uint64_t size, size_t block_size) {
+    if (!res)
+        return -EINVAL;
+    if (res->handle)
+        return -EALREADY;
+    res->handle = MHD_create_response_from_callback(size, block_size, write_cb, cls, flush_cb);
+    res->ret = MHD_queue_response(res->con, MHD_HTTP_OK, res->handle);
+    MHD_destroy_response(res->handle);
     return 0;
 }
 
-/*int bk_httpres_sendstream(struct bk_httpres *res) {
-    return 0;
-}*/
+int bk_httpres_senddata(struct bk_httpres *res, bk_httpread_cb read_cb, bk_httpfree_cb free_cb, void *cls,
+                        size_t block_size) {
+    return bk_httpres_sendstream(res, read_cb, free_cb, cls, MHD_SIZE_UNKNOWN, block_size);
+}

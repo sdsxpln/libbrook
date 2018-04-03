@@ -41,6 +41,7 @@
 extern "C" {
 #endif
 
+#include <stdio.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -352,6 +353,12 @@ typedef void (*bk_httperr_cb)(void *cls, const char *err);
 typedef void (*bk_httpreq_cb)(void *cls, struct bk_httpreq *req, struct bk_httpres *res);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
+typedef ssize_t (*bk_httpread_cb)(void *cls, uint64_t offset, char *buf, size_t size);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+typedef void (*bk_httpfree_cb)(void *cls);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN struct bk_httpsrv *bk_httpsrv_new2(/*TODO: auth callback?*/
         bk_httpreq_cb req_cb, void *req_cls,
         bk_httperr_cb err_cb, void *err_cls);
@@ -372,7 +379,7 @@ BK_EXTERN int bk_httpsrv_stop(struct bk_httpsrv *srv);
 BK_EXTERN int bk_httpres_send(struct bk_httpres *res, const char *val, const char *content_type, unsigned int status);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN int bk_httpres_sendbinary(struct bk_httpres *res, void *buffer, size_t size, const char *content_type,
+BK_EXTERN int bk_httpres_sendbinary(struct bk_httpres *res, void *buf, size_t size, const char *content_type,
                                     unsigned int status);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
@@ -383,7 +390,12 @@ BK_EXTERN int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, con
 BK_EXTERN int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-/*BK_EXTERN int bk_httpres_sendstream(struct bk_httpres *res);*/
+BK_EXTERN int bk_httpres_sendstream(struct bk_httpres *res, bk_httpread_cb write_cb, bk_httpfree_cb flush_cb,
+                                    void *cls, uint64_t size, size_t block_size);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN int bk_httpres_senddata(struct bk_httpres *res, bk_httpread_cb read_cb, bk_httpfree_cb free_cb, void *cls,
+                                  size_t block_size);
 
 #ifdef __cplusplus
 }
