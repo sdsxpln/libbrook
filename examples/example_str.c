@@ -26,10 +26,9 @@
  */
 
 /*
-    the full output is:
+    the output is:
     ./example_str
-    Hello, world!
-    abc123
+    Hello world
 */
 
 /* NOTE: Error checking has been omitted for clarity. */
@@ -39,13 +38,8 @@
 #include <brook.h>
 
 int main(void) {
-    struct bk_str *str;
-    str = bk_str_new();
-    bk_str_printf(str, "%s\n", "Hello, world!");
-    printf("%s", bk_str_content(str));
-    bk_str_clear(str);
-    bk_str_printf(str, "%s", "abc");
-    bk_str_printf(str, "%d\n", 123);
+    struct bk_str *str = bk_str_new();
+    bk_str_printf(str, "%s %s", "Hello", "world");
     printf("%s", bk_str_content(str));
     bk_str_free(str);
     return EXIT_SUCCESS;
