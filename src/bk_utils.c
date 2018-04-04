@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "brook.h"
 #include "bk_macros.h"
 #include "bk_utils.h"
 
