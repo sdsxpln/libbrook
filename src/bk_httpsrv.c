@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <errno.h>
 #include <sys/stat.h>
-#ifdef __linux__
-#include <linux/limits.h>
-#endif
 #include "microhttpd.h"
 #include "brook.h"
+#ifdef __MINGW32__
+#include "bk_utils.h"
+#endif
 #include "bk_httpsrv.h"
 
 static void bk__httperr_cb(void *cls, const char *err) {
@@ -157,7 +157,7 @@ int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, const char *c
 int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered) {
     FILE *file;
     struct stat buf;
-    char attach_filename[PATH_MAX];
+    char attach_filename[1024];
     int fd, ret;
     if (!res || !filename)
         return -EINVAL;
@@ -183,7 +183,7 @@ int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rende
         fclose(file);
         return -EBADF;
     }
-    snprintf(attach_filename, PATH_MAX, "%s; filename=\"%s\"", (rendered ? "inline" : "attachment"),
+    snprintf(attach_filename, sizeof(attach_filename), "%s; filename=\"%s\"", (rendered ? "inline" : "attachment"),
              basename(filename));
     if ((ret = bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, attach_filename)) != 0) {
         fclose(file);

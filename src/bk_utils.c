@@ -30,9 +30,26 @@
 #include <ctype.h>
 #include "bk_macros.h"
 #include "bk_utils.h"
-#include "brook.h"
 
 #define BK_VERSION_STR xstr(BK_VERSION_MAJOR) "." xstr(BK_VERSION_MINOR) "." xstr(BK_VERSION_PATCH)
+
+/* Platform */
+
+#ifdef __MINGW32__
+
+char *basename(const char *path) {
+    char *s1 = strrchr(path, '/');
+    char *s2 = strrchr(path, '\\');
+    if (s1 && s2)
+        path = (s1 > s2) ? s1 + 1 : s2 + 1;
+    else if (s1)
+        path = s1 + 1;
+    else if (s2)
+        path = s2 + 1;
+    return (char *) path;
+}
+
+#endif
 
 /* Version */
 

@@ -12,4 +12,11 @@ BK_EXTERN
 #endif
 void bk__toasciilower(char *str);
 
+#ifdef __MINGW32__
+#ifndef NDEBUG
+BK_EXTERN
+#endif
+char *basename(const char *path);
+#endif
+
 #endif /* BK_UTILS_H */
