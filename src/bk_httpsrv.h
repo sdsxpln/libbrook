@@ -13,7 +13,7 @@ struct bk_httpres {
     struct MHD_Connection *con;
     struct MHD_Response *handle;
     struct bk_strmap *headers;
-    int ret;
+    int result;
 };
 
 struct bk_httpsrv {

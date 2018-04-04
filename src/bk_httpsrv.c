@@ -24,7 +24,7 @@ static void bk__httpsrv_oel(void *cls, const char *fmt, va_list ap) {
 static void bk__httpres_init(struct MHD_Connection *con, struct bk_httpres *res) {
     memset(res, 0, sizeof(struct bk_httpres));
     res->con = con;
-    res->ret = MHD_NO;
+    res->result = MHD_NO;
 }
 
 static void bk__httpres_done(struct bk_httpres res) {
@@ -48,11 +48,11 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
     bk__httpres_init(con, &res);
     srv->req_cb(srv->req_cls, NULL, &res);
     bk__httpres_done(res);
-    return res.ret;
+    return res.result;
 }
 
 static ssize_t bk__httpfileread_cb(void *cls, uint64_t offset, char *buf, size_t size) {
-    if (fseek(cls, offset, SEEK_SET) != 0)
+    if (fseek(cls, offset, SEEK_SET))
         return MHD_CONTENT_READER_END_WITH_ERROR;
     return fread(buf, sizeof(char), size, cls);
 }
@@ -127,21 +127,22 @@ int bk_httpres_send(struct bk_httpres *res, const char *val, const char *content
 
 int bk_httpres_sendbinary(struct bk_httpres *res, void *buf, size_t size, const char *content_type,
                           unsigned int status) {
+    int ret;
     if (!res || !buf || !content_type || status <= 0)
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
     if (!(res->handle = MHD_create_response_from_buffer(size, buf, MHD_RESPMEM_MUST_COPY)))
         return -ENOMEM;
-    if ((res->ret = bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_TYPE, content_type)) != 0) {
+    if ((ret = bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_TYPE, content_type)) != 0) {
         MHD_destroy_response(res->handle);
-        return res->ret;
+        return ret;
     }
-    if ((res->ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0) {
+    if ((ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0) {
         MHD_destroy_response(res->handle);
-        return res->ret;
+        return ret;
     }
-    res->ret = MHD_queue_response(res->con, status, res->handle);
+    res->result = MHD_queue_response(res->con, status, res->handle);
     MHD_destroy_response(res->handle);
     return 0;
 }
@@ -165,12 +166,14 @@ int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rende
     if (!(file = fopen(filename, "rb")))
         return -errno;
     if ((fd = fileno(file)) == -1) {
+        ret = -errno;
         fclose(file);
-        return -errno;
+        return ret;
     }
-    if (fstat(fd, &buf) == -1) {
+    if (fstat(fd, &buf)) {
+        ret = -errno;
         fclose(file);
-        return -errno;
+        return ret;
     }
     if (S_ISDIR(buf.st_mode)) {
         fclose(file);
@@ -182,9 +185,9 @@ int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rende
     }
     snprintf(attach_filename, PATH_MAX, "%s; filename=\"%s\"", (rendered ? "inline" : "attachment"),
              basename(filename));
-    if ((res->ret = bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, attach_filename)) != 0) {
+    if ((ret = bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, attach_filename)) != 0) {
         fclose(file);
-        return res->ret;
+        return ret;
     }
     if ((ret = bk_httpres_sendstream(res, (uint64_t) buf.st_size, 32768, bk__httpfileread_cb, file,
                                      bk__httpfilefree_cb)) != 0)
@@ -194,17 +197,18 @@ int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rende
 
 int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_size, bk_httpread_cb write_cb, void *cls,
                           bk_httpfree_cb flush_cb) {
+    int ret;
     if (!res)
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
     if (!(res->handle = MHD_create_response_from_callback(size, block_size, write_cb, cls, flush_cb)))
         return -ENOMEM;
-    if ((res->ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0) {
+    if ((ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0) {
         MHD_destroy_response(res->handle);
-        return res->ret;
+        return ret;
     }
-    res->ret = MHD_queue_response(res->con, MHD_HTTP_OK, res->handle);
+    res->result = MHD_queue_response(res->con, MHD_HTTP_OK, res->handle);
     MHD_destroy_response(res->handle);
     return 0;
 }
