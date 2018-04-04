@@ -12,7 +12,7 @@ BK_EXTERN
 #endif
 void bk__toasciilower(char *str);
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(__ANDROID__)
 #ifndef NDEBUG
 BK_EXTERN
 #endif
