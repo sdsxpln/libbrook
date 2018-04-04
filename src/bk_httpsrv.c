@@ -27,6 +27,10 @@ static void bk__httpres_init(struct MHD_Connection *con, struct bk_httpres *res)
     res->ret = MHD_NO;
 }
 
+static void bk__httpres_done(struct bk_httpres res) {
+    bk_strmap_cleanup(&res.headers);
+}
+
 static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *url, const char *method,
                            const char *version, const char *upld_data, size_t *upld_data_size, void **con_cls) {
     struct bk_httpsrv *srv = cls;
@@ -43,18 +47,24 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
     *con_cls = NULL;
     bk__httpres_init(con, &res);
     srv->req_cb(srv->req_cls, NULL, &res);
+    bk__httpres_done(res);
     return res.ret;
 }
 
-static ssize_t bk__httpfilewrite_cb(void *cls, uint64_t offset, char *buf, size_t size) {
-    FILE *file = cls;
-    fseek(file, offset, SEEK_SET);
-    return fread(buf, sizeof(char), size, file);
+static ssize_t bk__httpfileread_cb(void *cls, uint64_t offset, char *buf, size_t size) {
+    if (fseek(cls, offset, SEEK_SET) != 0)
+        return MHD_CONTENT_READER_END_WITH_ERROR;
+    return fread(buf, sizeof(char), size, cls);
 }
-
 
 static void bk__httpfilefree_cb(void *cls) {
     fclose(cls);
+}
+
+static int bk__httpheaders_iter(void *cls, struct bk_strmap *header) {
+    if (MHD_add_response_header(cls, header->name, header->val) == MHD_YES)
+        return 0;
+    return -ENOMEM;
 }
 
 struct bk_httpsrv *bk_httpsrv_new2(bk_httpreq_cb req_cb, void *req_cls, bk_httperr_cb err_cb, void *err_cls) {
@@ -80,21 +90,16 @@ void bk_httpsrv_free(struct bk_httpsrv *srv) {
 }
 
 int bk_httpsrv_start(struct bk_httpsrv *srv, uint16_t port, bool threaded) {
-    (void) threaded;
     if (!srv || port <= 0)
         return -EINVAL;
-    if (!srv->handle) {
-        srv->handle = MHD_start_daemon(
-                MHD_USE_DUAL_STACK | MHD_USE_ERROR_LOG | (threaded ? MHD_USE_AUTO_INTERNAL_THREAD :
-                                                          MHD_USE_THREAD_PER_CONNECTION |
-                                                          MHD_USE_INTERNAL_POLLING_THREAD),
-                port, NULL, NULL,
-                bk__httpsrv_ahc, srv,
-                MHD_OPTION_EXTERNAL_LOGGER, bk__httpsrv_oel, srv,
-                MHD_OPTION_END);
-        if (!srv->handle)
-            return -errno;
-    }
+    if (!(srv->handle = MHD_start_daemon(
+            MHD_USE_DUAL_STACK | MHD_USE_ERROR_LOG |
+            (threaded ? MHD_USE_AUTO_INTERNAL_THREAD : MHD_USE_THREAD_PER_CONNECTION | MHD_USE_INTERNAL_POLLING_THREAD),
+            port, NULL, NULL,
+            bk__httpsrv_ahc, srv,
+            MHD_OPTION_EXTERNAL_LOGGER, bk__httpsrv_oel, srv,
+            MHD_OPTION_END)))
+        return -ECONNABORTED;
     return 0;
 }
 
@@ -108,11 +113,16 @@ int bk_httpsrv_stop(struct bk_httpsrv *srv) {
     return 0;
 }
 
+struct bk_strmap **bk_httpres_headers(struct bk_httpres *res) {
+    if (!res)
+        return NULL;
+    return &res->headers;
+}
+
 int bk_httpres_send(struct bk_httpres *res, const char *val, const char *content_type, unsigned int status) {
     if (!val)
         return -EINVAL;
-    bk_httpres_sendbinary(res, (void *) val, strlen(val), content_type, status);
-    return 0;
+    return bk_httpres_sendbinary(res, (void *) val, strlen(val), content_type, status);
 }
 
 int bk_httpres_sendbinary(struct bk_httpres *res, void *buf, size_t size, const char *content_type,
@@ -121,8 +131,16 @@ int bk_httpres_sendbinary(struct bk_httpres *res, void *buf, size_t size, const 
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
-    res->handle = MHD_create_response_from_buffer(size, buf, MHD_RESPMEM_MUST_COPY);
-    MHD_add_response_header(res->handle, MHD_HTTP_HEADER_CONTENT_TYPE, content_type);
+    if (!(res->handle = MHD_create_response_from_buffer(size, buf, MHD_RESPMEM_MUST_COPY)))
+        return -ENOMEM;
+    if ((res->ret = bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_TYPE, content_type)) != 0) {
+        MHD_destroy_response(res->handle);
+        return res->ret;
+    }
+    if ((res->ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0) {
+        MHD_destroy_response(res->handle);
+        return res->ret;
+    }
     res->ret = MHD_queue_response(res->con, status, res->handle);
     MHD_destroy_response(res->handle);
     return 0;
@@ -132,8 +150,7 @@ int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, const char *c
                        unsigned int status) {
     if (!str)
         return -EINVAL;
-    bk_httpres_sendbinary(res, (void *) bk_str_content(str), bk_str_length(str), content_type, status);
-    return 0;
+    return bk_httpres_sendbinary(res, (void *) bk_str_content(str), bk_str_length(str), content_type, status);
 }
 
 int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered) {
@@ -141,43 +158,58 @@ int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rende
     struct stat buf;
     char attach_filename[PATH_MAX];
     int fd, ret;
-    file = fopen(filename, "rb");
-    if (!file)
+    if (!res || !filename)
+        return -EINVAL;
+    if (res->handle)
+        return -EALREADY;
+    if (!(file = fopen(filename, "rb")))
         return -errno;
-    fd = fileno(file);
-    if (fd == -1) {
+    if ((fd = fileno(file)) == -1) {
         fclose(file);
         return -errno;
     }
-    if ((ret = fstat(fd, &buf) != 0)) {
+    if (fstat(fd, &buf) == -1) {
         fclose(file);
-        return -ret;
+        return -errno;
     }
-    if (!(ret = S_ISREG(buf.st_mode))) {
+    if (S_ISDIR(buf.st_mode)) {
         fclose(file);
-        return ret;
+        return -EISDIR;
     }
-    sprintf(attach_filename, "%s; filename=\"%s\"", (rendered ? "inline" : "attachment"), basename(filename));
-    MHD_add_response_header(res->handle, MHD_HTTP_HEADER_CONTENT_DISPOSITION, attach_filename);
-    ret = bk_httpres_sendstream(res, bk__httpfilewrite_cb, bk__httpfilefree_cb, file, (uint64_t) buf.st_size, 32768);
-    if (ret != 0)
+    if (!S_ISREG(buf.st_mode)) {
+        fclose(file);
+        return -EBADF;
+    }
+    snprintf(attach_filename, PATH_MAX, "%s; filename=\"%s\"", (rendered ? "inline" : "attachment"),
+             basename(filename));
+    if ((res->ret = bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, attach_filename)) != 0) {
+        fclose(file);
+        return res->ret;
+    }
+    if ((ret = bk_httpres_sendstream(res, (uint64_t) buf.st_size, 32768, bk__httpfileread_cb, file,
+                                     bk__httpfilefree_cb)) != 0)
         fclose(file);
     return ret;
 }
 
-int bk_httpres_sendstream(struct bk_httpres *res, bk_httpread_cb write_cb, bk_httpfree_cb flush_cb, void *cls,
-                          uint64_t size, size_t block_size) {
+int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_size, bk_httpread_cb write_cb, void *cls,
+                          bk_httpfree_cb flush_cb) {
     if (!res)
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
-    res->handle = MHD_create_response_from_callback(size, block_size, write_cb, cls, flush_cb);
+    if (!(res->handle = MHD_create_response_from_callback(size, block_size, write_cb, cls, flush_cb)))
+        return -ENOMEM;
+    if ((res->ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0) {
+        MHD_destroy_response(res->handle);
+        return res->ret;
+    }
     res->ret = MHD_queue_response(res->con, MHD_HTTP_OK, res->handle);
     MHD_destroy_response(res->handle);
     return 0;
 }
 
-int bk_httpres_senddata(struct bk_httpres *res, bk_httpread_cb read_cb, bk_httpfree_cb free_cb, void *cls,
-                        size_t block_size) {
-    return bk_httpres_sendstream(res, read_cb, free_cb, cls, MHD_SIZE_UNKNOWN, block_size);
+int bk_httpres_senddata(struct bk_httpres *res, size_t block_size, bk_httpread_cb read_cb, void *cls,
+                        bk_httpfree_cb free_cb) {
+    return bk_httpres_sendstream(res, MHD_SIZE_UNKNOWN, block_size, read_cb, cls, free_cb);
 }

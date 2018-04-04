@@ -376,6 +376,9 @@ BK_EXTERN int bk_httpsrv_start(struct bk_httpsrv *srv, uint16_t port, bool threa
 BK_EXTERN int bk_httpsrv_stop(struct bk_httpsrv *srv);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN struct bk_strmap **bk_httpres_headers(struct bk_httpres *res);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN int bk_httpres_send(struct bk_httpres *res, const char *val, const char *content_type, unsigned int status);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
@@ -390,12 +393,12 @@ BK_EXTERN int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, con
 BK_EXTERN int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN int bk_httpres_sendstream(struct bk_httpres *res, bk_httpread_cb write_cb, bk_httpfree_cb flush_cb,
-                                    void *cls, uint64_t size, size_t block_size);
+BK_EXTERN int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_size,
+                                    bk_httpread_cb read_cb, void *cls, bk_httpfree_cb flush_cb);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN int bk_httpres_senddata(struct bk_httpres *res, bk_httpread_cb read_cb, bk_httpfree_cb free_cb, void *cls,
-                                  size_t block_size);
+BK_EXTERN int bk_httpres_senddata(struct bk_httpres *res, size_t block_size, bk_httpread_cb read_cb, void *cls,
+                                  bk_httpfree_cb free_cb);
 
 #ifdef __cplusplus
 }
