@@ -28,6 +28,7 @@ static void bk__httpres_init(struct MHD_Connection *con, struct bk_httpres *res)
 }
 
 static void bk__httpres_done(struct bk_httpres res) {
+    MHD_destroy_response(res.handle);
     bk_strmap_cleanup(&res.headers);
 }
 
@@ -51,9 +52,7 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
     return res.result;
 }
 
-static ssize_t bk__httpfileread_cb(void *cls, uint64_t offset, char *buf, size_t size) {
-    if (fseek(cls, offset, SEEK_SET))
-        return MHD_CONTENT_READER_END_WITH_ERROR;
+static ssize_t bk__httpfileread_cb(void *cls, __BK_UNUSED uint64_t offset, char *buf, size_t size) {
     return fread(buf, sizeof(char), size, cls);
 }
 
@@ -134,16 +133,11 @@ int bk_httpres_sendbinary(struct bk_httpres *res, void *buf, size_t size, const 
         return -EALREADY;
     if (!(res->handle = MHD_create_response_from_buffer(size, buf, MHD_RESPMEM_MUST_COPY)))
         return -ENOMEM;
-    if ((ret = bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_TYPE, content_type)) != 0) {
-        MHD_destroy_response(res->handle);
+    if ((ret = bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_TYPE, content_type)) != 0)
         return ret;
-    }
-    if ((ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0) {
-        MHD_destroy_response(res->handle);
+    if ((ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0)
         return ret;
-    }
     res->result = MHD_queue_response(res->con, status, res->handle);
-    MHD_destroy_response(res->handle);
     return 0;
 }
 
@@ -157,7 +151,7 @@ int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, const char *c
 int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered) {
     FILE *file;
     struct stat buf;
-    char attach_filename[1024];
+    char attach_filename[256];
     int fd, ret;
     if (!res || !filename)
         return -EINVAL;
@@ -167,31 +161,30 @@ int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rende
         return -errno;
     if ((fd = fileno(file)) == -1) {
         ret = -errno;
-        fclose(file);
-        return ret;
+        goto failed;
     }
     if (fstat(fd, &buf)) {
         ret = -errno;
-        fclose(file);
-        return ret;
+        goto failed;
     }
     if (S_ISDIR(buf.st_mode)) {
-        fclose(file);
-        return -EISDIR;
+        ret = -EISDIR;
+        goto failed;
     }
     if (!S_ISREG(buf.st_mode)) {
-        fclose(file);
-        return -EBADF;
+        ret = -EBADF;
+        goto failed;
     }
     snprintf(attach_filename, sizeof(attach_filename), "%s; filename=\"%s\"", (rendered ? "inline" : "attachment"),
              basename(filename));
-    if ((ret = bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, attach_filename)) != 0) {
-        fclose(file);
-        return ret;
-    }
+    if ((ret = bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, attach_filename)) != 0)
+        goto failed;
     if ((ret = bk_httpres_sendstream(res, (uint64_t) buf.st_size, 32768, bk__httpfileread_cb, file,
                                      bk__httpfilefree_cb)) != 0)
-        fclose(file);
+        goto failed;
+    return 0;
+failed:
+    fclose(file);
     return ret;
 }
 
@@ -204,12 +197,9 @@ int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_si
         return -EALREADY;
     if (!(res->handle = MHD_create_response_from_callback(size, block_size, write_cb, cls, flush_cb)))
         return -ENOMEM;
-    if ((ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0) {
-        MHD_destroy_response(res->handle);
+    if (res->headers && (ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0)
         return ret;
-    }
     res->result = MHD_queue_response(res->con, MHD_HTTP_OK, res->handle);
-    MHD_destroy_response(res->handle);
     return 0;
 }
 
