@@ -19,14 +19,4 @@ BK_EXTERN
 #endif
 void bk__toasciilower(char *str);
 
-#ifndef NDEBUG
-BK_EXTERN
-#endif
-int bk__open(const char *filename, int flags);
-
-#ifndef NDEBUG
-BK_EXTERN
-#endif
-int bk__close(int fd);
-
 #endif /* BK_UTILS_H */

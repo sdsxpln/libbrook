@@ -87,23 +87,3 @@ void bk__toasciilower(char *str) {
         str++;
     }
 }
-
-/* File */
-
-int bk__open(const char *filename, int flags) {
-    int ret;
-    do {
-        errno = 0;
-        ret = open(filename, flags);
-    } while (ret == -1 && errno == EINTR);
-    return ret;
-}
-
-int bk__close(int fd) {
-    int ret;
-    do {
-        errno = 0;
-        ret = close(fd);
-    } while (ret == -1 && errno == EINTR);
-    return ret;
-}

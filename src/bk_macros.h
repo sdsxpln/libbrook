@@ -37,11 +37,12 @@
 #define str(a) #a
 
 /* macro used by libs `ut` for handling `Out of memory` errors. */
-#define oom()                               \
-do {                                        \
-    fprintf(stderr, _("Out of memory\n"));  \
-    fflush(stderr);                         \
-    exit(-ENOMEM);                          \
+#define oom()                                               \
+do {                                                        \
+    fprintf(stderr, "%s:%d: %s: Out of memory\n",           \
+        __FILE__, __LINE__, __extension__ __FUNCTION__);    \
+    fflush(stderr);                                         \
+    exit(-ENOMEM);                                          \
 } while (0)
 
 #endif /* BK_MACROS_H */
