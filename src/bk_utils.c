@@ -90,7 +90,7 @@ void bk__toasciilower(char *str) {
 
 /* File */
 
-int bk_open(const char *filename, int flags) {
+int bk__open(const char *filename, int flags) {
     int ret;
     do {
         errno = 0;
@@ -99,7 +99,7 @@ int bk_open(const char *filename, int flags) {
     return ret;
 }
 
-int bk_close(int fd) {
+int bk__close(int fd) {
     int ret;
     do {
         errno = 0;

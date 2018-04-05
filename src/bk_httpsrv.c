@@ -147,7 +147,7 @@ int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rende
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
-    if (((fd = bk_open(filename, O_RDONLY)) == -1))
+    if (((fd = bk__open(filename, O_RDONLY)) == -1))
         return -errno;
     if (fstat(fd, &sbuf)) {
         ret = -errno;
@@ -172,9 +172,9 @@ int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rende
 failed:
     if (fd != -1) {
         if (ret == 0)
-            ret = bk_close(fd);
+            ret = bk__close(fd);
         else
-            bk_close(fd);
+            bk__close(fd);
     }
     return ret;
 }
