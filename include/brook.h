@@ -390,15 +390,15 @@ BK_EXTERN int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, con
                                  unsigned int status);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered);
+BK_EXTERN int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered, unsigned int status);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_size,
-                                    bk_httpread_cb read_cb, void *cls, bk_httpfree_cb flush_cb);
+                                    bk_httpread_cb read_cb, void *cls, bk_httpfree_cb flush_cb, unsigned int status);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN int bk_httpres_senddata(struct bk_httpres *res, size_t block_size, bk_httpread_cb read_cb, void *cls,
-                                  bk_httpfree_cb free_cb);
+                                  bk_httpfree_cb free_cb, unsigned int status);
 
 #ifdef __cplusplus
 }

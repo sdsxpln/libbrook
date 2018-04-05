@@ -139,7 +139,7 @@ int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, const char *c
     return bk_httpres_sendbinary(res, (void *) bk_str_content(str), bk_str_length(str), content_type, status);
 }
 
-int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered) {
+int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered, unsigned int status) {
     char attach_filename[256];
     struct stat sbuf;
     int fd, ret = 0;
@@ -167,7 +167,7 @@ int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rende
     }
     if (res->headers && (ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0)
         return ret;
-    res->result = MHD_queue_response(res->con, MHD_HTTP_OK, res->handle);
+    res->result = MHD_queue_response(res->con, status, res->handle);
     return 0;
 failed:
     if (fd != -1) {
@@ -180,7 +180,7 @@ failed:
 }
 
 int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_size, bk_httpread_cb write_cb, void *cls,
-                          bk_httpfree_cb flush_cb) {
+                          bk_httpfree_cb flush_cb, unsigned int status) {
     int ret;
     if (!res)
         return -EINVAL;
@@ -190,11 +190,11 @@ int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_si
         return -ENOMEM;
     if (res->headers && (ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0)
         return ret;
-    res->result = MHD_queue_response(res->con, MHD_HTTP_OK, res->handle);
+    res->result = MHD_queue_response(res->con, status, res->handle);
     return 0;
 }
 
 int bk_httpres_senddata(struct bk_httpres *res, size_t block_size, bk_httpread_cb read_cb, void *cls,
-                        bk_httpfree_cb free_cb) {
-    return bk_httpres_sendstream(res, MHD_SIZE_UNKNOWN, block_size, read_cb, cls, free_cb);
+                        bk_httpfree_cb free_cb, unsigned int status) {
+    return bk_httpres_sendstream(res, MHD_SIZE_UNKNOWN, block_size, read_cb, cls, free_cb, status);
 }
