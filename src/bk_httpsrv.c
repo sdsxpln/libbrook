@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 #include "microhttpd.h"
 #include "brook.h"
 #if defined(__MINGW32__) || defined(__ANDROID__)
@@ -50,14 +51,6 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
     srv->req_cb(srv->req_cls, NULL, &res);
     bk__httpres_done(res);
     return res.result;
-}
-
-static ssize_t bk__httpfileread_cb(void *cls, __BK_UNUSED uint64_t offset, char *buf, size_t size) {
-    return fread(buf, sizeof(char), size, cls);
-}
-
-static void bk__httpfilefree_cb(void *cls) {
-    fclose(cls);
 }
 
 static int bk__httpheaders_iter(void *cls, struct bk_strmap *header) {
@@ -149,42 +142,38 @@ int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, const char *c
 }
 
 int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered) {
-    FILE *file;
-    struct stat buf;
     char attach_filename[256];
+    struct stat sbuf;
     int fd, ret;
     if (!res || !filename)
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
-    if (!(file = fopen(filename, "rb")))
+    if (((fd = open(filename, O_RDONLY)) == -1))
         return -errno;
-    if ((fd = fileno(file)) == -1) {
+    if (fstat(fd, &sbuf)) {
         ret = -errno;
         goto failed;
     }
-    if (fstat(fd, &buf)) {
-        ret = -errno;
-        goto failed;
-    }
-    if (S_ISDIR(buf.st_mode)) {
+    if (S_ISDIR(sbuf.st_mode)) {
         ret = -EISDIR;
-        goto failed;
-    }
-    if (!S_ISREG(buf.st_mode)) {
-        ret = -EBADF;
         goto failed;
     }
     snprintf(attach_filename, sizeof(attach_filename), "%s; filename=\"%s\"", (rendered ? "inline" : "attachment"),
              basename(filename));
     if ((ret = bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, attach_filename)) != 0)
         goto failed;
-    if ((ret = bk_httpres_sendstream(res, (uint64_t) buf.st_size, 32768, bk__httpfileread_cb, file,
-                                     bk__httpfilefree_cb)) != 0)
+    if (!(res->handle = MHD_create_response_from_fd_at_offset64(sbuf.st_size, fd, 0))) {
+        ret = -ENOMEM;
         goto failed;
+    }
+    if (res->headers && (ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0)
+        return ret;
+    res->result = MHD_queue_response(res->con, MHD_HTTP_OK, res->handle);
     return 0;
 failed:
-    fclose(file);
+    if (fd != -1)
+        close(fd);
     return ret;
 }
 
