@@ -173,7 +173,7 @@ int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rende
     return 0;
 failed:
     if (fd != -1)
-        close(fd);
+        ret = close(fd);
     return ret;
 }
 
