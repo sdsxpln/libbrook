@@ -36,13 +36,17 @@
 #define xstr(a) str(a) /* stringify the result of expansion of a macro argument */
 #define str(a) #a
 
-/* macro used by libs `ut` for handling `Out of memory` errors. */
+/* macro used for handling `Out of memory` errors. */
+#ifdef NDEBUG
+#define oom() exit(-1)
+#else
 #define oom()                                               \
 do {                                                        \
-    fprintf(stderr, "%s:%d: %s: Out of memory\n",           \
+    fprintf(stderr, _("%s:%d: %s: Out of memory\n"),        \
         __FILE__, __LINE__, __extension__ __FUNCTION__);    \
     fflush(stderr);                                         \
-    exit(-ENOMEM);                                          \
+    exit(-1);                                               \
 } while (0)
+#endif
 
 #endif /* BK_MACROS_H */

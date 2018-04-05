@@ -13,12 +13,13 @@ static int bk__httpheaders_iter(void *cls, struct bk_strmap *header) {
     return -ENOMEM;
 }
 
-static void bk__httpres_init(struct bk_httpres *res) {
+static void bk__httpres_init(struct MHD_Connection *con, struct bk_httpres *res) {
     memset(res, 0, sizeof(struct bk_httpres));
+    res->con = con;
     res->status = 500;
 }
 
-static int bk__httpres_dispatch(struct MHD_Connection *con, struct bk_httpres *res) {
+static int bk__httpres_done(struct bk_httpres *res) {
     int ret;
     if (res->headers && bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle) != 0) {
         bk_strmap_cleanup(&res->headers);
@@ -26,7 +27,7 @@ static int bk__httpres_dispatch(struct MHD_Connection *con, struct bk_httpres *r
         oom();
     }
     bk_strmap_cleanup(&res->headers);
-    ret = MHD_queue_response(con, res->status, res->handle);
+    ret = MHD_queue_response(res->con, res->status, res->handle);
     MHD_destroy_response(res->handle);
     return ret;
 }
@@ -58,9 +59,9 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
         return MHD_YES;
     }
     *con_cls = NULL;
-    bk__httpres_init(&res);
+    bk__httpres_init(con, &res);
     srv->req_cb(srv->req_cls, NULL, &res);
-    return bk__httpres_dispatch(con, &res);
+    return bk__httpres_done(&res);
 }
 
 struct bk_httpsrv *bk_httpsrv_new2(bk_httpreq_cb req_cb, void *req_cls, bk_httperr_cb err_cb, void *err_cls) {

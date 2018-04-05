@@ -10,6 +10,7 @@ struct bk_httpreq {
 };
 
 struct bk_httpres {
+    struct MHD_Connection *con;
     struct MHD_Response *handle;
     struct bk_strmap *headers;
     unsigned int status;
