@@ -180,13 +180,13 @@ failed:
 }
 
 int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_size, bk_httpread_cb write_cb, void *cls,
-                          bk_httpfree_cb flush_cb, unsigned int status) {
+                          bk_httpfree_cb free_cb, unsigned int status) {
     int ret;
     if (!res)
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
-    if (!(res->handle = MHD_create_response_from_callback(size, block_size, write_cb, cls, flush_cb)))
+    if (!(res->handle = MHD_create_response_from_callback(size, block_size, write_cb, cls, free_cb)))
         return -ENOMEM;
     if (res->headers && (ret = bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle)) != 0)
         return ret;
