@@ -19,4 +19,14 @@ BK_EXTERN
 char *basename(const char *path);
 #endif
 
+#ifndef NDEBUG
+BK_EXTERN
+#endif
+int bk_open(const char *filename, int flags);
+
+#ifndef NDEBUG
+BK_EXTERN
+#endif
+int bk_close(int fd);
+
 #endif /* BK_UTILS_H */

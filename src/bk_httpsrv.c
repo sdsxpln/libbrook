@@ -4,9 +4,7 @@
 #include <fcntl.h>
 #include "microhttpd.h"
 #include "brook.h"
-#if defined(__MINGW32__) || defined(__ANDROID__)
 #include "bk_utils.h"
-#endif
 #include "bk_httpsrv.h"
 
 static void bk__httperr_cb(void *cls, const char *err) {
@@ -144,12 +142,12 @@ int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, const char *c
 int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered) {
     char attach_filename[256];
     struct stat sbuf;
-    int fd, ret;
+    int fd, ret = 0;
     if (!res || !filename)
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
-    if (((fd = open(filename, O_RDONLY)) == -1))
+    if (((fd = bk_open(filename, O_RDONLY)) == -1))
         return -errno;
     if (fstat(fd, &sbuf)) {
         ret = -errno;
@@ -172,8 +170,12 @@ int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rende
     res->result = MHD_queue_response(res->con, MHD_HTTP_OK, res->handle);
     return 0;
 failed:
-    if (fd != -1)
-        ret = close(fd);
+    if (fd != -1) {
+        if (ret == 0)
+            ret = bk_close(fd);
+        else
+            bk_close(fd);
+    }
     return ret;
 }
 

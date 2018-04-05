@@ -28,6 +28,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <errno.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include "brook.h"
 #include "bk_macros.h"
 #include "bk_utils.h"
@@ -83,4 +86,24 @@ void bk__toasciilower(char *str) {
             *str = (char) tolower(*str);
         str++;
     }
+}
+
+/* File */
+
+int bk_open(const char *filename, int flags) {
+    int ret;
+    do {
+        errno = 0;
+        ret = open(filename, flags);
+    } while (ret == -1 && errno == EINTR);
+    return ret;
+}
+
+int bk_close(int fd) {
+    int ret;
+    do {
+        errno = 0;
+        ret = close(fd);
+    } while (ret == -1 && errno == EINTR);
+    return ret;
 }
