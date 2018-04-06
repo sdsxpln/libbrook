@@ -112,6 +112,18 @@ BK_EXTERN void bk_free(void *ptr);
 
 /** \} */
 
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+typedef void (*bk_signal_cb)(int sig);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN int bk_signal(int sig, bk_signal_cb cb);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN void bk_unsignal(int sig);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN int bk_sigterm(bk_signal_cb cb);
+
 /**
  * \ingroup bk_api
  * \defgroup bk_str String
