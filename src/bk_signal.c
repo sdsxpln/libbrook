@@ -1,36 +1,56 @@
 #include <stdlib.h>
-#include <string.h>
 #include <signal.h>
+#ifndef _WIN32
+#include <string.h>
+#include <errno.h>
+#endif
 #include "bk_macros.h"
 #include "brook.h"
 
 int bk_signal(int sig, bk_signal_cb cb) {
+#ifdef _WIN32
+    if (signal(sig, cb) == SIG_ERR)
+        return -errno;
+#else
     struct sigaction sa;
-    memset(&sa, 0, sizeof(sa));
+    memset(&sa, 0, sizeof(struct sigaction));
     if (sigfillset(&sa.sa_mask))
         oom();
     sa.sa_handler = cb;
     if (sigaction(sig, &sa, NULL))
         return -errno;
+#endif
     return 0;
 }
 
 void bk_unsignal(int sig) {
+#ifdef _WIN32
+    signal(sig, SIG_DFL);
+#else
     struct sigaction sa;
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_DFL;
     if (sigaction(sig, &sa, NULL))
         oom();
+#endif
 }
 
 int bk_sigterm(bk_signal_cb cb) {
+#ifdef SIGHUP
     if (bk_signal(SIGHUP, cb))
         return -errno;
+#endif
     if (bk_signal(SIGINT, cb))
         return -errno;
+#ifdef SIGQUIT
     if (bk_signal(SIGQUIT, cb))
         return -errno;
+#endif
     if (bk_signal(SIGTERM, cb))
         return -errno;
+#ifdef SIGBREAK
+    if (bk_signal(SIGBREAK, cb))
+        return -errno;
+#endif
     return 0;
 }
