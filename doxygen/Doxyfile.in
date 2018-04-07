@@ -895,6 +895,9 @@ EXCLUDE_PATTERNS       =
 # exclude all test directories use the pattern */test/*
 
 EXCLUDE_SYMBOLS        = BK_EXTERN \
+                         __BK_UNUSED \
+                         __BK_MALLOC \
+                         __BK_FORMAT \
                          BK_VERSION_MAJOR \
                          BK_VERSION_MINOR \
                          BK_VERSION_PATCH \

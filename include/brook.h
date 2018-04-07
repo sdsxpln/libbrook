@@ -112,17 +112,48 @@ BK_EXTERN void bk_free(void *ptr);
 
 /** \} */
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * \ingroup bk_api
+ * \defgroup bk_signal Signals
+ * Cross-platform functions for signal management.
+ * \{
+ */
+
+/**
+ * Callback signature used by signal functions.
+ * \param sig Signal number.
+ */
 typedef void (*bk_signal_cb)(int sig);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Registers a callback \p cb to be triggered when an signal \p sig occurs.
+ * \param sig Signal number.
+ * \param cb Callback to be triggered by a signal.
+ * \return 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ * \retval -errno - When pass an invalid signal.
+ */
 BK_EXTERN int bk_signal(int sig, bk_signal_cb cb);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Reverts the default system callback to be triggered when an signal \p sig occurs.
+ * \param sig Signal number.
+ * \return 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ * \retval -errno - When pass an invalid signal.
+ */
 BK_EXTERN int bk_unsignal(int sig);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Registers a callback \p cb to be triggered by the most relevant termination signals.
+ * \param cb Callback to be triggered by the most relevant termination signals.
+ * \return 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ * \retval -errno - When pass an invalid signal.
+ */
 BK_EXTERN int bk_sigterm(bk_signal_cb cb);
+
+/** \} */
 
 /**
  * \ingroup bk_api
@@ -349,7 +380,16 @@ BK_EXTERN void bk_strmap_cleanup(struct bk_strmap **map);
 
 /** \} */
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * \ingroup bk_api
+ * \defgroup bk_httpsrv HTTP server
+ * TODO
+ * \{
+ */
+
+/**
+ * TODO
+ */
 struct bk_httpreq;
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
@@ -411,6 +451,8 @@ BK_EXTERN int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN int bk_httpres_senddata(struct bk_httpres *res, size_t block_size, bk_httpread_cb read_cb, void *cls,
                                   bk_httpfree_cb free_cb, unsigned int status);
+
+/** \} */
 
 #ifdef __cplusplus
 }
