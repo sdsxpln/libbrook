@@ -114,49 +114,6 @@ BK_EXTERN void bk_free(void *ptr);
 
 /**
  * \ingroup bk_api
- * \defgroup bk_signal Signals
- * Cross-platform functions for signal management.
- * \{
- */
-
-/**
- * Callback signature used by signal functions.
- * \param sig Signal number.
- */
-typedef void (*bk_signal_cb)(int sig);
-
-/**
- * Registers a callback \p cb to be triggered when an signal \p sig occurs.
- * \param sig Signal number.
- * \param cb Callback to be triggered by a signal.
- * \return 0 - Success.
- * \retval -EINVAL - Invalid argument.
- * \retval -errno - When pass an invalid signal.
- */
-BK_EXTERN int bk_signal(int sig, bk_signal_cb cb);
-
-/**
- * Reverts the default system callback to be triggered when an signal \p sig occurs.
- * \param sig Signal number.
- * \return 0 - Success.
- * \retval -EINVAL - Invalid argument.
- * \retval -errno - When pass an invalid signal.
- */
-BK_EXTERN int bk_unsignal(int sig);
-
-/**
- * Registers a callback \p cb to be triggered by the most relevant termination signals.
- * \param cb Callback to be triggered by the most relevant termination signals.
- * \return 0 - Success.
- * \retval -EINVAL - Invalid argument.
- * \retval -errno - When pass an invalid signal.
- */
-BK_EXTERN int bk_sigterm(bk_signal_cb cb);
-
-/** \} */
-
-/**
- * \ingroup bk_api
  * \defgroup bk_str String
  * String handle and its related functions.
  * \{

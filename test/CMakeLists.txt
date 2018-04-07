@@ -52,7 +52,6 @@ if (BUILD_TESTING)
     set(BK_TESTS_DIR ${CMAKE_SOURCE_DIR}/test)
     list(APPEND BK_TESTS
             utils
-            signal
             str
             strmap)
     set(BK_TESTS ${BK_TESTS} PARENT_SCOPE)
