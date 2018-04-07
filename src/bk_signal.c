@@ -25,15 +25,16 @@ int bk_signal(int sig, bk_signal_cb cb) {
 
 int bk_unsignal(int sig) {
 #ifdef _WIN32
-    return signal(sig, SIG_DFL);
+    if (signal(sig, SIG_DFL) != SIG_ERR)
+        return -errno;
 #else
     struct sigaction sa;
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_DFL;
     if (sigaction(sig, &sa, NULL))
         return -errno;
-    return 0;
 #endif
+    return 0;
 }
 
 int bk_sigterm(bk_signal_cb cb) {

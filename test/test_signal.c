@@ -30,6 +30,11 @@
 #include "brook.h"
 #include <signal.h>
 
+#ifdef _WIN32
+#define SIGUSR1 1
+#define SIGUSR2 2
+#endif
+
 bool signaled1 = false;
 bool signaled2 = false;
 unsigned char signaled_times1 = 0;
@@ -50,7 +55,7 @@ static void sigterm_cb(int sig) {
 #endif
     if (sig == SIGINT)
         signaled_times2++;
-/* raise() cannot raise SIGQUIT. */
+    /* raise() cannot raise SIGQUIT. */
     if (sig == SIGTERM)
         signaled_times2++;
 #ifdef SIGBREAK
@@ -97,7 +102,7 @@ static void test_sigterm(void) {
     signaled_times1++;
     raise(SIGINT);
 #endif
-/* raise() cannot raise SIGQUIT. */
+    /* raise() cannot raise SIGQUIT. */
 #ifdef SIGTERM
     signaled_times1++;
     raise(SIGTERM);
