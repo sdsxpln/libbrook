@@ -26,7 +26,6 @@
  */
 
 /*
-    the output is:
     ./example_str
     Hello world
 */

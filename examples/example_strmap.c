@@ -26,14 +26,15 @@
  */
 
 /*
+    ./example_strmap
     C:	Hello!
     P:	Hello. How are you?
     C:	I'm fine. And you?
     P:	Me too.
 
     Chatters:
-	    P: Paim
-	    C: Clecio
+        P: Paim
+        C: Clecio
  */
 
 /* NOTE: Error checking has been omitted for clarity. */
