@@ -25,7 +25,7 @@ int bk_signal(int sig, bk_signal_cb cb) {
 
 int bk_unsignal(int sig) {
 #ifdef _WIN32
-    if (signal(sig, SIG_DFL) != SIG_ERR)
+    if (signal(sig, SIG_DFL) == SIG_ERR)
         return -errno;
 #else
     struct sigaction sa;

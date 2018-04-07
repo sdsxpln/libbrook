@@ -30,22 +30,17 @@
 #include "brook.h"
 #include <signal.h>
 
-#ifdef _WIN32
-#define SIGUSR1 1
-#define SIGUSR2 2
-#endif
-
 bool signaled1 = false;
 bool signaled2 = false;
 unsigned char signaled_times1 = 0;
 unsigned char signaled_times2 = 0;
 
 static void signal_cb1(int sig) {
-    signaled1 = sig == SIGUSR1 || sig == SIGUSR2;
+    signaled1 = sig == SIGABRT || sig == SIGSEGV;
 }
 
 static void signal_cb2(int sig) {
-    signaled2 = sig == SIGUSR1;
+    signaled2 = sig == SIGABRT;
 }
 
 static void sigterm_cb(int sig) {
@@ -65,29 +60,37 @@ static void sigterm_cb(int sig) {
 }
 
 static void test_signal(void) {
+#ifdef _WIN32
+    ASSERT(bk_signal(0, signal_cb1) == -ERANGE);
+#else
     ASSERT(bk_signal(0, signal_cb1) == -EINVAL);
-    ASSERT(bk_signal(SIGUSR1, NULL) == 0);
-    ASSERT(bk_signal(SIGUSR1, SIG_DFL) == 0);
-    ASSERT(bk_signal(SIGUSR1, signal_cb1) == 0);
+#endif
+    ASSERT(bk_signal(SIGTERM, NULL) == 0);
+    ASSERT(bk_signal(SIGABRT, SIG_DFL) == 0);
+    ASSERT(bk_signal(SIGABRT, signal_cb1) == 0);
     ASSERT(!signaled1);
-    raise(SIGUSR1);
+    raise(SIGABRT);
     ASSERT(signaled1);
     signaled1 = false;
     ASSERT(!signaled1);
-    ASSERT(bk_signal(SIGUSR2, signal_cb1) == 0);
-    raise(SIGUSR2);
+    ASSERT(bk_signal(SIGSEGV, signal_cb1) == 0);
+    raise(SIGSEGV);
     ASSERT(signaled1);
 }
 
 static void test_unsignal(void) {
+#ifdef _WIN32
+    ASSERT(bk_unsignal(0) == -ERANGE);
+#else
     ASSERT(bk_unsignal(0) == -EINVAL);
-    ASSERT(bk_unsignal(SIGUSR1) == 0);
+#endif
+    ASSERT(bk_unsignal(SIGABRT) == 0);
     signaled1 = false;
     signaled2 = false;
     ASSERT(!signaled1);
     ASSERT(!signaled2);
-    ASSERT(signal(SIGUSR1, signal_cb2) != SIG_ERR);
-    raise(SIGUSR1);
+    ASSERT(signal(SIGABRT, signal_cb2) != SIG_ERR);
+    raise(SIGABRT);
     ASSERT(!signaled1);
     ASSERT(signaled2);
 }
