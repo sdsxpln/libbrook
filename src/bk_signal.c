@@ -23,15 +23,16 @@ int bk_signal(int sig, bk_signal_cb cb) {
     return 0;
 }
 
-void bk_unsignal(int sig) {
+int bk_unsignal(int sig) {
 #ifdef _WIN32
-    signal(sig, SIG_DFL);
+    return signal(sig, SIG_DFL);
 #else
     struct sigaction sa;
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_DFL;
     if (sigaction(sig, &sa, NULL))
-        oom();
+        return -errno;
+    return 0;
 #endif
 }
 
