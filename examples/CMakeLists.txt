@@ -53,6 +53,7 @@ if (BK_BUILD_EXAMPLES)
     endif ()
     set(BK_EXAMPLES_DIR ${CMAKE_SOURCE_DIR}/examples)
     list(APPEND BK_EXAMPLES
+            signal
             str
             strmap
             httpsrv)
