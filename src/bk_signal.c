@@ -3,8 +3,8 @@
 #ifndef _WIN32
 #include <string.h>
 #include <errno.h>
-#endif
 #include "bk_macros.h"
+#endif
 #include "brook.h"
 
 int bk_signal(int sig, bk_signal_cb cb) {
