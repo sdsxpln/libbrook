@@ -173,8 +173,8 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *f
     snprintf(attach_filename, sizeof(attach_filename), "%s; filename=\"%s\"", (rendered ? "inline" : "attachment"),
              basename(filename));
     bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, attach_filename);
-    if ((res->handle = MHD_create_response_from_callback((uint64_t) sbuf.st_size, block_site, bk__httpfileread_cb, file,
-                                                         bk__httpfilefree_cb)) != 0)
+    if (!(res->handle = MHD_create_response_from_callback((uint64_t) sbuf.st_size, block_site, bk__httpfileread_cb,
+                                                          file, bk__httpfilefree_cb)) != 0)
         oom();
     res->status = status;
     return 0;
