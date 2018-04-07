@@ -399,7 +399,8 @@ BK_EXTERN int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, con
                                  unsigned int status);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered, unsigned int status);
+BK_EXTERN int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *filename, bool rendered,
+                                  unsigned int status);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_size,

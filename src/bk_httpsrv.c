@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include "microhttpd.h"
 #include "bk_macros.h"
 #include "bk_utils.h"
@@ -11,6 +10,14 @@ static int bk__httpheaders_iter(void *cls, struct bk_strmap *header) {
     if (MHD_add_response_header(cls, header->name, header->val) == MHD_YES)
         return 0;
     return -ENOMEM;
+}
+
+static ssize_t bk__httpfileread_cb(void *cls, __BK_UNUSED uint64_t offset, char *buf, size_t size) {
+    return fread(buf, sizeof(char), size, cls);
+}
+
+static void bk__httpfilefree_cb(void *cls) {
+    fclose(cls);
 }
 
 static void bk__httpres_init(struct MHD_Connection *con, struct bk_httpres *res) {
@@ -135,16 +142,22 @@ int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, const char *c
     return bk_httpres_sendbinary(res, (void *) bk_str_content(str), bk_str_length(str), content_type, status);
 }
 
-int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rendered, unsigned int status) {
+int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *filename, bool rendered,
+                        unsigned int status) {
     char attach_filename[256];
+    FILE *file;
     struct stat sbuf;
-    int fd, ret = 0;
-    if (!res || !filename)
+    int fd, ret;
+    if (!res || !filename || block_site < 1)
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
-    if (((fd = open(filename, O_RDONLY)) == -1))
+    if (!(file = fopen(filename, "rb")))
         return -errno;
+    if ((fd = fileno(file)) == -1) {
+        ret = -errno;
+        goto failed;
+    }
     if (fstat(fd, &sbuf)) {
         ret = -errno;
         goto failed;
@@ -153,19 +166,24 @@ int bk_httpres_sendfile(struct bk_httpres *res, const char *filename, bool rende
         ret = -EISDIR;
         goto failed;
     }
+    if (!S_ISREG(sbuf.st_mode)) {
+        ret = -EBADF;
+        goto failed;
+    }
     snprintf(attach_filename, sizeof(attach_filename), "%s; filename=\"%s\"", (rendered ? "inline" : "attachment"),
              basename(filename));
     bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, attach_filename);
-    if (!(res->handle = MHD_create_response_from_fd_at_offset64(sbuf.st_size, fd, 0)))
+    if ((res->handle = MHD_create_response_from_callback((uint64_t) sbuf.st_size, block_site, bk__httpfileread_cb, file,
+                                                         bk__httpfilefree_cb)) != 0)
         oom();
     res->status = status;
     return 0;
 failed:
-    if (fd != -1) {
+    if (file) {
         if (ret == 0)
-            ret = close(fd);
+            ret = fclose(file);
         else
-            close(fd);
+            fclose(file);
     }
     return ret;
 }
