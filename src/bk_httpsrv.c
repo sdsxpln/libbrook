@@ -39,8 +39,7 @@ static int bk__httpres_done(struct bk_httpres *res) {
     return ret;
 }
 
-static void bk__httperr_cb(void *cls, const char *err) {
-    (void) cls;
+static void bk__httperr_cb(__BK_UNUSED void *cls, const char *err) {
     fprintf(stderr, "%s", err);
     fflush(stderr);
 }
@@ -215,23 +214,27 @@ failed:
 
 int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_size, bk_httpread_cb write_cb, void *cls,
                           bk_httpfree_cb free_cb, unsigned int status) {
-    int ret;
+    int errnum;
     if (!res) {
-        ret = -EINVAL;
+        errnum = EINVAL;
         goto failed;
     }
     if (res->handle) {
-        ret = -EALREADY;
+        errnum = EALREADY;
         goto failed;
     }
-    if (!(res->handle = MHD_create_response_from_callback(size, block_size, write_cb, cls, free_cb)))
-        oom();
+    if (!(res->handle = MHD_create_response_from_callback(size, block_size, write_cb, cls, free_cb))) {
+        errnum = ENOMEM;
+        goto failed;
+    }
     res->status = status;
     return 0;
 failed:
     if (free_cb)
         free_cb(cls);
-    return ret;
+    if (errnum == ENOMEM)
+        oom();
+    return -errnum;
 }
 
 int bk_httpres_senddata(struct bk_httpres *res, size_t block_size, bk_httpread_cb read_cb, void *cls,
