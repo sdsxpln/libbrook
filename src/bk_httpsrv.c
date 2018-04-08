@@ -144,9 +144,11 @@ int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, const char *c
 
 int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *filename, bool rendered,
                         unsigned int status) {
-    char attach_filename[256];
     FILE *file;
     struct stat64 sbuf;
+    const char *ia, *bn;
+    char *fn;
+    size_t fn_size;
     int fd, ret;
     if (!res || !filename || block_site < 1)
         return -EINVAL;
@@ -170,9 +172,18 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *f
         ret = -EBADF;
         goto failed;
     }
-    snprintf(attach_filename, sizeof(attach_filename), "%s; filename=\"%s\"", (rendered ? "inline" : "attachment"),
-             basename(filename));
-    bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, attach_filename);
+#define _BK_FNFMT "%s; filename=\"%s\""
+    ia = rendered ? "inline" : "attachment";
+    bn = basename(filename);
+    fn_size = snprintf(NULL, 0, _BK_FNFMT, ia, bn) + sizeof(char);
+    if (!(fn = malloc(fn_size))) {
+        ret = -ENOMEM;
+        goto failed;
+    }
+    snprintf(fn, fn_size, _BK_FNFMT, ia, bn);
+#undef _BK_FNFMT
+    bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, fn);
+    free(fn);
     if (!(res->handle = MHD_create_response_from_callback((uint64_t) sbuf.st_size, block_site, bk__httpfileread_cb,
                                                           file, bk__httpfilefree_cb)))
         oom();
