@@ -146,7 +146,7 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *f
                         unsigned int status) {
     char attach_filename[256];
     FILE *file;
-    struct stat sbuf;
+    struct stat64 sbuf;
     int fd, ret;
     if (!res || !filename || block_site < 1)
         return -EINVAL;
@@ -158,7 +158,7 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *f
         ret = -errno;
         goto failed;
     }
-    if (fstat(fd, &sbuf)) {
+    if (fstat64(fd, &sbuf)) {
         ret = -errno;
         goto failed;
     }
@@ -174,7 +174,7 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *f
              basename(filename));
     bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, attach_filename);
     if (!(res->handle = MHD_create_response_from_callback((uint64_t) sbuf.st_size, block_site, bk__httpfileread_cb,
-                                                          file, bk__httpfilefree_cb)) != 0)
+                                                          file, bk__httpfilefree_cb)))
         oom();
     res->status = status;
     return 0;
