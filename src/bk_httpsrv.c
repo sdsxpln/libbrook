@@ -47,9 +47,17 @@ static void bk__httperr_cb(void *cls, const char *err) {
 
 static void bk__httpsrv_oel(void *cls, const char *fmt, va_list ap) {
     struct bk_httpsrv *srv = cls;
-    char err[256];
-    vsprintf(err, fmt, ap);
+    va_list ap_cpy;
+    size_t size;
+    char *err;
+    va_copy(ap_cpy, ap);
+    size = vsnprintf(NULL, 0, fmt, ap_cpy) + sizeof(char);
+    va_end(ap_cpy);
+    if (!(err = malloc(size)))
+        oom();
+    vsnprintf(err, size, fmt, ap);
     srv->err_cb(srv->err_cls, err);
+    free(err);
 }
 
 static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *url, const char *method,
