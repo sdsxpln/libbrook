@@ -146,8 +146,8 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *f
                         unsigned int status) {
     FILE *file;
     struct stat64 sbuf;
-    const char *ia, *bn;
-    char *fn;
+    const char *cd_type, *cd_basename;
+    char *cd_header;
     size_t fn_size;
     int fd, ret;
     if (!res || !filename || block_site < 1)
@@ -173,17 +173,17 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *f
         goto failed;
     }
 #define _BK_FNFMT "%s; filename=\"%s\""
-    ia = rendered ? "inline" : "attachment";
-    bn = basename(filename);
-    fn_size = snprintf(NULL, 0, _BK_FNFMT, ia, bn) + sizeof(char);
-    if (!(fn = malloc(fn_size))) {
+    cd_type = rendered ? "inline" : "attachment";
+    cd_basename = basename(filename);
+    fn_size = snprintf(NULL, 0, _BK_FNFMT, cd_type, cd_basename) + sizeof(char);
+    if (!(cd_header = malloc(fn_size))) {
         ret = -ENOMEM;
         goto failed;
     }
-    snprintf(fn, fn_size, _BK_FNFMT, ia, bn);
+    snprintf(cd_header, fn_size, _BK_FNFMT, cd_type, cd_basename);
 #undef _BK_FNFMT
-    bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, fn);
-    free(fn);
+    bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, cd_header);
+    free(cd_header);
     if (!(res->handle = MHD_create_response_from_callback((uint64_t) sbuf.st_size, block_site, bk__httpfileread_cb,
                                                           file, bk__httpfilefree_cb)))
         oom();
