@@ -153,32 +153,33 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *f
                         unsigned int status) {
     FILE *file;
     struct stat64 sbuf;
-    const char *cd_type, *cd_basename;
+    const char *cd_type;
+    const char *cd_basename;
     char *cd_header;
     size_t fn_size;
-    int fd, ret = 0;
+    int fd, errnum = 0;
     if (!res || !filename || block_site < 1)
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
     if (!(file = fopen(filename, "rb"))) {
-        ret = errno;
+        errnum = errno;
         goto failed;
     }
     if ((fd = fileno(file)) == -1) {
-        ret = errno;
+        errnum = errno;
         goto failed;
     }
     if (fstat64(fd, &sbuf)) {
-        ret = errno;
+        errnum = errno;
         goto failed;
     }
     if (S_ISDIR(sbuf.st_mode)) {
-        ret = EISDIR;
+        errnum = EISDIR;
         goto failed;
     }
     if (!S_ISREG(sbuf.st_mode)) {
-        ret = EBADF;
+        errnum = EBADF;
         goto failed;
     }
 #define _BK_FNFMT "%s; filename=\"%s\""
@@ -186,7 +187,7 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *f
     cd_basename = basename(filename);
     fn_size = snprintf(NULL, 0, _BK_FNFMT, cd_type, cd_basename) + sizeof(char);
     if (!(cd_header = malloc(fn_size))) {
-        ret = ENOMEM;
+        errnum = ENOMEM;
         goto failed;
     }
     snprintf(cd_header, fn_size, _BK_FNFMT, cd_type, cd_basename);
@@ -195,21 +196,21 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *f
     free(cd_header);
     if (!(res->handle = MHD_create_response_from_callback((uint64_t) sbuf.st_size, block_site, bk__httpfileread_cb,
                                                           file, bk__httpfilefree_cb))) {
-        ret = ENOMEM;
+        errnum = ENOMEM;
         goto failed;
     }
     res->status = status;
     return 0;
 failed:
     if (file) {
-        if (ret == 0)
-            ret = fclose(file);
+        if (errnum == 0)
+            errnum = fclose(file);
         else
             fclose(file);
     }
-    if (ret == ENOMEM)
+    if (errnum == ENOMEM)
         oom();
-    return -ret;
+    return -errnum;
 }
 
 int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_size, bk_httpread_cb write_cb, void *cls,
