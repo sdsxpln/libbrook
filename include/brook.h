@@ -383,7 +383,7 @@ BK_EXTERN const char *bk_httpauth_usr(struct bk_httpauth *auth);
 BK_EXTERN const char *bk_httpauth_pwd(struct bk_httpauth *auth);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN int bk_httpauth_abort(struct bk_httpauth *auth);
+BK_EXTERN int bk_httpauth_cancel(struct bk_httpauth *auth);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN struct bk_httpsrv *bk_httpsrv_new2(bk_httpauth_cb auth_cb, void *auth_cls,

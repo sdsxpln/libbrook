@@ -10,7 +10,7 @@ struct bk_httpauth {
     char *realm;
     char *usr;
     char *pwd;
-    bool aborted;
+    bool canceled;
 };
 
 struct bk_httpreq {

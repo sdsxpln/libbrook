@@ -40,13 +40,27 @@ static int bk__httpres_done(struct bk_httpres *res) {
     return res->ret;
 }
 
-/*static void bk__httpauth_init() {
+static void bk__httpauth_init(struct MHD_Connection *con, struct bk_httpauth *auth) {
+    memset(auth, 0, sizeof(struct bk_httpauth));
+    auth->usr = MHD_basic_auth_get_username_password(con, &auth->pwd);
+}
 
-}*/
-
-/*static int bk__httpauth_done() {
-    return 0;
-}*/
+static int bk__httpauth_done(struct MHD_Connection *con, struct bk_httpres *res, struct bk_httpauth *auth) {
+    MHD_free(auth->usr);
+    MHD_free(auth->pwd);
+    if (res->ret) {
+        MHD_free(auth->realm);
+    } else {
+        if (!auth->canceled)
+            res->ret = MHD_queue_basic_auth_fail_response(con, auth->realm ? auth->realm : "", res->handle);
+        MHD_free(auth->realm);
+        MHD_destroy_response(res->handle);
+        if (auth->canceled)
+            res->ret = MHD_NO;
+        return false;
+    }
+    return true;
+}
 
 static void bk__httperr_cb(__BK_UNUSED void *cls, const char *err) {
     fprintf(stderr, "%s", err);
@@ -73,47 +87,31 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
     struct bk_httpsrv *srv = cls;
     struct bk_httpres res;
     struct bk_httpauth auth;
-
     (void) url;
     (void) version;
     (void) method;
     (void) upld_data;
     (void) upld_data_size;
-
     if (!*con_cls) {
         *con_cls = (void *) 1;
         return MHD_YES;
     }
     *con_cls = NULL;
-
     bk__httpres_init(con, &res);
-
     if (srv->auth_cb) {
-        memset(&auth, 0, sizeof(struct bk_httpauth));
-        auth.usr = MHD_basic_auth_get_username_password(con, &auth.pwd);
+        bk__httpauth_init(con, &auth);
         res.ret = srv->auth_cb(srv->auth_cls, &auth, NULL, &res);
-        if (auth.usr)
-            MHD_free(auth.usr);
-        if (auth.pwd)
-            MHD_free(auth.pwd);
-        if (!res.ret) {
-            if (!auth.aborted)
-                res.ret = MHD_queue_basic_auth_fail_response(con, "my realm", res.handle);
-            if (auth.realm)
-                MHD_free(auth.realm);
-            MHD_destroy_response(res.handle);
-            return auth.aborted ? MHD_NO : res.ret;
-        }
+        if (!bk__httpauth_done(con, &res, &auth))
+            return res.ret;
     }
-
     srv->req_cb(srv->req_cls, NULL, &res);
     return bk__httpres_done(&res);
 }
 
-int bk_httpauth_abort(struct bk_httpauth *auth) {
+int bk_httpauth_cancel(struct bk_httpauth *auth) {
     if (!auth)
         return -EINVAL;
-    auth->aborted = true;
+    auth->canceled = true;
     return 0;
 }
 
