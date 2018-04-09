@@ -55,7 +55,8 @@ if (BK_BUILD_EXAMPLES)
     list(APPEND BK_EXAMPLES
             str
             strmap
-            httpsrv)
+            httpsrv
+            httpauth)
     set(BK_EXAMPLES ${BK_EXAMPLES} PARENT_SCOPE)
     list(APPEND _libs brook)
     foreach (_example ${BK_EXAMPLES})
