@@ -415,6 +415,12 @@ BK_EXTERN int bk_httpsrv_start(struct bk_httpsrv *srv, uint16_t port, bool threa
 BK_EXTERN int bk_httpsrv_stop(struct bk_httpsrv *srv);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN int bk_httpreq_setuserdata(struct bk_httpreq *req, void *data);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN void *bk_httpreq_userdata(struct bk_httpreq *req);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN struct bk_strmap **bk_httpres_headers(struct bk_httpres *res);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
