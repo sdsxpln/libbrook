@@ -347,6 +347,9 @@ BK_EXTERN void bk_strmap_cleanup(struct bk_strmap **map);
 /**
  * TODO
  */
+struct bk_httpauth;
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
 struct bk_httpreq;
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
@@ -356,10 +359,13 @@ struct bk_httpres;
 struct bk_httpsrv;
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-typedef void (*bk_httperr_cb)(void *cls, const char *err);
+typedef bool (*bk_httpauth_cb)(void *cls, struct bk_httpauth *auth, struct bk_httpreq *req, struct bk_httpres *res);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 typedef void (*bk_httpreq_cb)(void *cls, struct bk_httpreq *req, struct bk_httpres *res);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+typedef void (*bk_httperr_cb)(void *cls, const char *err);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 typedef ssize_t (*bk_httpread_cb)(void *cls, uint64_t offset, char *buf, size_t size);
@@ -368,9 +374,21 @@ typedef ssize_t (*bk_httpread_cb)(void *cls, uint64_t offset, char *buf, size_t 
 typedef void (*bk_httpfree_cb)(void *cls);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN struct bk_httpsrv *bk_httpsrv_new2(/*TODO: auth callback?*/
-        bk_httpreq_cb req_cb, void *req_cls,
-        bk_httperr_cb err_cb, void *err_cls);
+BK_EXTERN int bk_httpauth_setrealm(struct bk_httpauth *auth, const char *realm);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN const char *bk_httpauth_usr(struct bk_httpauth *auth);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN const char *bk_httpauth_pwd(struct bk_httpauth *auth);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN int bk_httpauth_abort(struct bk_httpauth *auth);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN struct bk_httpsrv *bk_httpsrv_new2(bk_httpauth_cb auth_cb, void *auth_cls,
+                                             bk_httpreq_cb req_cb, void *req_cls,
+                                             bk_httperr_cb err_cb, void *err_cls);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN struct bk_httpsrv *bk_httpsrv_new(bk_httpreq_cb cb, void *cls);

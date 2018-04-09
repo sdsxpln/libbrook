@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
 #include <sys/stat.h>
 #include "microhttpd.h"
 #include "bk_macros.h"
 #include "bk_utils.h"
+#include "bk_strmap.h"
 #include "bk_httpsrv.h"
 
 static int bk__httpheaders_iter(void *cls, struct bk_strmap *header) {
@@ -27,17 +29,24 @@ static void bk__httpres_init(struct MHD_Connection *con, struct bk_httpres *res)
 }
 
 static int bk__httpres_done(struct bk_httpres *res) {
-    int ret;
     if (res->headers && bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle) != 0) {
         bk_strmap_cleanup(&res->headers);
         MHD_destroy_response(res->handle);
         oom();
     }
     bk_strmap_cleanup(&res->headers);
-    ret = MHD_queue_response(res->con, res->status, res->handle);
+    res->ret = MHD_queue_response(res->con, res->status, res->handle);
     MHD_destroy_response(res->handle);
-    return ret;
+    return res->ret;
 }
+
+/*static void bk__httpauth_init() {
+
+}*/
+
+/*static int bk__httpauth_done() {
+    return 0;
+}*/
 
 static void bk__httperr_cb(__BK_UNUSED void *cls, const char *err) {
     fprintf(stderr, "%s", err);
@@ -63,25 +72,75 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
                            const char *version, const char *upld_data, size_t *upld_data_size, void **con_cls) {
     struct bk_httpsrv *srv = cls;
     struct bk_httpres res;
+    struct bk_httpauth auth;
+
     (void) url;
     (void) version;
     (void) method;
     (void) upld_data;
     (void) upld_data_size;
+
     if (!*con_cls) {
         *con_cls = (void *) 1;
         return MHD_YES;
     }
     *con_cls = NULL;
+
     bk__httpres_init(con, &res);
+
+    if (srv->auth_cb) {
+        memset(&auth, 0, sizeof(struct bk_httpauth));
+        auth.usr = MHD_basic_auth_get_username_password(con, &auth.pwd);
+        res.ret = srv->auth_cb(srv->auth_cls, &auth, NULL, &res);
+        if (auth.usr)
+            MHD_free(auth.usr);
+        if (auth.pwd)
+            MHD_free(auth.pwd);
+        if (!res.ret) {
+            if (!auth.aborted)
+                res.ret = MHD_queue_basic_auth_fail_response(con, "my realm", res.handle);
+            if (auth.realm)
+                MHD_free(auth.realm);
+            MHD_destroy_response(res.handle);
+            return auth.aborted ? MHD_NO : res.ret;
+        }
+    }
+
     srv->req_cb(srv->req_cls, NULL, &res);
     return bk__httpres_done(&res);
 }
 
-struct bk_httpsrv *bk_httpsrv_new2(bk_httpreq_cb req_cb, void *req_cls, bk_httperr_cb err_cb, void *err_cls) {
+int bk_httpauth_abort(struct bk_httpauth *auth) {
+    if (!auth)
+        return -EINVAL;
+    auth->aborted = true;
+    return 0;
+}
+
+int bk_httpauth_setrealm(struct bk_httpauth *auth, const char *realm) {
+    if (!auth || !realm)
+        return -EINVAL;
+    auth->realm = strdup(realm);
+    if (!auth->realm)
+        return -ENOMEM;
+    return 0;
+}
+
+const char *bk_httpauth_usr(struct bk_httpauth *auth) {
+    return auth ? auth->usr : NULL;
+}
+
+const char *bk_httpauth_pwd(struct bk_httpauth *auth) {
+    return auth ? auth->pwd : NULL;
+}
+
+struct bk_httpsrv *bk_httpsrv_new2(bk_httpauth_cb auth_cb, void *auth_cls, bk_httpreq_cb req_cb, void *req_cls,
+                                   bk_httperr_cb err_cb, void *err_cls) {
     struct bk_httpsrv *srv = bk_alloc(sizeof(struct bk_httpsrv));
     if (!req_cb || !err_cb)
         return NULL;
+    srv->auth_cb = auth_cb;
+    srv->auth_cls = auth_cls;
     srv->req_cb = req_cb;
     srv->req_cls = req_cls;
     srv->err_cb = err_cb;
@@ -90,7 +149,7 @@ struct bk_httpsrv *bk_httpsrv_new2(bk_httpreq_cb req_cb, void *req_cls, bk_httpe
 }
 
 struct bk_httpsrv *bk_httpsrv_new(bk_httpreq_cb cb, void *cls) {
-    return bk_httpsrv_new2(cb, cls, bk__httperr_cb, NULL);
+    return bk_httpsrv_new2(NULL, NULL, cb, cls, bk__httperr_cb, NULL);
 }
 
 void bk_httpsrv_free(struct bk_httpsrv *srv) {
