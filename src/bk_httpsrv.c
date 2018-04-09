@@ -9,9 +9,9 @@
 #include "bk_httpsrv.h"
 
 static int bk__httpheaders_iter(void *cls, struct bk_strmap *header) {
-    if (MHD_add_response_header(cls, header->name, header->val) == MHD_YES)
-        return 0;
-    return -ENOMEM;
+    if (!MHD_add_response_header(cls, header->name, header->val) == MHD_YES)
+        oom();
+    return 0;
 }
 
 static ssize_t bk__httpfileread_cb(void *cls, __BK_UNUSED uint64_t offset, char *buf, size_t size) {
@@ -120,7 +120,7 @@ int bk_httpauth_setrealm(struct bk_httpauth *auth, const char *realm) {
         return -EINVAL;
     auth->realm = strdup(realm);
     if (!auth->realm)
-        return -ENOMEM;
+        oom();
     return 0;
 }
 

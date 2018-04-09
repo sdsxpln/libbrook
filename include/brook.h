@@ -128,7 +128,7 @@ struct bk_str;
 /**
  * Creates a new zero-initialized string handle.
  * \return String handle.
- * \warning It exits the application when no memory space available.
+ * \warning It exits the application if called when no memory space available.
  */
 BK_EXTERN struct bk_str *bk_str_new(void)
 __BK_MALLOC;
@@ -254,7 +254,7 @@ BK_EXTERN const char *bk_strmap_val(struct bk_strmap *pair);
  * \retval -EINVAL - Invalid argument.
  * \note It does not check if a name already exists in a pair added to the \p map, then the uniqueness must be managed
  * by the application.
- * \warning It exits the application when no memory space available.
+ * \warning It exits the application if called when no memory space available.
  */
 BK_EXTERN int bk_strmap_add(struct bk_strmap **map, const char *name, const char *val);
 
@@ -267,7 +267,7 @@ BK_EXTERN int bk_strmap_add(struct bk_strmap **map, const char *name, const char
  * \retval -EINVAL - Invalid argument.
  * \note When a name already exists in pair previously added into the \p map, then the function replaces its value,
  * otherwise it is added as a new pair.
- * \warning It exits the application when no memory space available.
+ * \warning It exits the application if called when no memory space available.
  */
 BK_EXTERN int bk_strmap_set(struct bk_strmap **map, const char *name, const char *val);
 
@@ -340,12 +340,13 @@ BK_EXTERN void bk_strmap_cleanup(struct bk_strmap **map);
 /**
  * \ingroup bk_api
  * \defgroup bk_httpsrv HTTP server
- * TODO
+ * Fast event-driven HTTP server.
  * \{
  */
 
 /**
- * TODO
+ * Handle for the HTTP basic authentication. It allows to grant or deny the access to the server resources.
+ * \struct bk_httpauth
  */
 struct bk_httpauth;
 
@@ -355,7 +356,11 @@ struct bk_httpreq;
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 struct bk_httpres;
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Handle for the fast event-driven HTTP server. When listing, it serves or receives files, form fields, query params
+ * , streams and more.
+ * \struct bk_httpsrv
+ */
 struct bk_httpsrv;
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
@@ -373,7 +378,14 @@ typedef ssize_t (*bk_httpread_cb)(void *cls, uint64_t offset, char *buf, size_t 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 typedef void (*bk_httpfree_cb)(void *cls);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Sets the authentication protection space (realm).
+ * \param auth Authentication handle.
+ * \param realm Realm string.
+ * \retval 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ * \warning It exits the application if called when no memory space available.
+ */
 BK_EXTERN int bk_httpauth_setrealm(struct bk_httpauth *auth, const char *realm);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
