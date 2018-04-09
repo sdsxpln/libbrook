@@ -51,6 +51,12 @@ static int bk__httpauth_done(struct MHD_Connection *con, struct bk_httpres *res,
     if (res->ret) {
         bk_free(auth->realm);
     } else {
+        if (res->headers && bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle) != 0) {
+            bk_strmap_cleanup(&res->headers);
+            MHD_destroy_response(res->handle);
+            oom();
+        }
+        bk_strmap_cleanup(&res->headers);
         if (!auth->canceled)
             res->ret = MHD_queue_basic_auth_fail_response(con, auth->realm ? auth->realm : "", res->handle);
         bk_free(auth->realm);
