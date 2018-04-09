@@ -19,7 +19,8 @@ static bool auth_cb(__BK_UNUSED void *cls, struct bk_httpauth *auth,
     bool pass;
     bk_httpauth_setrealm(auth, "My realm");
     if (!(pass = match_text(bk_httpauth_usr(auth), "abc") && match_text(bk_httpauth_pwd(auth), "123")))
-        bk_httpres_send(res, "<html><head><title>Denied</title></head><body>Go away</body></html>",
+        bk_httpres_send(res,
+                        "<html><head><title>Denied</title></head><body><font color=\"red\">Go away</font></body></html>",
                         "text/html; charset=utf-8", 200);
     return pass;
 }
