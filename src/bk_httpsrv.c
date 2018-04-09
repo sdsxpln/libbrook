@@ -46,14 +46,14 @@ static void bk__httpauth_init(struct MHD_Connection *con, struct bk_httpauth *au
 }
 
 static int bk__httpauth_done(struct MHD_Connection *con, struct bk_httpres *res, struct bk_httpauth *auth) {
-    MHD_free(auth->usr);
-    MHD_free(auth->pwd);
+    bk_free(auth->usr);
+    bk_free(auth->pwd);
     if (res->ret) {
-        MHD_free(auth->realm);
+        bk_free(auth->realm);
     } else {
         if (!auth->canceled)
             res->ret = MHD_queue_basic_auth_fail_response(con, auth->realm ? auth->realm : "", res->handle);
-        MHD_free(auth->realm);
+        bk_free(auth->realm);
         MHD_destroy_response(res->handle);
         if (auth->canceled)
             res->ret = MHD_NO;
@@ -79,7 +79,7 @@ static void bk__httpsrv_oel(void *cls, const char *fmt, va_list ap) {
         oom();
     vsnprintf(err, size, fmt, ap);
     srv->err_cb(srv->err_cls, err);
-    free(err);
+    bk_free(err);
 }
 
 static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *url, const char *method,
@@ -250,7 +250,7 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *f
     snprintf(cd_header, fn_size, _BK_FNFMT, cd_type, cd_basename);
 #undef _BK_FNFMT
     bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, cd_header);
-    free(cd_header);
+    bk_free(cd_header);
     if (!(res->handle = MHD_create_response_from_callback((uint64_t) sbuf.st_size, block_site, bk__httpfileread_cb,
                                                           file, bk__httpfilefree_cb))) {
         errnum = ENOMEM;
