@@ -293,8 +293,8 @@ int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, const char *c
     return bk_httpres_sendbinary(res, (void *) bk_str_content(str), bk_str_length(str), content_type, status);
 }
 
-int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *filename, bool rendered,
-                        unsigned int status) {
+int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, uint64_t max_size, const char *filename,
+                        bool rendered, unsigned int status) {
     FILE *file;
     struct stat64 sbuf;
     const char *cd_type;
@@ -316,6 +316,10 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, const char *f
     }
     if (fstat64(fd, &sbuf)) {
         errnum = errno;
+        goto failed;
+    }
+    if ((uint64_t) sbuf.st_size > max_size) {
+        errnum = EFBIG;
         goto failed;
     }
     if (S_ISDIR(sbuf.st_mode)) {
