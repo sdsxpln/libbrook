@@ -51,6 +51,8 @@ set(MHD_OPTIONS
         --enable-https=no #TODO: enable by options, something like -DBK_HTTPS_SUPPORT=ON
         --enable-asserts=no
         --enable-coverage=no
+        --disable-httpupgrade
+        --disable-dauth
         --disable-doc
         --disable-examples
         --disable-curl)
