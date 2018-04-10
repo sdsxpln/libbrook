@@ -282,6 +282,16 @@ BK_EXTERN int bk_strmap_set(struct bk_strmap **map, const char *name, const char
  */
 BK_EXTERN int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_strmap **pair);
 
+
+/**
+ * Gets a pair by name and return its value.
+ * \param[in] map Pairs map.
+ * \param[in] name Name of the pair to be found.
+ * \return Pair value.
+ * \retval NULL When \p map or \p name is `NULL` or pair not found.
+ */
+BK_EXTERN const char *bk_strmap_get(struct bk_strmap *map, const char *name);
+
 /**
  * Removes a pair by its name.
  * \param[in] map Pointer to the pairs map.
@@ -357,8 +367,8 @@ struct bk_httpreq;
 struct bk_httpres;
 
 /**
- * Handle for the fast event-driven HTTP server. When listing, it serves or receives files, form fields, query params
- * , streams and more.
+ * Handle for the fast event-driven HTTP server. When listing, it serves or receives files, form fields, query params,
+ * streams and more.
  * \struct bk_httpsrv
  */
 struct bk_httpsrv;
@@ -383,8 +393,8 @@ BK_EXTERN ssize_t bk_httpread_end(bool err);
 
 /**
  * Sets the authentication protection space (realm).
- * \param auth Authentication handle.
- * \param realm Realm string.
+ * \param[in] auth Authentication handle.
+ * \param[in] realm Realm string.
  * \retval 0 - Success.
  * \retval -EINVAL - Invalid argument.
  * \warning It exits the application if called when no memory space available.

@@ -104,6 +104,13 @@ int bk_strmap_find(struct bk_strmap *map, const char *name, struct bk_strmap **p
     return 0;
 }
 
+const char *bk_strmap_get(struct bk_strmap *map, const char *name) {
+    struct bk_strmap *pair;
+    if (!map || !name)
+        return NULL;
+    return bk_strmap_find(map, name, &pair) == 0 ? pair->val : NULL;
+}
+
 int bk_strmap_rm(struct bk_strmap **map, const char *name) {
     struct bk_strmap *pair;
     char *key;

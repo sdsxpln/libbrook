@@ -58,7 +58,7 @@ static void chat(struct bk_strmap **map, const char *name, const char *msg) {
     struct bk_strmap *pair;
     bk_strmap_set(map, name, msg);
     if (msg && (bk_strmap_find(*map, name, &pair) == 0))
-        printf("%c:\t%s\n", *name, bk_strmap_val(pair));
+        printf("%c:\t%s\n", *bk_strmap_name(pair), bk_strmap_val(pair));
 }
 
 int main(void) {
