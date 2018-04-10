@@ -22,7 +22,14 @@ static void bk__httpfilefree_cb(void *cls) {
     fclose(cls);
 }
 
-static void bk__httpres_init(struct MHD_Connection *con, struct bk_httpres *res) {
+static void bk__httpreq_init(struct bk_httpreq *req, const char *version, const char *method, const char *path) {
+    memset(req, 0, sizeof(struct bk_httpreq));
+    req->version = version;
+    req->method = method;
+    req->path = path;
+}
+
+static void bk__httpres_init(struct bk_httpres *res, struct MHD_Connection *con) {
     memset(res, 0, sizeof(struct bk_httpres));
     res->con = con;
     res->status = 500;
@@ -40,12 +47,12 @@ static int bk__httpres_done(struct bk_httpres *res) {
     return res->ret;
 }
 
-static void bk__httpauth_init(struct MHD_Connection *con, struct bk_httpauth *auth) {
+static void bk__httpauth_init(struct bk_httpauth *auth, struct MHD_Connection *con) {
     memset(auth, 0, sizeof(struct bk_httpauth));
     auth->usr = MHD_basic_auth_get_username_password(con, &auth->pwd);
 }
 
-static int bk__httpauth_done(struct MHD_Connection *con, struct bk_httpres *res, struct bk_httpauth *auth) {
+static int bk__httpauth_done(struct bk_httpres *res, struct bk_httpauth *auth, struct MHD_Connection *con) {
     bk_free(auth->usr);
     bk_free(auth->pwd);
     if (res->ret) {
@@ -94,9 +101,6 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
     struct bk_httpreq req;
     struct bk_httpres res;
     struct bk_httpauth auth;
-    (void) url;
-    (void) version;
-    (void) method;
     (void) upld_data;
     (void) upld_data_size;
     if (!*con_cls) {
@@ -104,14 +108,12 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
         return MHD_YES;
     }
     *con_cls = NULL;
-
-    memset(&req, 0, sizeof(struct bk_httpreq));
-
-    bk__httpres_init(con, &res);
+    bk__httpreq_init(&req, version, method, url);
+    bk__httpres_init(&res, con);
     if (srv->auth_cb) {
-        bk__httpauth_init(con, &auth);
+        bk__httpauth_init(&auth, con);
         res.ret = srv->auth_cb(srv->auth_cls, &auth, &req, &res);
-        if (!bk__httpauth_done(con, &res, &auth))
+        if (!bk__httpauth_done(&res, &auth, con))
             return res.ret;
     }
     srv->req_cb(srv->req_cls, &req, &res);
@@ -193,6 +195,18 @@ int bk_httpsrv_stop(struct bk_httpsrv *srv) {
         srv->handle = NULL;
     }
     return 0;
+}
+
+const char *bk_httpreq_version(struct bk_httpreq *req) {
+    return req ? req->version : NULL;
+}
+
+const char *bk_httpreq_method(struct bk_httpreq *req) {
+    return req ? req->method : NULL;
+}
+
+const char *bk_httpreq_path(struct bk_httpreq *req) {
+    return req ? req->path : NULL;
 }
 
 int bk_httpreq_setuserdata(struct bk_httpreq *req, void *data) {

@@ -15,6 +15,9 @@ struct bk_httpauth {
 
 struct bk_httpreq {
     struct bk_strmap *headers;
+    const char *version;
+    const char *method;
+    const char *path;
     void *userdata;
 };
 
