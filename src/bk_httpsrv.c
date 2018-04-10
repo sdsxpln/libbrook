@@ -118,11 +118,8 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
     return bk__httpres_done(&res);
 }
 
-int bk_httpauth_cancel(struct bk_httpauth *auth) {
-    if (!auth)
-        return -EINVAL;
-    auth->canceled = true;
-    return 0;
+BK_EXTERN ssize_t bk_httpread_end(bool err) {
+    return err ? MHD_CONTENT_READER_END_WITH_ERROR : MHD_CONTENT_READER_END_OF_STREAM;
 }
 
 int bk_httpauth_setrealm(struct bk_httpauth *auth, const char *realm) {
@@ -140,6 +137,13 @@ const char *bk_httpauth_usr(struct bk_httpauth *auth) {
 
 const char *bk_httpauth_pwd(struct bk_httpauth *auth) {
     return auth ? auth->pwd : NULL;
+}
+
+int bk_httpauth_cancel(struct bk_httpauth *auth) {
+    if (!auth)
+        return -EINVAL;
+    auth->canceled = true;
+    return 0;
 }
 
 struct bk_httpsrv *bk_httpsrv_new2(bk_httpauth_cb auth_cb, void *auth_cls, bk_httpreq_cb req_cb, void *req_cls,

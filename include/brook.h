@@ -378,6 +378,9 @@ typedef ssize_t (*bk_httpread_cb)(void *cls, uint64_t offset, char *buf, size_t 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 typedef void (*bk_httpfree_cb)(void *cls);
 
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN ssize_t bk_httpread_end(bool err);
+
 /**
  * Sets the authentication protection space (realm).
  * \param auth Authentication handle.
