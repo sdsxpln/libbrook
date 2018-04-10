@@ -214,7 +214,7 @@ int bk_httpsrv_start(struct bk_httpsrv *srv, uint16_t port, bool threaded) {
         return -EINVAL;
     if (!(srv->handle = MHD_start_daemon(
             MHD_USE_DUAL_STACK | MHD_USE_ERROR_LOG |
-            (threaded ? MHD_USE_AUTO_INTERNAL_THREAD : MHD_USE_THREAD_PER_CONNECTION | MHD_USE_INTERNAL_POLLING_THREAD),
+            (threaded ? MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_THREAD_PER_CONNECTION : MHD_USE_AUTO_INTERNAL_THREAD),
             port, NULL, NULL,
             bk__httpsrv_ahc, srv,
             MHD_OPTION_EXTERNAL_LOGGER, bk__httpsrv_oel, srv,
