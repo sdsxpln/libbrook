@@ -138,7 +138,7 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
     (void) upld_data;
     (void) upld_data_size;
     if (!*con_cls) {
-        *con_cls = (void *) 1;
+        *con_cls = con;
         return MHD_YES;
     }
     *con_cls = NULL;

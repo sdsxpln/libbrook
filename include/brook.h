@@ -427,7 +427,13 @@ BK_EXTERN int bk_httpsrv_start(struct bk_httpsrv *srv, uint16_t port, bool threa
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN int bk_httpsrv_stop(struct bk_httpsrv *srv);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+/**
+ * Retrieves the client headers into #bk_strmap reference.
+ * \param[in] req Request object.
+ * \return Reference to the client headers map.
+ * \retval NULL When \p req is `NULL` or empty headers.
+ * \note The headers map is automatically freed by the library.
+ */
 BK_EXTERN struct bk_strmap **bk_httpreq_headers(struct bk_httpreq *req);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
