@@ -6,6 +6,11 @@
 #include "bk_strmap.h"
 #include "brook.h"
 
+struct bk__httpconvals_holder {
+    struct bk_strmap **map;
+    bool err;
+};
+
 struct bk_httpauth {
     char *realm;
     char *usr;
@@ -14,7 +19,10 @@ struct bk_httpauth {
 };
 
 struct bk_httpreq {
+    struct MHD_Connection *con;
     struct bk_strmap *headers;
+    struct bk_strmap *cookies;
+    struct bk_strmap *params;
     const char *version;
     const char *method;
     const char *path;

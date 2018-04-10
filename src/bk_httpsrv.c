@@ -9,8 +9,8 @@
 #include "bk_httpsrv.h"
 
 static int bk__httpheaders_iter(void *cls, struct bk_strmap *header) {
-    if (MHD_add_response_header(cls, header->name, header->val) == MHD_NO)
-        oom();
+    if (MHD_add_response_header(cls, header->name, header->val) != MHD_YES)
+        return -ENOMEM;
     return 0;
 }
 
@@ -22,11 +22,45 @@ static void bk__httpfilefree_cb(void *cls) {
     fclose(cls);
 }
 
-static void bk__httpreq_init(struct bk_httpreq *req, const char *version, const char *method, const char *path) {
+static void bk__httpreq_init(struct bk_httpreq *req, struct MHD_Connection *con, const char *version,
+                             const char *method, const char *path) {
     memset(req, 0, sizeof(struct bk_httpreq));
+    req->con = con;
     req->version = version;
     req->method = method;
     req->path = path;
+}
+
+static void bk__httpreq_done(struct bk_httpreq *req) {
+    bk_strmap_cleanup(&req->headers);
+    bk_strmap_cleanup(&req->cookies);
+    bk_strmap_cleanup(&req->params);
+}
+
+static int bk__httpreq_iter(void *cls, __BK_UNUSED enum MHD_ValueKind kind, const char *key, const char *val) {
+    struct bk__httpconvals_holder *holder = cls;
+    return (holder->err = (bk_strmap_add(holder->map, key, val) != 0)) ? MHD_NO : MHD_YES;
+}
+
+static void bk__httpreq_prepare(struct bk_httpreq *req) {
+    struct bk__httpconvals_holder holder;
+    memset(&holder, 0, sizeof(struct bk__httpconvals_holder));
+    holder.map = &req->headers;
+    MHD_get_connection_values(req->con, MHD_HEADER_KIND, bk__httpreq_iter, &holder);
+    if (holder.err)
+        goto failed;
+    holder.map = &req->cookies;
+    MHD_get_connection_values(req->con, MHD_COOKIE_KIND, bk__httpreq_iter, &holder);
+    if (holder.err)
+        goto failed;
+    holder.map = &req->params;
+    MHD_get_connection_values(req->con, MHD_GET_ARGUMENT_KIND, bk__httpreq_iter, &holder);
+    if (holder.err)
+        goto failed;
+    return;
+failed:
+    bk__httpreq_done(req);
+    oom();
 }
 
 static void bk__httpres_init(struct bk_httpres *res, struct MHD_Connection *con) {
@@ -108,7 +142,8 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
         return MHD_YES;
     }
     *con_cls = NULL;
-    bk__httpreq_init(&req, version, method, url);
+    bk__httpreq_init(&req, con, version, method, url);
+    bk__httpreq_prepare(&req);
     bk__httpres_init(&res, con);
     if (srv->auth_cb) {
         bk__httpauth_init(&auth, con);
@@ -117,6 +152,7 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
             return res.ret;
     }
     srv->req_cb(srv->req_cls, &req, &res);
+    bk__httpreq_done(&req);
     return bk__httpres_done(&res);
 }
 
@@ -195,6 +231,18 @@ int bk_httpsrv_stop(struct bk_httpsrv *srv) {
         srv->handle = NULL;
     }
     return 0;
+}
+
+struct bk_strmap **bk_httpreq_headers(struct bk_httpreq *req) {
+    return req ? &req->headers : NULL;
+}
+
+struct bk_strmap **bk_httpreq_cookies(struct bk_httpreq *req) {
+    return req ? &req->cookies : NULL;
+}
+
+struct bk_strmap **bk_httpreq_params(struct bk_httpreq *req) {
+    return req ? &req->params : NULL;
 }
 
 const char *bk_httpreq_version(struct bk_httpreq *req) {
