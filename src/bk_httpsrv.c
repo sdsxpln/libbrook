@@ -113,6 +113,8 @@ done:
 }
 
 static void bk__httperr_cb(__BK_UNUSED void *cls, const char *err) {
+    if (!isatty(fileno(stderr)))
+        return;
     fprintf(stderr, "%s", err);
     fflush(stderr);
 }
