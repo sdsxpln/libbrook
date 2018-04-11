@@ -14,14 +14,13 @@ static bool match_text(const char *s1, const char *s2) {
     return strcmp(s1, s2) == 0;
 }
 
-static bool auth_cb(__BK_UNUSED void *cls, struct bk_httpauth *auth,
-                    __BK_UNUSED struct bk_httpreq *req, struct bk_httpres *res) {
+static bool auth_cb(__BK_UNUSED void *cls, struct bk_httpauth *auth) {
     bool pass;
     bk_httpauth_setrealm(auth, "My realm");
     if (!(pass = match_text(bk_httpauth_usr(auth), "abc") && match_text(bk_httpauth_pwd(auth), "123")))
-        bk_httpres_send(res,
-                        "<html><head><title>Denied</title></head><body><font color=\"red\">Go away</font></body></html>",
-                        "text/html; charset=utf-8", 200);
+        bk_httpauth_deny(auth,
+                         "<html><head><title>Denied</title></head><body><font color=\"red\">Go away</font></body></html>",
+                         "text/html; charset=utf-8");
     return pass;
 }
 
@@ -31,7 +30,8 @@ static void err_cb(__BK_UNUSED void *cls, const char *err) {
 }
 
 static void req_cb(__BK_UNUSED void *cls, __BK_UNUSED struct bk_httpreq *req, struct bk_httpres *res) {
-    bk_httpres_send(res, "<html><head><title>Secret</title></head><body>Secret page</body></html>",
+    bk_httpres_send(res,
+                    "<html><head><title>Secret</title></head><body><font color=\"green\">Secret page</font></body></html>",
                     "text/html; charset=utf-8", 200);
 }
 

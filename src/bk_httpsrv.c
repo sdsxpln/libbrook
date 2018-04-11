@@ -86,27 +86,30 @@ static void bk__httpauth_init(struct bk_httpauth *auth, struct MHD_Connection *c
     auth->usr = MHD_basic_auth_get_username_password(con, &auth->pwd);
 }
 
-static int bk__httpauth_done(struct bk_httpres *res, struct bk_httpauth *auth, struct MHD_Connection *con) {
+static bool bk__httpauth_done(struct bk_httpauth *auth, struct MHD_Connection *con) {
     bk_free(auth->usr);
     bk_free(auth->pwd);
-    if (res->ret) {
-        bk_free(auth->realm);
-    } else {
-        if (res->headers && bk_strmap_iter(res->headers, bk__httpheaders_iter, res->handle) != 0) {
-            bk_strmap_cleanup(&res->headers);
-            MHD_destroy_response(res->handle);
-            oom();
-        }
-        bk_strmap_cleanup(&res->headers);
-        if (!auth->canceled)
-            res->ret = MHD_queue_basic_auth_fail_response(con, auth->realm ? auth->realm : "", res->handle);
-        bk_free(auth->realm);
-        MHD_destroy_response(res->handle);
-        if (auth->canceled)
-            res->ret = MHD_NO;
-        return false;
+    if (auth->ret) {
+        auth->ret = MHD_YES;
+        goto done;
     }
-    return true;
+    if (auth->canceled) {
+        auth->ret = MHD_NO;
+        goto done;
+    }
+    auth->handle = MHD_create_response_from_buffer(strlen(auth->justification), auth->justification,
+                                                   MHD_RESPMEM_MUST_FREE);
+    MHD_add_response_header(auth->handle, MHD_HTTP_HEADER_CONTENT_TYPE, auth->content_type);
+    bk_free(auth->content_type);
+    auth->ret = MHD_queue_basic_auth_fail_response(con, auth->realm ? auth->realm : _("Brook realm"), auth->handle);
+    bk_free(auth->realm);
+    MHD_destroy_response(auth->handle);
+    return false;
+done:
+    bk_free(auth->realm);
+    bk_free(auth->justification);
+    bk_free(auth->content_type);
+    return auth->ret == MHD_YES;
 }
 
 static void bk__httperr_cb(__BK_UNUSED void *cls, const char *err) {
@@ -142,30 +145,51 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
         return MHD_YES;
     }
     *con_cls = NULL;
+    if (srv->auth_cb) {
+        bk__httpauth_init(&auth, con);
+        auth.ret = srv->auth_cb(srv->auth_cls, &auth);
+        if (!bk__httpauth_done(&auth, con))
+            return auth.ret;
+    }
     bk__httpreq_init(&req, con, version, method, url);
     bk__httpreq_prepare(&req);
     bk__httpres_init(&res, con);
-    if (srv->auth_cb) {
-        bk__httpauth_init(&auth, con);
-        res.ret = srv->auth_cb(srv->auth_cls, &auth, &req, &res);
-        if (!bk__httpauth_done(&res, &auth, con))
-            return res.ret;
-    }
     srv->req_cb(srv->req_cls, &req, &res);
     bk__httpreq_done(&req);
     return bk__httpres_done(&res);
 }
 
-BK_EXTERN ssize_t bk_httpread_end(bool err) {
+ssize_t bk_httpread_end(bool err) {
     return err ? MHD_CONTENT_READER_END_WITH_ERROR : MHD_CONTENT_READER_END_OF_STREAM;
 }
 
 int bk_httpauth_setrealm(struct bk_httpauth *auth, const char *realm) {
     if (!auth || !realm)
         return -EINVAL;
+    if (auth->realm)
+        return -EALREADY;
     auth->realm = strdup(realm);
     if (!auth->realm)
         oom();
+    return 0;
+}
+
+int bk_httpauth_deny(struct bk_httpauth *auth, const char *justification, const char *content_type) {
+    if (!auth || !justification || !content_type)
+        return -EINVAL;
+    if (auth->justification)
+        return -EALREADY;
+    auth->justification = strdup(justification);
+    auth->content_type = strdup(content_type);
+    if (!auth->justification || !auth->content_type)
+        oom();
+    return 0;
+}
+
+int bk_httpauth_cancel(struct bk_httpauth *auth) {
+    if (!auth)
+        return -EINVAL;
+    auth->canceled = true;
     return 0;
 }
 
@@ -175,13 +199,6 @@ const char *bk_httpauth_usr(struct bk_httpauth *auth) {
 
 const char *bk_httpauth_pwd(struct bk_httpauth *auth) {
     return auth ? auth->pwd : NULL;
-}
-
-int bk_httpauth_cancel(struct bk_httpauth *auth) {
-    if (!auth)
-        return -EINVAL;
-    auth->canceled = true;
-    return 0;
 }
 
 struct bk_httpsrv *bk_httpsrv_new2(bk_httpauth_cb auth_cb, void *auth_cls, bk_httpreq_cb req_cb, void *req_cls,

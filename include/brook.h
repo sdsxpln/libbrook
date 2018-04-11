@@ -374,7 +374,7 @@ struct bk_httpres;
 struct bk_httpsrv;
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
-typedef bool (*bk_httpauth_cb)(void *cls, struct bk_httpauth *auth, struct bk_httpreq *req, struct bk_httpres *res);
+typedef bool (*bk_httpauth_cb)(void *cls, struct bk_httpauth *auth);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 typedef void (*bk_httpreq_cb)(void *cls, struct bk_httpreq *req, struct bk_httpres *res);
@@ -401,14 +401,24 @@ BK_EXTERN ssize_t bk_httpread_end(bool err);
  */
 BK_EXTERN int bk_httpauth_setrealm(struct bk_httpauth *auth, const char *realm);
 
+/**
+ * Deny the authentication sending a justification to the user.
+ * \param[in] auth Authentication handle.
+ * \param[in] err Justification message.
+ * \param[in] content_type `Content-Type` of the justification.
+ * \retval 0 - Success.
+ * \retval -EINVAL - Invalid argument.
+ */
+BK_EXTERN int bk_httpauth_deny(struct bk_httpauth *auth, const char *justification, const char *content_type);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN int bk_httpauth_cancel(struct bk_httpauth *auth);
+
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN const char *bk_httpauth_usr(struct bk_httpauth *auth);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN const char *bk_httpauth_pwd(struct bk_httpauth *auth);
-
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN int bk_httpauth_cancel(struct bk_httpauth *auth);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN struct bk_httpsrv *bk_httpsrv_new2(bk_httpauth_cb auth_cb, void *auth_cls,
