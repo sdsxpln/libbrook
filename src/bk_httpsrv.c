@@ -22,19 +22,32 @@ static void bk__httpfilefree_cb(void *cls) {
     fclose(cls);
 }
 
+static struct bk_httpreq *bk__httpreq_new(void) {
+    return bk_alloc(sizeof(struct bk_httpreq));
+}
+
 static void bk__httpreq_init(struct bk_httpreq *req, struct MHD_Connection *con, const char *version,
                              const char *method, const char *path) {
-    memset(req, 0, sizeof(struct bk_httpreq));
     req->con = con;
     req->version = version;
     req->method = method;
     req->path = path;
 }
 
-static void bk__httpreq_done(struct bk_httpreq *req) {
+static void bk__httpreq_cleanup(struct bk_httpreq *req) {
     bk_strmap_cleanup(&req->headers);
     bk_strmap_cleanup(&req->cookies);
     bk_strmap_cleanup(&req->params);
+}
+
+static void bk__httpreq_done(__BK_UNUSED void *cls, __BK_UNUSED struct MHD_Connection *con, void **con_cls,
+                             __BK_UNUSED enum MHD_RequestTerminationCode toe) {
+    struct bk_httpreq *req = *con_cls;
+    if (req) {
+        bk__httpreq_cleanup(req);
+        bk_free(req);
+    }
+    *con_cls = NULL;
 }
 
 static int bk__httpreq_iter(void *cls, __BK_UNUSED enum MHD_ValueKind kind, const char *key, const char *val) {
@@ -59,7 +72,7 @@ static void bk__httpreq_prepare(struct bk_httpreq *req) {
         goto failed;
     return;
 failed:
-    bk__httpreq_done(req);
+    bk__httpreq_cleanup(req);
     oom();
 }
 
@@ -139,27 +152,29 @@ static void bk__httpsrv_oel(void *cls, const char *fmt, va_list ap) {
 static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *url, const char *method,
                            const char *version, const char *upld_data, size_t *upld_data_size, void **con_cls) {
     struct bk_httpsrv *srv = cls;
-    struct bk_httpreq req;
+    struct bk_httpreq *req;
     struct bk_httpres res;
     struct bk_httpauth auth;
+
     (void) upld_data;
     (void) upld_data_size;
+
     if (!*con_cls) {
-        *con_cls = con;
+        if (srv->auth_cb) {
+            bk__httpauth_init(&auth, con);
+            auth.ret = srv->auth_cb(srv->auth_cls, &auth);
+            if (!bk__httpauth_done(&auth))
+                return auth.ret;
+        }
+        if (!(*con_cls = bk__httpreq_new()))
+            oom();
         return MHD_YES;
     }
-    *con_cls = NULL;
-    if (srv->auth_cb) {
-        bk__httpauth_init(&auth, con);
-        auth.ret = srv->auth_cb(srv->auth_cls, &auth);
-        if (!bk__httpauth_done(&auth))
-            return auth.ret;
-    }
-    bk__httpreq_init(&req, con, version, method, url);
-    bk__httpreq_prepare(&req);
+    req = *con_cls;
+    bk__httpreq_init(req, con, version, method, url);
+    bk__httpreq_prepare(req);
     bk__httpres_init(&res, con);
-    srv->req_cb(srv->req_cls, &req, &res);
-    bk__httpreq_done(&req);
+    srv->req_cb(srv->req_cls, req, &res);
     return bk__httpres_done(&res);
 }
 
@@ -239,6 +254,7 @@ int bk_httpsrv_start(struct bk_httpsrv *srv, uint16_t port, bool threaded) {
             port, NULL, NULL,
             bk__httpsrv_ahc, srv,
             MHD_OPTION_EXTERNAL_LOGGER, bk__httpsrv_oel, srv,
+            MHD_OPTION_NOTIFY_COMPLETED, bk__httpreq_done, NULL,
             MHD_OPTION_END)))
         return -ECONNABORTED;
     return 0;
