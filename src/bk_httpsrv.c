@@ -83,10 +83,11 @@ static int bk__httpres_done(struct bk_httpres *res) {
 
 static void bk__httpauth_init(struct bk_httpauth *auth, struct MHD_Connection *con) {
     memset(auth, 0, sizeof(struct bk_httpauth));
+    auth->con = con;
     auth->usr = MHD_basic_auth_get_username_password(con, &auth->pwd);
 }
 
-static bool bk__httpauth_done(struct bk_httpauth *auth, struct MHD_Connection *con) {
+static bool bk__httpauth_done(struct bk_httpauth *auth) {
     bk_free(auth->usr);
     bk_free(auth->pwd);
     if (auth->ret) {
@@ -101,7 +102,8 @@ static bool bk__httpauth_done(struct bk_httpauth *auth, struct MHD_Connection *c
                                                    MHD_RESPMEM_MUST_FREE);
     MHD_add_response_header(auth->handle, MHD_HTTP_HEADER_CONTENT_TYPE, auth->content_type);
     bk_free(auth->content_type);
-    auth->ret = MHD_queue_basic_auth_fail_response(con, auth->realm ? auth->realm : _("Brook realm"), auth->handle);
+    auth->ret = MHD_queue_basic_auth_fail_response(auth->con, auth->realm ? auth->realm : _("Brook realm"),
+                                                   auth->handle);
     bk_free(auth->realm);
     MHD_destroy_response(auth->handle);
     return false;
@@ -150,7 +152,7 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
     if (srv->auth_cb) {
         bk__httpauth_init(&auth, con);
         auth.ret = srv->auth_cb(srv->auth_cls, &auth);
-        if (!bk__httpauth_done(&auth, con))
+        if (!bk__httpauth_done(&auth))
             return auth.ret;
     }
     bk__httpreq_init(&req, con, version, method, url);

@@ -12,6 +12,7 @@ struct bk__httpconvals_holder {
 };
 
 struct bk_httpauth {
+    struct MHD_Connection *con;
     struct MHD_Response *handle;
     char *realm;
     char *usr;
