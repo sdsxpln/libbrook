@@ -45,7 +45,7 @@ do {                                                        \
     fprintf(stderr, _("%s:%d: %s: Out of memory\n"),        \
         __FILE__, __LINE__, __extension__ __FUNCTION__);    \
     fflush(stderr);                                         \
-    exit(-1);                                               \
+    abort();                                                \
 } while (0)
 #endif
 
