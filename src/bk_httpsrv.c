@@ -41,8 +41,8 @@ static int bk__httpreq_iter(void *cls, __BK_UNUSED enum MHD_ValueKind kind, cons
     return (holder->failed = (bk_strmap_add(holder->map, key, val) != 0)) ? MHD_NO : MHD_YES;
 }
 
-static void bk__httpreq_prepare(struct bk_httpreq *req, struct MHD_Connection *con, const char *version,
-                                const char *method, const char *path) {
+static void bk__httpreq_init(struct bk_httpreq *req, struct MHD_Connection *con, const char *version,
+                             const char *method, const char *path) {
     struct bk__httpconvals_holder holder;
     memset(&holder, 0, sizeof(struct bk__httpconvals_holder));
     holder.map = &req->headers;
@@ -169,7 +169,7 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
         return MHD_YES;
     }
     req = *con_cls;
-    bk__httpreq_prepare(req, con, version, method, url);
+    bk__httpreq_init(req, con, version, method, url);
     bk__httpres_init(&res, con);
     srv->req_cb(srv->req_cls, req, &res);
     return bk__httpres_done(&res);
