@@ -493,6 +493,8 @@ BK_EXTERN int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_
 BK_EXTERN int bk_httpres_senddata(struct bk_httpres *res, size_t block_size, bk_httpread_cb read_cb, void *cls,
                                   bk_httpfree_cb free_cb, unsigned int status);
 
+/*TODO: Compress the response: bk_httpres_compress(<BK_COMP_DEFL/BK_COMP_GZIP>) */
+
 /** \} */
 
 #ifdef __cplusplus
