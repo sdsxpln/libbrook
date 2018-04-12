@@ -15,7 +15,11 @@ static int bk__httpheaders_iter(void *cls, struct bk_strmap *header) {
 }
 
 static ssize_t bk__httpfileread_cb(void *cls, __BK_UNUSED uint64_t offset, char *buf, size_t size) {
-    return fread(buf, sizeof(char), size, cls);
+    return
+#ifdef __ANDROID__
+        (ssize_t)
+#endif
+            fread(buf, sizeof(char), size, cls);
 }
 
 static void bk__httpfilefree_cb(void *cls) {
@@ -172,7 +176,11 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
 }
 
 ssize_t bk_httpread_end(bool err) {
-    return err ? MHD_CONTENT_READER_END_WITH_ERROR : MHD_CONTENT_READER_END_OF_STREAM;
+    return
+#ifdef __ANDROID__
+        (ssize_t)
+#endif
+            (err ? MHD_CONTENT_READER_END_WITH_ERROR : MHD_CONTENT_READER_END_OF_STREAM);
 }
 
 int bk_httpauth_setrealm(struct bk_httpauth *auth, const char *realm) {
