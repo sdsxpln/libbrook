@@ -339,10 +339,16 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, uint64_t max_
         return -EALREADY;
     if (!(absolute_path = realpath(filename, NULL)))
         return -errno;
+#ifdef _WIN32
+    eno = fopen_s(&file, absolute_path, "rb");
+    if (eno)
+        goto fail;
+#else
     if (!(file = fopen(absolute_path, "rb"))) {
         eno = errno;
         goto fail;
     }
+#endif
     if ((fd = fileno(file)) == -1) {
         eno = errno;
         goto fail;
