@@ -29,6 +29,7 @@
 #define BK_MACROS_H
 
 #include <stdio.h>
+#include <unistd.h>
 #include <errno.h>
 
 #define _(String) (String) /* macro to make it easy to mark text for translation */
@@ -38,16 +39,14 @@
 
 /* macro used for handling `Out of memory` errors. */
 #ifdef NDEBUG
-#define oom() exit(-1)
+#define oom() exit(EXIT_FAILURE)
 #else
-#define oom()                                                   \
-do {                                                            \
-    if (ferror(stderr)) {                                       \
-        fprintf(stderr, _("%s:%d: %s: Out of memory\n"),        \
-            __FILE__, __LINE__, __extension__ __FUNCTION__);    \
-        fflush(stderr);                                         \
-        exit(EXIT_FAILURE);                                     \
-    }                                                           \
+#define oom()                                                                                   \
+do {                                                                                            \
+    if (isatty(fileno(stderr)) && (fprintf(stderr, _("%s:%d: %s: Out of memory\n"),             \
+                                        __FILE__, __LINE__, __extension__ __FUNCTION__) > 0))   \
+        fflush(stderr);                                                                         \
+    exit(EXIT_FAILURE);                                                                         \
 } while (0)
 #endif
 

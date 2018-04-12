@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <unistd.h>
 
 #ifdef _WIN32
 #define __progname __argv[0]
@@ -50,14 +51,14 @@ extern const char *__progname;
 #ifdef NDEBUG
 #define ASSERT(expr) ((void) 0)
 #else
-#define ASSERT(expr)                                                            \
-do {                                                                            \
-    if (!(expr) && ferror(stderr)) {                                            \
-        fprintf(stderr, "%s: %s:%d: %s: Assertion `%s' failed.\n",              \
-            __progname, __FILE__, __LINE__, __extension__ __FUNCTION__, #expr); \
-        fflush(stderr);                                                         \
-        exit(EXIT_FAILURE);                                                     \
-    }                                                                           \
+#define ASSERT(expr)                                                                        \
+do {                                                                                        \
+    if (!(expr)) {                                                                          \
+        if ((fprintf(stderr, "%s: %s:%d: %s: Assertion `%s' failed.\n",                     \
+                __progname, __FILE__, __LINE__, __extension__ __FUNCTION__, #expr) > 0))    \
+            fflush(stderr);                                                                 \
+        exit(EXIT_FAILURE);                                                                 \
+    }                                                                                       \
 } while (0)
 #endif
 
