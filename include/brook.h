@@ -110,6 +110,9 @@ __BK_MALLOC;
  */
 BK_EXTERN void bk_free(void *ptr);
 
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN char *bk_tmpdir();
+
 /** \} */
 
 /**

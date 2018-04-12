@@ -28,9 +28,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <errno.h>
-#include <unistd.h>
-#include <fcntl.h>
 #include "brook.h"
 #include "bk_macros.h"
 #include "bk_utils.h"
@@ -55,6 +52,14 @@ char *basename(const char *path) {
 
 #endif
 
+void bk__toasciilower(char *str) {
+    while (*str) {
+        if (/*isascii(*str) &&*/isupper(*str))
+            *str = (char) tolower(*str);
+        str++;
+    }
+}
+
 /* Version */
 
 unsigned int bk_version(void) {
@@ -78,12 +83,9 @@ void bk_free(void *ptr) {
     free(ptr);
 }
 
-/* String */
+/* File. */
 
-void bk__toasciilower(char *str) {
-    while (*str) {
-        if (/*isascii(*str) &&*/isupper(*str))
-            *str = (char) tolower(*str);
-        str++;
-    }
+char *bk_tmpdir() {
+    /*TODO: FIXME! */
+    return strdup("");
 }
