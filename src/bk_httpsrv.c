@@ -40,16 +40,6 @@ static void bk__httpreq_cleanup(struct bk_httpreq *req) {
     bk_strmap_cleanup(&req->params);
 }
 
-static void bk__httpreq_done(__BK_UNUSED void *cls, __BK_UNUSED struct MHD_Connection *con, void **con_cls,
-                             __BK_UNUSED enum MHD_RequestTerminationCode toe) {
-    struct bk_httpreq *req = *con_cls;
-    if (req) {
-        bk__httpreq_cleanup(req);
-        bk_free(req);
-    }
-    *con_cls = NULL;
-}
-
 static int bk__httpreq_iter(void *cls, __BK_UNUSED enum MHD_ValueKind kind, const char *key, const char *val) {
     struct bk__httpconvals_holder *holder = cls;
     return (holder->failed = (bk_strmap_add(holder->map, key, val) != 0)) ? MHD_NO : MHD_YES;
@@ -74,6 +64,16 @@ static void bk__httpreq_prepare(struct bk_httpreq *req) {
 fail_oom:
     bk__httpreq_cleanup(req);
     oom();
+}
+
+static void bk__httpreq_done(__BK_UNUSED void *cls, __BK_UNUSED struct MHD_Connection *con, void **con_cls,
+                             __BK_UNUSED enum MHD_RequestTerminationCode toe) {
+    struct bk_httpreq *req = *con_cls;
+    if (req) {
+        bk__httpreq_cleanup(req);
+        bk_free(req);
+    }
+    *con_cls = NULL;
 }
 
 static void bk__httpres_init(struct bk_httpres *res, struct MHD_Connection *con) {
