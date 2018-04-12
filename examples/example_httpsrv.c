@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <brook.h>
 
 /* NOTE: Error checking has been omitted for clarity. */
@@ -14,10 +13,10 @@ static void req_cb(__BK_UNUSED void *cls, __BK_UNUSED struct bk_httpreq *req, st
 
 int main(void) {
     struct bk_httpsrv *srv = bk_httpsrv_new(req_cb, NULL);
-    if (bk_httpsrv_start(srv, PORT, false) == 0) {
-        printf("Server running at http://localhost:%d\n", PORT);
-        getchar();
-    }
+    if (bk_httpsrv_start(srv, PORT, false) != 0)
+        return EXIT_FAILURE;
+    printf("Server running at http://localhost:%d\n", PORT);
+    getchar();
     bk_httpsrv_free(srv);
-    return errno;
+    return EXIT_SUCCESS;
 }
