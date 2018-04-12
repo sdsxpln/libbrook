@@ -138,7 +138,7 @@ static void bk__httpsrv_oel(void *cls, const char *fmt, va_list ap) {
     va_copy(ap_cpy, ap);
     size = vsnprintf(NULL, 0, fmt, ap_cpy) + sizeof(char);
     va_end(ap_cpy);
-    if (!(err = malloc(size)))
+    if (!(err = bk_alloc(size)))
         oom();
     vsnprintf(err, size, fmt, ap);
     srv->err_cb(srv->err_cls, err);
@@ -368,13 +368,13 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, uint64_t max_
 #define _BK_FNFMT "%s; filename=\"%s\""
     cd_type = rendered ? "inline" : "attachment";
     cd_basename = basename(absolute_path);
-    bk_free(absolute_path);
     fn_size = snprintf(NULL, 0, _BK_FNFMT, cd_type, cd_basename) + sizeof(char);
-    if (!(cd_header = malloc(fn_size))) {
+    if (!(cd_header = bk_alloc(fn_size))) {
         eno = ENOMEM;
         goto fail;
     }
     snprintf(cd_header, fn_size, _BK_FNFMT, cd_type, cd_basename);
+    bk_free(absolute_path);
 #undef _BK_FNFMT
     bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, cd_header);
     bk_free(cd_header);
