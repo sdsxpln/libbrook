@@ -128,10 +128,10 @@ done:
 }
 
 static void bk__httperr_cb(__BK_UNUSED void *cls, const char *err) {
-    if (!isatty(fileno(stderr)))
-        return;
-    fprintf(stderr, "%s", err);
-    fflush(stderr);
+    if (ferror(stderr)) {
+        fprintf(stderr, "%s", err);
+        fflush(stderr);
+    }
 }
 
 static void bk__httpsrv_oel(void *cls, const char *fmt, va_list ap) {
