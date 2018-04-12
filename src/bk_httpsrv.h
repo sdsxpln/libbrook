@@ -8,7 +8,7 @@
 
 struct bk__httpconvals_holder {
     struct bk_strmap **map;
-    bool err;
+    bool failed;
 };
 
 struct bk_httpauth {

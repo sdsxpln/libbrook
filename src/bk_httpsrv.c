@@ -52,7 +52,7 @@ static void bk__httpreq_done(__BK_UNUSED void *cls, __BK_UNUSED struct MHD_Conne
 
 static int bk__httpreq_iter(void *cls, __BK_UNUSED enum MHD_ValueKind kind, const char *key, const char *val) {
     struct bk__httpconvals_holder *holder = cls;
-    return (holder->err = (bk_strmap_add(holder->map, key, val) != 0)) ? MHD_NO : MHD_YES;
+    return (holder->failed = (bk_strmap_add(holder->map, key, val) != 0)) ? MHD_NO : MHD_YES;
 }
 
 static void bk__httpreq_prepare(struct bk_httpreq *req) {
@@ -60,18 +60,18 @@ static void bk__httpreq_prepare(struct bk_httpreq *req) {
     memset(&holder, 0, sizeof(struct bk__httpconvals_holder));
     holder.map = &req->headers;
     MHD_get_connection_values(req->con, MHD_HEADER_KIND, bk__httpreq_iter, &holder);
-    if (holder.err)
-        goto failed;
+    if (holder.failed)
+        goto fail_oom;
     holder.map = &req->cookies;
     MHD_get_connection_values(req->con, MHD_COOKIE_KIND, bk__httpreq_iter, &holder);
-    if (holder.err)
-        goto failed;
+    if (holder.failed)
+        goto fail_oom;
     holder.map = &req->params;
     MHD_get_connection_values(req->con, MHD_GET_ARGUMENT_KIND, bk__httpreq_iter, &holder);
-    if (holder.err)
-        goto failed;
+    if (holder.failed)
+        goto fail_oom;
     return;
-failed:
+fail_oom:
     bk__httpreq_cleanup(req);
     oom();
 }
