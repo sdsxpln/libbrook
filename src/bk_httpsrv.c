@@ -187,8 +187,7 @@ int bk_httpauth_setrealm(struct bk_httpauth *auth, const char *realm) {
         return -EINVAL;
     if (auth->realm)
         return -EALREADY;
-    auth->realm = strdup(realm);
-    if (!auth->realm)
+    if (!(auth->realm = strdup(realm)))
         oom();
     return 0;
 }
@@ -198,10 +197,11 @@ int bk_httpauth_deny(struct bk_httpauth *auth, const char *justification, const 
         return -EINVAL;
     if (auth->justification)
         return -EALREADY;
-    auth->justification = strdup(justification);
-    auth->content_type = strdup(content_type);
-    if (!auth->justification || !auth->content_type)
+    if (!(auth->justification = strdup(justification)) || !(auth->content_type = strdup(content_type))) {
+        bk_free(auth->justification);
+        bk_free(auth->content_type);
         oom();
+    }
     return 0;
 }
 
