@@ -6,6 +6,13 @@
 #include "brook.h"
 #endif
 
+#ifdef _WIN32
+# ifndef PATH_MAX
+#  define PATH_MAX _MAX_PATH
+# endif
+# define realpath(n, r) _fullpath((r), (n), PATH_MAX)
+#endif
+
 #if defined(__MINGW32__) || defined(__ANDROID__)
 #ifndef NDEBUG
 BK_EXTERN
