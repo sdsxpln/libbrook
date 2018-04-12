@@ -334,46 +334,50 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, uint64_t max_
                         bool rendered, unsigned int status) {
     FILE *file;
     struct stat64 sbuf;
+    char *absolute_path;
     const char *cd_type;
     const char *cd_basename;
     char *cd_header;
     size_t fn_size;
-    int fd, errnum = 0;
+    int fd, eno = 0;
     if (!res || !filename || block_site < 1)
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
-    if (!(file = fopen(filename, "rb"))) {
-        errnum = errno;
-        goto failed;
+    if (!(absolute_path = realpath(filename, NULL)))
+        return -errno;
+    if (!(file = fopen(absolute_path, "rb"))) {
+        eno = errno;
+        goto fail;
     }
     if ((fd = fileno(file)) == -1) {
-        errnum = errno;
-        goto failed;
+        eno = errno;
+        goto fail;
     }
     if (fstat64(fd, &sbuf)) {
-        errnum = errno;
-        goto failed;
+        eno = errno;
+        goto fail;
     }
     if ((uint64_t) sbuf.st_size > max_size) {
-        errnum = EFBIG;
-        goto failed;
+        eno = EFBIG;
+        goto fail;
     }
     if (S_ISDIR(sbuf.st_mode)) {
-        errnum = EISDIR;
-        goto failed;
+        eno = EISDIR;
+        goto fail;
     }
     if (!S_ISREG(sbuf.st_mode)) {
-        errnum = EBADF;
-        goto failed;
+        eno = EBADF;
+        goto fail;
     }
 #define _BK_FNFMT "%s; filename=\"%s\""
     cd_type = rendered ? "inline" : "attachment";
-    cd_basename = basename(filename);
+    cd_basename = basename(absolute_path);
+    bk_free(absolute_path);
     fn_size = snprintf(NULL, 0, _BK_FNFMT, cd_type, cd_basename) + sizeof(char);
     if (!(cd_header = malloc(fn_size))) {
-        errnum = ENOMEM;
-        goto failed;
+        eno = ENOMEM;
+        goto fail;
     }
     snprintf(cd_header, fn_size, _BK_FNFMT, cd_type, cd_basename);
 #undef _BK_FNFMT
@@ -381,36 +385,37 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, uint64_t max_
     bk_free(cd_header);
     if (!(res->handle = MHD_create_response_from_callback((uint64_t) sbuf.st_size, block_site, bk__httpfileread_cb,
                                                           file, bk__httpfilefree_cb))) {
-        errnum = ENOMEM;
-        goto failed;
+        eno = ENOMEM;
+        goto fail;
     }
     res->status = status;
     return 0;
-failed:
+fail:
+    bk_free(absolute_path);
     if (file) {
-        if (errnum == 0)
-            errnum = fclose(file);
+        if (eno == 0)
+            eno = fclose(file);
         else
             fclose(file);
     }
-    if (errnum == ENOMEM)
+    if (eno == ENOMEM)
         oom();
-    return -errnum;
+    return -eno;
 }
 
 int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_size, bk_httpread_cb write_cb, void *cls,
                           bk_httpfree_cb free_cb, unsigned int status) {
-    int errnum;
+    int eno;
     if (!res) {
-        errnum = EINVAL;
+        eno = EINVAL;
         goto failed;
     }
     if (res->handle) {
-        errnum = EALREADY;
+        eno = EALREADY;
         goto failed;
     }
     if (!(res->handle = MHD_create_response_from_callback(size, block_size, write_cb, cls, free_cb))) {
-        errnum = ENOMEM;
+        eno = ENOMEM;
         goto failed;
     }
     res->status = status;
@@ -418,9 +423,9 @@ int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_si
 failed:
     if (free_cb)
         free_cb(cls);
-    if (errnum == ENOMEM)
+    if (eno == ENOMEM)
         oom();
-    return -errnum;
+    return -eno;
 }
 
 int bk_httpres_senddata(struct bk_httpres *res, size_t block_size, bk_httpread_cb read_cb, void *cls,
