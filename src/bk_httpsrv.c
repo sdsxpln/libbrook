@@ -316,7 +316,7 @@ int bk_httpres_send(struct bk_httpres *res, const char *val, const char *content
 
 int bk_httpres_sendbinary(struct bk_httpres *res, void *buf, size_t size, const char *content_type,
                           unsigned int status) {
-    if (!res || !buf || !content_type || status <= 0)
+    if (!res || !buf || !content_type || ((status < 100) || (status > 599)))
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
@@ -331,7 +331,7 @@ int bk_httpres_sendstr(struct bk_httpres *res, struct bk_str *str, const char *c
     return bk_httpres_sendbinary(res, (void *) bk_str_content(str), bk_str_length(str), content_type, status);
 }
 
-int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, uint64_t max_size, const char *filename,
+int bk_httpres_sendfile(struct bk_httpres *res, size_t block_size, uint64_t max_size, const char *filename,
                         bool rendered, unsigned int status) {
     FILE *file;
     struct stat64 sbuf;
@@ -341,7 +341,7 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, uint64_t max_
     char *cd_header;
     size_t fn_size;
     int fd, eno = 0;
-    if (!res || !filename || block_site < 1)
+    if (!res || (block_size < 1) || ((int64_t) max_size < 0) || !filename || ((status < 100) || (status > 599)))
         return -EINVAL;
     if (res->handle)
         return -EALREADY;
@@ -390,7 +390,7 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, uint64_t max_
 #undef _BK_FNFMT
     bk_strmap_set(&res->headers, MHD_HTTP_HEADER_CONTENT_DISPOSITION, cd_header);
     bk_free(cd_header);
-    if (!(res->handle = MHD_create_response_from_callback((uint64_t) sbuf.st_size, block_site, bk__httpfileread_cb,
+    if (!(res->handle = MHD_create_response_from_callback((uint64_t) sbuf.st_size, block_size, bk__httpfileread_cb,
                                                           file, bk__httpfilefree_cb))) {
         eno = ENOMEM;
         goto fail;
@@ -413,7 +413,7 @@ fail:
 int bk_httpres_sendstream(struct bk_httpres *res, uint64_t size, size_t block_size, bk_httpread_cb write_cb, void *cls,
                           bk_httpfree_cb free_cb, unsigned int status) {
     int eno;
-    if (!res) {
+    if (!res || (size < 1) || (block_size < 1) || !write_cb || ((status < 100) || (status > 599))) {
         eno = EINVAL;
         goto failed;
     }
