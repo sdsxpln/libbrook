@@ -26,14 +26,6 @@ static struct bk_httpreq *bk__httpreq_new(void) {
     return bk_alloc(sizeof(struct bk_httpreq));
 }
 
-static void bk__httpreq_init(struct bk_httpreq *req, struct MHD_Connection *con, const char *version,
-                             const char *method, const char *path) {
-    req->con = con;
-    req->version = version;
-    req->method = method;
-    req->path = path;
-}
-
 static void bk__httpreq_cleanup(struct bk_httpreq *req) {
     bk_strmap_cleanup(&req->headers);
     bk_strmap_cleanup(&req->cookies);
@@ -45,21 +37,25 @@ static int bk__httpreq_iter(void *cls, __BK_UNUSED enum MHD_ValueKind kind, cons
     return (holder->failed = (bk_strmap_add(holder->map, key, val) != 0)) ? MHD_NO : MHD_YES;
 }
 
-static void bk__httpreq_prepare(struct bk_httpreq *req) {
+static void bk__httpreq_init(struct bk_httpreq *req, struct MHD_Connection *con, const char *version,
+                             const char *method, const char *path) {
     struct bk__httpconvals_holder holder;
     memset(&holder, 0, sizeof(struct bk__httpconvals_holder));
     holder.map = &req->headers;
-    MHD_get_connection_values(req->con, MHD_HEADER_KIND, bk__httpreq_iter, &holder);
+    MHD_get_connection_values(con, MHD_HEADER_KIND, bk__httpreq_iter, &holder);
     if (holder.failed)
         goto fail_oom;
     holder.map = &req->cookies;
-    MHD_get_connection_values(req->con, MHD_COOKIE_KIND, bk__httpreq_iter, &holder);
+    MHD_get_connection_values(con, MHD_COOKIE_KIND, bk__httpreq_iter, &holder);
     if (holder.failed)
         goto fail_oom;
     holder.map = &req->params;
-    MHD_get_connection_values(req->con, MHD_GET_ARGUMENT_KIND, bk__httpreq_iter, &holder);
+    MHD_get_connection_values(con, MHD_GET_ARGUMENT_KIND, bk__httpreq_iter, &holder);
     if (holder.failed)
         goto fail_oom;
+    req->version = version;
+    req->method = method;
+    req->path = path;
     return;
 fail_oom:
     bk__httpreq_cleanup(req);
@@ -172,7 +168,6 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
     }
     req = *con_cls;
     bk__httpreq_init(req, con, version, method, url);
-    bk__httpreq_prepare(req);
     bk__httpres_init(&res, con);
     srv->req_cb(srv->req_cls, req, &res);
     return bk__httpres_done(&res);
