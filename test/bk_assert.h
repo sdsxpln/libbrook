@@ -52,7 +52,7 @@ extern const char *__progname;
 #else
 #define ASSERT(expr)                                                            \
 do {                                                                            \
-    if (!(expr)) {                                                              \
+    if (!(expr) && ferror(stderr)) {                                            \
         fprintf(stderr, "%s: %s:%d: %s: Assertion `%s' failed.\n",              \
             __progname, __FILE__, __LINE__, __extension__ __FUNCTION__, #expr); \
         fflush(stderr);                                                         \
