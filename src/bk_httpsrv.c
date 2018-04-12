@@ -365,7 +365,7 @@ int bk_httpres_sendfile(struct bk_httpres *res, size_t block_site, uint64_t max_
         eno = errno;
         goto fail;
     }
-    if ((uint64_t) sbuf.st_size > max_size) {
+    if ((max_size > 0) && ((uint64_t) sbuf.st_size > max_size)) {
         eno = EFBIG;
         goto fail;
     }
