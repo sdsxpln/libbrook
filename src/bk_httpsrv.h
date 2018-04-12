@@ -19,12 +19,10 @@ struct bk_httpauth {
     char *pwd;
     char *justification;
     char *content_type;
-    int ret;
     bool canceled;
 };
 
 struct bk_httpreq {
-    struct MHD_Connection *con;
     struct bk_strmap *headers;
     struct bk_strmap *cookies;
     struct bk_strmap *params;
@@ -51,6 +49,7 @@ struct bk_httpsrv {
     void *req_cls;
     void *err_cls;
     char *upload_dir;
+    size_t post_buffer_size;
 };
 
 #endif /* BK_HTTPSRV_H */
