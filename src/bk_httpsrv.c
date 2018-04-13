@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <errno.h>
 #include "microhttpd.h"
 #include "bk_macros.h"
