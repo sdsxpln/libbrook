@@ -20,7 +20,11 @@ static int bk__httpreq_iter(void *cls, __BK_UNUSED enum MHD_ValueKind kind, cons
 }
 
 struct bk_httpreq *bk__httpreq_new(void) {
-    return bk_alloc(sizeof(struct bk_httpreq));
+    struct bk_httpreq *req = bk_alloc(sizeof(struct bk_httpreq));
+    if (!req)
+        oom();
+    req->payload = bk_str_new();
+    return req;
 }
 
 void bk__httpreq_init(struct bk_httpreq *req, struct MHD_Connection *con, const char *version, const char *method,

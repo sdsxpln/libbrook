@@ -12,8 +12,7 @@ bool bk__httpuplds_process(struct bk_httpsrv *srv, struct bk_httpreq *req, struc
     (void) srv;
     (void) con;
     if (*upld_data_size > 0) {
-        req->payload = bk_str_new();
-        utstring_bincpy(req->payload->buf, upld_data, *upld_data_size);
+        utstring_bincpy(req->payload->buf, upld_data, *upld_data_size); /* internal only, use bk_str_strcpy(). */
         *upld_data_size = 0;
         *ret = MHD_YES;
         return true;

@@ -43,8 +43,7 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
             if (!bk__httpauth_done(&auth, &res.ret))
                 return res.ret;
         }
-        if (!(*con_cls = bk__httpreq_new()))
-            oom();
+        *con_cls = bk__httpreq_new();
         return MHD_YES;
     }
     req = *con_cls;
@@ -73,8 +72,8 @@ struct bk_httpsrv *bk_httpsrv_new2(bk_httpauth_cb auth_cb, void *auth_cls, bk_ht
     srv->post_bufsize = 1024; /* 1 Kb */
     srv->max_payldsize = 524288; /* 512 kB */
 #else
-    srv->post_bufsize = 2/*4096*/; /* 4 kB */
-    srv->max_payldsize = 2/*4194304*/; /* 4 MB */
+    srv->post_bufsize = 4096; /* 4 kB */
+    srv->max_payldsize = 4194304; /* 4 MB */
 #endif
     return srv;
 }
