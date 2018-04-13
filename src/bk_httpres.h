@@ -2,7 +2,7 @@
 #define BK_HTTPRES_H
 
 #include "microhttpd.h"
-#include "bk_strmap.h"
+#include "brook.h"
 
 struct bk_httpres {
     struct MHD_Connection *con;

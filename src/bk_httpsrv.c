@@ -2,7 +2,7 @@
 #include <errno.h>
 #include "microhttpd.h"
 #include "bk_macros.h"
-#include "bk_utils.h"
+#include "brook.h"
 #include "bk_httpauth.h"
 #include "bk_httpreq.h"
 #include "bk_httpres.h"

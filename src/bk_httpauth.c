@@ -3,7 +3,7 @@
 #include <string.h>
 #include "microhttpd.h"
 #include "bk_macros.h"
-#include "bk_utils.h"
+#include "brook.h"
 #include "bk_httpauth.h"
 
 void bk__httpauth_init(struct bk_httpauth *auth, struct MHD_Connection *con) {

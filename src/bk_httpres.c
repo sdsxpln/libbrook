@@ -6,8 +6,9 @@
 #include <sys/stat.h>
 #include "microhttpd.h"
 #include "bk_macros.h"
-#include "bk_utils.h"
-#include "bk_str.h"
+#if defined(__MINGW32__) || defined(__ANDROID__)
+#include "bk_utils.h" /* basename() */
+#endif
 #include "bk_strmap.h"
 #include "bk_httpres.h"
 #include "brook.h"

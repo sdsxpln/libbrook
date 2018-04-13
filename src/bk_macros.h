@@ -28,6 +28,7 @@
 #ifndef BK_MACROS_H
 #define BK_MACROS_H
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>

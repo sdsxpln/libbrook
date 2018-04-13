@@ -1,8 +1,9 @@
 #ifndef BK_HTTPREQ_H
 #define BK_HTTPREQ_H
 
+#include <stdbool.h>
 #include "microhttpd.h"
-#include "bk_strmap.h"
+#include "brook.h"
 
 struct bk__httpconvals_holder {
     struct bk_strmap **map;

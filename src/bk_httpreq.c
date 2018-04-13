@@ -2,8 +2,7 @@
 #include <string.h>
 #include "microhttpd.h"
 #include "bk_macros.h"
-#include "bk_utils.h"
-#include "bk_strmap.h"
+#include "brook.h"
 #include "bk_httpreq.h"
 
 static void bk__httpreq_cleanup(struct bk_httpreq *req) {
