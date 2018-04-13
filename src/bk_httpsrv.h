@@ -1,44 +1,8 @@
 #ifndef BK_HTTPSRV_H
 #define BK_HTTPSRV_H
 
-#include <stdbool.h>
 #include "microhttpd.h"
-#include "bk_strmap.h"
 #include "brook.h"
-
-struct bk__httpconvals_holder {
-    struct bk_strmap **map;
-    bool failed;
-};
-
-struct bk_httpauth {
-    struct MHD_Connection *con;
-    struct MHD_Response *handle;
-    char *realm;
-    char *usr;
-    char *pwd;
-    char *justification;
-    char *content_type;
-    bool canceled;
-};
-
-struct bk_httpreq {
-    struct bk_strmap *headers;
-    struct bk_strmap *cookies;
-    struct bk_strmap *params;
-    const char *version;
-    const char *method;
-    const char *path;
-    void *userdata;
-};
-
-struct bk_httpres {
-    struct MHD_Connection *con;
-    struct MHD_Response *handle;
-    struct bk_strmap *headers;
-    unsigned int status;
-    int ret;
-};
 
 struct bk_httpsrv {
     struct MHD_Daemon *handle;

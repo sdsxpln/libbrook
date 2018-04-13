@@ -391,9 +391,6 @@ typedef ssize_t (*bk_httpread_cb)(void *cls, uint64_t offset, char *buf, size_t 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 typedef void (*bk_httpfree_cb)(void *cls);
 
-/* experimental: it will be documented and tested as soon as it is accepted as better API. */
-BK_EXTERN ssize_t bk_httpread_end(bool err);
-
 /**
  * Sets the authentication protection space (realm).
  * \param[in] auth Authentication handle.
@@ -497,6 +494,9 @@ BK_EXTERN int bk_httpres_senddata(struct bk_httpres *res, size_t block_size, bk_
                                   bk_httpfree_cb free_cb, unsigned int status);
 
 /*TODO: Compress the response: bk_httpres_compress(<BK_COMP_DEFL:BK_COMP_GZIP>) */
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN ssize_t bk_httpread_end(bool err);
 
 /** \} */
 
