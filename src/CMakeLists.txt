@@ -57,6 +57,7 @@ list(APPEND BK_C_SOURCE
         ${BK_SOURCE_DIR}/bk_strmap.c
         ${BK_SOURCE_DIR}/bk_httpextra.c
         ${BK_SOURCE_DIR}/bk_httpauth.c
+        ${BK_SOURCE_DIR}/bk_httpuplds.c
         ${BK_SOURCE_DIR}/bk_httpreq.c
         ${BK_SOURCE_DIR}/bk_httpres.c
         ${BK_SOURCE_DIR}/bk_httpsrv.c)
