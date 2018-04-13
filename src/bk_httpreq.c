@@ -6,12 +6,15 @@
 #include "brook.h"
 #include "bk_httpreq.h"
 
-static void bk__httpreq_cleanup(struct bk_httpreq *req) {
+static void bk__httpreq_free(struct bk_httpreq *req) {
+    if (!req)
+        return;
     bk_strmap_cleanup(&req->headers);
     bk_strmap_cleanup(&req->cookies);
     bk_strmap_cleanup(&req->params);
     bk_str_free(req->payload);
     MHD_destroy_post_processor(req->pp);
+    bk_free(req);
 }
 
 static int bk__httpreq_iter(void *cls, __BK_UNUSED enum MHD_ValueKind kind, const char *key, const char *val) {
@@ -27,8 +30,8 @@ struct bk_httpreq *bk__httpreq_new(void) {
     return req;
 }
 
-void bk__httpreq_init(struct bk_httpreq *req, struct MHD_Connection *con, const char *version, const char *method,
-                      const char *path) {
+void bk__httpreq_prepare(struct bk_httpreq *req, struct MHD_Connection *con, const char *version, const char *method,
+                         const char *path) {
     struct bk__httpconvals_holder holder;
     memset(&holder, 0, sizeof(struct bk__httpconvals_holder));
     holder.map = &req->headers;
@@ -48,17 +51,13 @@ void bk__httpreq_init(struct bk_httpreq *req, struct MHD_Connection *con, const 
     req->path = path;
     return;
 fail_oom:
-    bk__httpreq_cleanup(req);
+    bk__httpreq_free(req);
     oom();
 }
 
 void bk__httpreq_done(__BK_UNUSED void *cls, __BK_UNUSED struct MHD_Connection *con, void **con_cls,
                       __BK_UNUSED enum MHD_RequestTerminationCode toe) {
-    struct bk_httpreq *req = *con_cls;
-    if (req) {
-        bk__httpreq_cleanup(req);
-        bk_free(req);
-    }
+    bk__httpreq_free(*con_cls);
     *con_cls = NULL;
 }
 
@@ -83,7 +82,7 @@ const char *bk_httpreq_method(struct bk_httpreq *req) {
 }
 
 bool bk_httpreq_ispost(struct bk_httpreq *req) {
-    return req && ((req->payload) || (req->pp));
+    return req && req->ispost;
 }
 
 const char *bk_httpreq_path(struct bk_httpreq *req) {

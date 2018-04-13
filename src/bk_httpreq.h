@@ -22,12 +22,13 @@ struct bk_httpreq {
     const char *method;
     const char *path;
     void *userdata;
+    bool ispost;
 };
 
 struct bk_httpreq *bk__httpreq_new(void);
 
-void bk__httpreq_init(struct bk_httpreq *req, struct MHD_Connection *con, const char *version, const char *method,
-                      const char *path);
+void bk__httpreq_prepare(struct bk_httpreq *req, struct MHD_Connection *con, const char *version, const char *method,
+                         const char *path);
 
 void bk__httpreq_done(__BK_UNUSED void *cls, __BK_UNUSED struct MHD_Connection *con, void **con_cls,
                       __BK_UNUSED enum MHD_RequestTerminationCode toe);

@@ -9,10 +9,16 @@ void bk__httpuplds_cleanup()*/
 
 bool bk__httpuplds_process(struct bk_httpsrv *srv, struct bk_httpreq *req, struct MHD_Connection *con,
                            const char *upld_data, size_t *upld_data_size, int *ret) {
-    (void) srv;
     (void) con;
     if (*upld_data_size > 0) {
-        utstring_bincpy(req->payload->buf, upld_data, *upld_data_size); /* internal only, use bk_str_strcpy(). */
+        req->ispost = true;
+        utstring_bincpy(req->payload->buf, upld_data, *upld_data_size);
+        if ((srv->max_payldsize > 0) && (utstring_len(req->payload->buf) > srv->max_payldsize)) {
+            *ret = MHD_NO;
+            if (srv->err_cb)
+                srv->err_cb(srv->err_cls, _("Payload Too Large.\n"));
+            return true;
+        }
         *upld_data_size = 0;
         *ret = MHD_YES;
         return true;

@@ -15,6 +15,9 @@ struct bk_httpsrv {
     char *uplds_dir;
     size_t post_bufsize;
     size_t max_payldsize;
+    unsigned int thrd_pool_size;
+    unsigned int con_timeout;
+    unsigned int con_limit;
 };
 
 #endif /* BK_HTTPSRV_H */
