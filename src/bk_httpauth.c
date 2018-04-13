@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <errno.h>
 #include "microhttpd.h"
 #include "bk_macros.h"
 #include "brook.h"
