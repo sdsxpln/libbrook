@@ -451,6 +451,12 @@ BK_EXTERN const char *bk_httpreq_method(struct bk_httpreq *req);
 BK_EXTERN const char *bk_httpreq_path(struct bk_httpreq *req);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN bool bk_httpreq_ispost(struct bk_httpreq *req);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN struct bk_str *bk_httpreq_payload(struct bk_httpreq *req);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN int bk_httpreq_setuserdata(struct bk_httpreq *req, void *data);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */

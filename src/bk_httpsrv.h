@@ -12,8 +12,9 @@ struct bk_httpsrv {
     void *auth_cls;
     void *req_cls;
     void *err_cls;
-    char *upload_dir;
-    size_t post_buffer_size;
+    char *uplds_dir;
+    size_t post_bufsize;
+    size_t max_payldsize;
 };
 
 #endif /* BK_HTTPSRV_H */

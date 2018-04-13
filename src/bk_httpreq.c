@@ -10,6 +10,8 @@ static void bk__httpreq_cleanup(struct bk_httpreq *req) {
     bk_strmap_cleanup(&req->headers);
     bk_strmap_cleanup(&req->cookies);
     bk_strmap_cleanup(&req->params);
+    bk_str_free(req->payload);
+    MHD_destroy_post_processor(req->pp);
 }
 
 static int bk__httpreq_iter(void *cls, __BK_UNUSED enum MHD_ValueKind kind, const char *key, const char *val) {
@@ -76,8 +78,16 @@ const char *bk_httpreq_method(struct bk_httpreq *req) {
     return req ? req->method : NULL;
 }
 
+bool bk_httpreq_ispost(struct bk_httpreq *req) {
+    return req && ((req->payload) || (req->pp));
+}
+
 const char *bk_httpreq_path(struct bk_httpreq *req) {
     return req ? req->path : NULL;
+}
+
+struct bk_str *bk_httpreq_payload(struct bk_httpreq *req) {
+    return req ? req->payload : NULL;
 }
 
 int bk_httpreq_setuserdata(struct bk_httpreq *req, void *data) {

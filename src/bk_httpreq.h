@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "microhttpd.h"
 #include "brook.h"
+#include "bk_httpuplds.h"
 
 struct bk__httpconvals_holder {
     struct bk_strmap **map;
@@ -11,9 +12,12 @@ struct bk__httpconvals_holder {
 };
 
 struct bk_httpreq {
+    struct MHD_PostProcessor *pp;
+    struct bk_httpupld *uplds;
     struct bk_strmap *headers;
     struct bk_strmap *cookies;
     struct bk_strmap *params;
+    struct bk_str *payload;
     const char *version;
     const char *method;
     const char *path;

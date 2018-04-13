@@ -5,6 +5,7 @@
 #include "bk_macros.h"
 #include "brook.h"
 #include "bk_httpauth.h"
+#include "bk_httpuplds.h"
 #include "bk_httpreq.h"
 #include "bk_httpres.h"
 #include "bk_httpsrv.h"
@@ -35,10 +36,6 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
     struct bk_httpreq *req;
     struct bk_httpres res;
     struct bk_httpauth auth;
-
-    (void) upld_data;
-    (void) upld_data_size;
-
     if (!*con_cls) {
         if (srv->auth_cb) {
             bk__httpauth_init(&auth, con);
@@ -51,6 +48,8 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
         return MHD_YES;
     }
     req = *con_cls;
+    if (bk__httpuplds_process(srv, req, con, upld_data, upld_data_size, &res.ret))
+        return res.ret;
     bk__httpreq_init(req, con, version, method, url);
     bk__httpres_init(&res, con);
     srv->req_cb(srv->req_cls, req, &res);
@@ -62,7 +61,7 @@ struct bk_httpsrv *bk_httpsrv_new2(bk_httpauth_cb auth_cb, void *auth_cls, bk_ht
     struct bk_httpsrv *srv = bk_alloc(sizeof(struct bk_httpsrv));
     if (!req_cb || !err_cb)
         return NULL;
-    if (!(srv->upload_dir = bk_tmpdir()))
+    if (!(srv->uplds_dir = bk_tmpdir()))
         oom();
     srv->auth_cb = auth_cb;
     srv->auth_cls = auth_cls;
@@ -70,7 +69,13 @@ struct bk_httpsrv *bk_httpsrv_new2(bk_httpauth_cb auth_cb, void *auth_cls, bk_ht
     srv->req_cls = req_cls;
     srv->err_cb = err_cb;
     srv->err_cls = err_cls;
-    srv->post_buffer_size = 512;
+#ifdef __ANDROID__
+    srv->post_bufsize = 1024; /* 1 Kb */
+    srv->max_payldsize = 524288; /* 512 kB */
+#else
+    srv->post_bufsize = 2/*4096*/; /* 4 kB */
+    srv->max_payldsize = 2/*4194304*/; /* 4 MB */
+#endif
     return srv;
 }
 
@@ -82,7 +87,7 @@ void bk_httpsrv_free(struct bk_httpsrv *srv) {
     if (!srv)
         return;
     bk_httpsrv_stop(srv);
-    bk_free(srv->upload_dir);
+    bk_free(srv->uplds_dir);
     bk_free(srv);
 }
 
