@@ -9,9 +9,9 @@
 #if defined(__MINGW32__) || defined(__ANDROID__)
 #include "bk_utils.h" /* basename() */
 #endif
+#include "brook.h"
 #include "bk_strmap.h"
 #include "bk_httpres.h"
-#include "brook.h"
 
 static int bk__httpheaders_iter(void *cls, struct bk_strmap *header) {
     if (MHD_add_response_header(cls, header->name, header->val) != MHD_YES)

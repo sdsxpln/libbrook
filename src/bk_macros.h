@@ -29,9 +29,11 @@
 #define BK_MACROS_H
 
 #include <stdlib.h>
+#ifndef NDEBUG
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
+#endif
 
 #define _(String) (String) /* macro to make it easy to mark text for translation */
 
