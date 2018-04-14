@@ -33,7 +33,6 @@ static void bk__httpsrv_oel(void *cls, const char *fmt, va_list ap) {
 static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *url, const char *method,
                            const char *version, const char *upld_data, size_t *upld_data_size, void **con_cls) {
     struct bk_httpsrv *srv = cls;
-    struct bk_httpreq *req;
     struct bk_httpres res;
     struct bk_httpauth auth;
     if (!*con_cls) {
@@ -46,12 +45,11 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
         *con_cls = bk__httpreq_new();
         return MHD_YES;
     }
-    req = *con_cls;
-    if (bk__httpuplds_process(srv, req, con, upld_data, upld_data_size, &res.ret))
+    if (bk__httpuplds_process(srv, *con_cls, con, upld_data, upld_data_size, &res.ret))
         return res.ret;
-    bk__httpreq_init(req, con, version, method, url);
+    bk__httpreq_prepare(*con_cls, con, version, method, url);
     bk__httpres_init(&res, con);
-    srv->req_cb(srv->req_cls, req, &res);
+    srv->req_cb(srv->req_cls, *con_cls, &res);
     return bk__httpres_done(&res);
 }
 
