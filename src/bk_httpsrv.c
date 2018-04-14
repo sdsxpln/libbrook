@@ -58,8 +58,6 @@ struct bk_httpsrv *bk_httpsrv_new2(bk_httpauth_cb auth_cb, void *auth_cls, bk_ht
     struct bk_httpsrv *srv = bk_alloc(sizeof(struct bk_httpsrv));
     if (!req_cb || !err_cb)
         return NULL;
-    if (!(srv->uplds_dir = bk_tmpdir()))
-        oom();
     srv->auth_cb = auth_cb;
     srv->auth_cls = auth_cls;
     srv->req_cb = req_cb;
@@ -84,8 +82,46 @@ void bk_httpsrv_free(struct bk_httpsrv *srv) {
     if (!srv)
         return;
     bk_httpsrv_stop(srv);
-    bk_free(srv->uplds_dir);
     bk_free(srv);
+}
+
+int bk_httpsrv_setopt_va(struct bk_httpsrv *srv, enum BK_HTTPSRV_OPT opt, va_list ap) {
+    if (!srv)
+        return -EINVAL;
+    switch (opt) {
+        case BK_HTTPSRV_OPT_UNKNOWN:
+            break;
+        case BK_HTTPSRV_OPT_UPLD_DIR:
+            srv->uplds_dir = va_arg(ap, const char *);
+            break;
+        case BK_HTTPSRV_OPT_POST_BUFSIZE:
+            srv->post_bufsize = va_arg(ap, size_t);
+            break;
+        case BK_HTTPSRV_OPT_MAX_PAYLDSIZE:
+            srv->max_payldsize = va_arg(ap, size_t);
+            break;
+        case BK_HTTPSRV_OPT_THRD_POOL_SIZE:
+            srv->thrd_pool_size = va_arg(ap, unsigned int);
+            break;
+        case BK_HTTPSRV_OPT_CON_TIMEOUT:
+            srv->con_timeout = va_arg(ap, unsigned int);
+            break;
+        case BK_HTTPSRV_OPT_CON_LIMIT:
+            srv->con_limit = va_arg(ap, unsigned int);
+            break;
+        default:;
+    }
+    return 0;
+}
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+int bk_httpsrv_setopt(struct bk_httpsrv *srv, enum BK_HTTPSRV_OPT opt, ...) {
+    va_list ap;
+    int ret;
+    va_start(ap, opt);
+    ret = bk_httpsrv_setopt_va(srv, opt, ap);
+    va_end(ap);
+    return ret;
 }
 
 int bk_httpsrv_start(struct bk_httpsrv *srv, uint16_t port, bool threaded) {

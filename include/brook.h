@@ -380,6 +380,17 @@ struct bk_httpres;
 struct bk_httpsrv;
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
+enum BK_HTTPSRV_OPT {
+    BK_HTTPSRV_OPT_UNKNOWN = 0,
+    BK_HTTPSRV_OPT_UPLD_DIR = 1,
+    BK_HTTPSRV_OPT_POST_BUFSIZE = 2,
+    BK_HTTPSRV_OPT_MAX_PAYLDSIZE = 4,
+    BK_HTTPSRV_OPT_THRD_POOL_SIZE = 8,
+    BK_HTTPSRV_OPT_CON_TIMEOUT = 16,
+    BK_HTTPSRV_OPT_CON_LIMIT = 32
+};
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
 typedef bool (*bk_httpauth_cb)(void *cls, struct bk_httpauth *auth);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
@@ -503,6 +514,12 @@ BK_EXTERN struct bk_httpsrv *bk_httpsrv_new(bk_httpreq_cb cb, void *cls);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN void bk_httpsrv_free(struct bk_httpsrv *srv);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN int bk_httpsrv_setopt_va(struct bk_httpsrv *srv, enum BK_HTTPSRV_OPT opt, va_list ap);
+
+/* experimental: it will be documented and tested as soon as it is accepted as better API. */
+BK_EXTERN int bk_httpsrv_setopt(struct bk_httpsrv *srv, enum BK_HTTPSRV_OPT opt, ...);
 
 /* experimental: it will be documented and tested as soon as it is accepted as better API. */
 BK_EXTERN int bk_httpsrv_start(struct bk_httpsrv *srv, uint16_t port, bool threaded);

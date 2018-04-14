@@ -11,7 +11,7 @@ void bk__httpuplds_cleanup()*/
 static int bk__httpuplds_iter(void *cls, __BK_UNUSED enum MHD_ValueKind kind, const char *key, const char *filename,
                               const char *content_type, const char *transfer_encoding, const char *data,
                               uint64_t off, size_t size) {
-    struct bk_httpuplds_holder *holder;
+    struct bk__httpuplds_holder *holder;
     (void) content_type;
     (void) transfer_encoding;
     (void) off;
@@ -27,7 +27,7 @@ static int bk__httpuplds_iter(void *cls, __BK_UNUSED enum MHD_ValueKind kind, co
 
 bool bk__httpuplds_process(struct bk_httpsrv *srv, struct bk_httpreq *req, struct MHD_Connection *con,
                            const char *upld_data, size_t *upld_data_size, int *ret) {
-    struct bk_httpuplds_holder holder = {srv, req};
+    struct bk__httpuplds_holder holder = {srv, req};
     (void) con;
     if (*upld_data_size > 0) {
         req->ispost = true;

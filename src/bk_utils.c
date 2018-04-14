@@ -87,5 +87,5 @@ void bk_free(void *ptr) {
 
 char *bk_tmpdir() {
     /*TODO: FIXME! */
-    return strdup("");
+    return "";
 }

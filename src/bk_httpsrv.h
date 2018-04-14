@@ -12,7 +12,7 @@ struct bk_httpsrv {
     void *auth_cls;
     void *req_cls;
     void *err_cls;
-    char *uplds_dir;
+    const char *uplds_dir;
     size_t post_bufsize;
     size_t max_payldsize;
     unsigned int thrd_pool_size;
