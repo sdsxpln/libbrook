@@ -73,6 +73,10 @@ struct bk_strmap **bk_httpreq_params(struct bk_httpreq *req) {
     return req ? &req->params : NULL;
 }
 
+struct bk_strmap **bk_httpreq_fields(struct bk_httpreq *req) {
+    return req ? &req->fields : NULL;
+}
+
 const char *bk_httpreq_version(struct bk_httpreq *req) {
     return req ? req->version : NULL;
 }

@@ -33,8 +33,8 @@ static void bk__httpsrv_oel(void *cls, const char *fmt, va_list ap) {
 static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *url, const char *method,
                            const char *version, const char *upld_data, size_t *upld_data_size, void **con_cls) {
     struct bk_httpsrv *srv = cls;
-    struct bk_httpres res;
     struct bk_httpauth auth;
+    struct bk_httpres res;
     if (!*con_cls) {
         if (srv->auth_cb) {
             bk__httpauth_init(&auth, con);
@@ -42,7 +42,7 @@ static int bk__httpsrv_ahc(void *cls, struct MHD_Connection *con, const char *ur
             if (!bk__httpauth_done(&auth, &res.ret))
                 return res.ret;
         }
-        *con_cls = bk__httpreq_new();
+        *con_cls = bk__httpreq_new(); /* `*con_cls` keeps the request instance */
         return MHD_YES;
     }
     if (bk__httpuplds_process(srv, *con_cls, con, upld_data, upld_data_size, &res.ret))
